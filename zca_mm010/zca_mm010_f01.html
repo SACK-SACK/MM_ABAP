@@ -1,0 +1,583 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2//EN">
+<html>
+<head>
+<title>ZCA_MM010_F01</title>
+</head>
+<body bgcolor="#FFFFE0">
+<font size="3" face = "Arial" color="#000000"><b>Code listing for: ZCA_MM010_F01</b></font>
+<br>
+<font size="3" face = "Arial" color="#000000"><b>Description:  서브루틴</b></font>
+<hr>
+<pre width="100">
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*& Include          ZCA_MM010_F01</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*& Form display_data</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+FORM display_data .
+
+  CALL METHOD go_alv1-&gt;set_table_for_first_display
+    EXPORTING
+      i_structure_name = 'ZCA_DISPLAY'              " 송장아이템의 구조로 보여줌
+      is_layout        = gs_layo                 " 열최적화와 ZEBRA기능구현
+    CHANGING
+      it_outtab        = gt_display1             " 인터널 테이블의 정보를 보여준다.
+      it_fieldcatalog  = gt_fieldcat.
+
+
+ENDFORM.
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*& Form create_data</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+FORM create_data .
+
+  CREATE OBJECT go_custom_con1     " CONTANIER생성
+    EXPORTING
+      container_name = 'CCON_HEAD'.
+
+  CREATE OBJECT go_alv1            " CONTAINER위에 ALV생성
+    EXPORTING
+      i_parent = go_custom_con1.   " Parent Container
+
+
+ENDFORM.
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*& Form make_layout</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+FORM make_layout .
+
+  gs_layo-cwidth_opt = 'X'.
+  gs_layo-zebra = 'X'.
+
+ENDFORM.
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*& Form make_fieldcat</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+FORM make_fieldcat .
+
+  CLEAR gt_fieldcat.
+
+  CLEAR gs_fieldcat.
+  gs_fieldcat-fieldname = 'ICON'.
+  gs_fieldcat-coltext = '승인 여부'.
+  gs_fieldcat-col_opt = 1.
+  gs_fieldcat-outputlen = 5.
+  gs_fieldcat-just = 'C'.
+  gs_fieldcat-key = 'X'.
+  APPEND gs_fieldcat TO gt_fieldcat. CLEAR gs_fieldcat.
+
+  " 송장번호
+  CLEAR gs_fieldcat.
+  gs_fieldcat-fieldname = 'INVNR'.
+  gs_fieldcat-coltext = '송장번호'.
+  gs_fieldcat-col_opt = 2.
+  gs_fieldcat-hotspot = 'X'.
+  gs_fieldcat-key = 'X'.
+  APPEND gs_fieldcat TO gt_fieldcat. CLEAR gs_fieldcat.
+
+  " 회계년도
+  CLEAR gs_fieldcat.
+  gs_fieldcat-fieldname = 'GJAHR'.
+  gs_fieldcat-coltext = '회계년도'.
+  gs_fieldcat-col_opt = 3.
+  APPEND gs_fieldcat TO gt_fieldcat. CLEAR gs_fieldcat.
+
+  " 증빙일자
+  CLEAR gs_fieldcat.
+  gs_fieldcat-fieldname = 'BLDAT'.
+  gs_fieldcat-coltext = '증빙일자'.
+  gs_fieldcat-col_opt = 4.
+  APPEND gs_fieldcat TO gt_fieldcat. CLEAR gs_fieldcat.
+
+  " 전기일자
+  CLEAR gs_fieldcat.
+  gs_fieldcat-fieldname = 'BUDAT'.
+  gs_fieldcat-coltext = '전기일자'.
+  gs_fieldcat-col_opt = 5.
+  APPEND gs_fieldcat TO gt_fieldcat. CLEAR gs_fieldcat.
+
+  " 벤더코드
+  CLEAR gs_fieldcat.
+  gs_fieldcat-fieldname = 'LTFNR'.
+  gs_fieldcat-coltext = '벤더코드'.
+  gs_fieldcat-col_opt = 6.
+  APPEND gs_fieldcat TO gt_fieldcat. CLEAR gs_fieldcat.
+
+  " 벤더명
+  CLEAR gs_fieldcat.
+  gs_fieldcat-fieldname = 'NAME1'.
+  gs_fieldcat-coltext = '벤더명'.
+  gs_fieldcat-col_opt = 7.
+  APPEND gs_fieldcat TO gt_fieldcat. CLEAR gs_fieldcat.
+
+  " 은행코드
+  CLEAR gs_fieldcat.
+  gs_fieldcat-fieldname = 'BANKCODE'.
+  gs_fieldcat-coltext = '은행코드'.
+  gs_fieldcat-col_opt = 8.
+  APPEND gs_fieldcat TO gt_fieldcat. CLEAR gs_fieldcat.
+
+  " 총액
+  CLEAR gs_fieldcat.
+  gs_fieldcat-fieldname = 'FINALAMT'.
+  gs_fieldcat-coltext = '총액'.
+  gs_fieldcat-col_opt = 9.
+  APPEND gs_fieldcat TO gt_fieldcat. CLEAR gs_fieldcat.
+
+  " 세금
+  CLEAR gs_fieldcat.
+  gs_fieldcat-fieldname = 'TAXAMOUNT'.
+  gs_fieldcat-coltext = '세금'.
+  gs_fieldcat-col_opt = 10.
+  APPEND gs_fieldcat TO gt_fieldcat. CLEAR gs_fieldcat.
+
+  " 원자재 값
+  CLEAR gs_fieldcat.
+  gs_fieldcat-fieldname = 'RMWWR'.
+  gs_fieldcat-coltext = '원자재값'.
+  gs_fieldcat-col_opt = 11.
+  APPEND gs_fieldcat TO gt_fieldcat. CLEAR gs_fieldcat.
+
+  " 통화코드
+  CLEAR gs_fieldcat.
+  gs_fieldcat-fieldname = 'WAERS'.
+  gs_fieldcat-coltext = '통화코드'.
+  gs_fieldcat-col_opt = 12.
+  APPEND gs_fieldcat TO gt_fieldcat. CLEAR gs_fieldcat.
+
+  " 만기일자
+  CLEAR gs_fieldcat.
+  gs_fieldcat-fieldname = 'ZFBDT'.
+  gs_fieldcat-coltext = '지급만기일자'.
+  gs_fieldcat-col_opt = 13.
+  APPEND gs_fieldcat TO gt_fieldcat. CLEAR gs_fieldcat.
+
+  " 송장수령일자
+  CLEAR gs_fieldcat.
+  gs_fieldcat-fieldname = 'REINDAT'.
+  gs_fieldcat-coltext = '송장수령일자'.
+  gs_fieldcat-col_opt = 14.
+  APPEND gs_fieldcat TO gt_fieldcat. CLEAR gs_fieldcat.
+
+  " 취소 FLAG
+  CLEAR gs_fieldcat.
+  gs_fieldcat-fieldname = 'RBSTAT'.
+  gs_fieldcat-coltext = '취소여부'.
+  gs_fieldcat-col_opt = 15.
+  APPEND gs_fieldcat TO gt_fieldcat. CLEAR gs_fieldcat.
+
+
+ENDFORM.
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*& Form CREATE_CCON_HEAD</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+FORM create_ccon_head .
+
+  PERFORM create_data.       " contanier과 alv grid를 생성한다.
+  PERFORM make_layout.       " LAYOUT을 생성한다.
+  PERFORM make_fieldcat.     " field cat를 생성한다.
+  PERFORM on_hotspot_click.  " hotspot click method를 등록한다.
+  PERFORM display_data.      " 완성된 정보를 화면에 보여준다.
+
+ENDFORM.
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*& Form create_ccon_item</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+FORM create_ccon_item .
+
+  PERFORM create_data2.       " contanier과 alv grid를 생성한다.
+  PERFORM make_layout2.       " LAYOUT을 생성한다.
+  PERFORM make_fieldcat2.     " field cat를 생성한다.
+  PERFORM on_hotspot_click_item.  " hotspot click method를 등록한다.
+  PERFORM display_data2.      " 완성된 정보를 화면에 보여준다.
+
+ENDFORM.
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*& Form create_data2</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+FORM create_data2 .
+
+
+  CREATE OBJECT go_custom_con2     " CONTANIER생성
+    EXPORTING
+      container_name = 'CCON_ITEM'.
+
+  CREATE OBJECT go_alv2            " CONTAINER위에 ALV생성
+    EXPORTING
+      i_parent = go_custom_con2.   " Parent Container
+
+
+ENDFORM.
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*& Form make_layout2</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+FORM make_layout2 .
+
+  gs_layo2-cwidth_opt = 'X'.
+  gs_layo2-zebra = 'X'.
+
+ENDFORM.
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*& Form make_fieldcat2</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+FORM make_fieldcat2 .
+
+  " 송장번호
+  CLEAR gs_fieldcat2.
+  gs_fieldcat2-fieldname = 'INVNR'.
+  gs_fieldcat2-coltext = '송장번호'.
+  gs_fieldcat2-col_opt = 1.
+  gs_fieldcat2-hotspot = 'X'.
+  gs_fieldcat2-key = 'X'.
+  APPEND gs_fieldcat2 TO gt_fieldcat2. CLEAR gs_fieldcat2.
+
+  " 회계년도
+  CLEAR gs_fieldcat2.
+  gs_fieldcat2-fieldname = 'GJAHR'.
+  gs_fieldcat2-coltext = '회계년도'.
+  gs_fieldcat2-col_opt = 2.
+  APPEND gs_fieldcat2 TO gt_fieldcat2. CLEAR gs_fieldcat2.
+
+  " 송장품목번호
+  CLEAR gs_fieldcat2.
+  gs_fieldcat2-fieldname = 'BUZEI'.
+  gs_fieldcat2-coltext = '송장품목번호'.
+  gs_fieldcat2-col_opt = 3.
+  APPEND gs_fieldcat2 TO gt_fieldcat2. CLEAR gs_fieldcat2.
+
+  " 벤더코드
+  CLEAR gs_fieldcat2.
+  gs_fieldcat2-fieldname = 'LTFNR'.
+  gs_fieldcat2-coltext = '벤더코드'.
+  gs_fieldcat2-col_opt = 4.
+  APPEND gs_fieldcat2 TO gt_fieldcat2. CLEAR gs_fieldcat2.
+
+  " 벤더명
+  CLEAR gs_fieldcat2.
+  gs_fieldcat2-fieldname = 'NAME1'.
+  gs_fieldcat2-coltext = '벤더명'.
+  gs_fieldcat2-col_opt = 5.
+  APPEND gs_fieldcat2 TO gt_fieldcat2. CLEAR gs_fieldcat2.
+
+  " 구매오더 코드
+  CLEAR gs_fieldcat2.
+  gs_fieldcat2-fieldname = 'EBELN'.
+  gs_fieldcat2-coltext = '구매오더코드'.
+  gs_fieldcat2-col_opt = 6.
+  APPEND gs_fieldcat2 TO gt_fieldcat2. CLEAR gs_fieldcat2.
+
+  " 품목번호
+  CLEAR gs_fieldcat2.
+  gs_fieldcat2-fieldname = 'EBELN'.
+  gs_fieldcat2-coltext = '품목번호'.
+  gs_fieldcat2-col_opt = 7.
+  APPEND gs_fieldcat2 TO gt_fieldcat2. CLEAR gs_fieldcat2.
+
+  " 자재코드
+  CLEAR gs_fieldcat2.
+  gs_fieldcat2-fieldname = 'MATNR'.
+  gs_fieldcat2-coltext = '자재코드'.
+  gs_fieldcat2-col_opt = 8.
+  APPEND gs_fieldcat2 TO gt_fieldcat2. CLEAR gs_fieldcat2.
+
+  " 자재명
+  CLEAR gs_fieldcat2.
+  gs_fieldcat2-fieldname = 'MAKTX'.
+  gs_fieldcat2-coltext = '자재명'.
+  gs_fieldcat2-col_opt = 9.
+  APPEND gs_fieldcat2 TO gt_fieldcat2. CLEAR gs_fieldcat2.
+
+  " 플랜트코드
+  CLEAR gs_fieldcat2.
+  gs_fieldcat2-fieldname = 'WERKS'.
+  gs_fieldcat2-coltext = '플랜트코드'.
+  gs_fieldcat2-col_opt = 10.
+  APPEND gs_fieldcat2 TO gt_fieldcat2. CLEAR gs_fieldcat2.
+
+  " 플랜트명
+  CLEAR gs_fieldcat2.
+  gs_fieldcat2-fieldname = 'PNAME'.
+  gs_fieldcat2-coltext = '플랜트명'.
+  gs_fieldcat2-col_opt = 11.
+  APPEND gs_fieldcat2 TO gt_fieldcat2. CLEAR gs_fieldcat2.
+
+  " 청구수량
+  CLEAR gs_fieldcat2.
+  gs_fieldcat2-fieldname = 'IVAMT'.
+  gs_fieldcat2-coltext = '청구수량'.
+  gs_fieldcat2-col_opt = 12.
+  APPEND gs_fieldcat2 TO gt_fieldcat2. CLEAR gs_fieldcat2.
+
+  " 단위
+  CLEAR gs_fieldcat2.
+  gs_fieldcat2-fieldname = 'MEINH'.
+  gs_fieldcat2-coltext = '단위'.
+  gs_fieldcat2-col_opt = 13.
+  APPEND gs_fieldcat2 TO gt_fieldcat2. CLEAR gs_fieldcat2.
+
+  " 금액
+  CLEAR gs_fieldcat2.
+  gs_fieldcat2-fieldname = 'WRBTR'.
+  gs_fieldcat2-coltext = '금액'.
+  gs_fieldcat2-col_opt = 14.
+  APPEND gs_fieldcat2 TO gt_fieldcat2. CLEAR gs_fieldcat2.
+
+  " 통화코드
+  CLEAR gs_fieldcat2.
+  gs_fieldcat2-fieldname = 'WAERS'.
+  gs_fieldcat2-coltext = '통화코드'.
+  gs_fieldcat2-col_opt = 15.
+  APPEND gs_fieldcat2 TO gt_fieldcat2. CLEAR gs_fieldcat2.
+
+  " 창고코드
+  CLEAR gs_fieldcat2.
+  gs_fieldcat2-fieldname = 'LGORT'.
+  gs_fieldcat2-coltext = '창고코드'.
+  gs_fieldcat2-col_opt = 16.
+  APPEND gs_fieldcat2 TO gt_fieldcat2. CLEAR gs_fieldcat2.
+
+  " 창고명
+  CLEAR gs_fieldcat2.
+  gs_fieldcat2-fieldname = 'LGOBE'.
+  gs_fieldcat2-coltext = '창고명'.
+  gs_fieldcat2-col_opt = 17.
+  APPEND gs_fieldcat2 TO gt_fieldcat2. CLEAR gs_fieldcat2.
+
+
+ENDFORM.
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*& Form display_data2</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+FORM display_data2 .
+
+  CALL METHOD go_alv2-&gt;set_table_for_first_display
+    EXPORTING
+      is_layout       = gs_layo2                 " 열최적화와 ZEBRA기능구현
+    CHANGING
+      it_outtab       = gt_display2                 " 인터널 테이블의 정보를 보여준다.
+      it_fieldcatalog = gt_fieldcat2.
+
+ENDFORM.
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*& Form toggle_mode</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+FORM toggle_mode .
+
+  IF zca_rbkp-rbstat = 'X'.
+    IF gv_mode IS INITIAL.
+      gv_mode = 'C'.
+    ELSE.
+      CLEAR gv_mode.
+    ENDIF.
+  ENDIF.
+
+ENDFORM.
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*& Form select_data</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+FORM select_data .
+
+  CLEAR: gt_display1,gt_rseg.
+
+  SELECT rbkp~invnr
+         rbkp~gjahr
+         rbkp~bldat
+         rbkp~budat
+         rbkp~ltfnr
+         rbkp~bankcode
+         rbkp~finalamt
+         rbkp~taxamount
+         rbkp~rmwwr
+         rbkp~waers
+         rbkp~zfbdt
+         rbkp~reindat
+         rbkp~rbstat
+         lfa1~name1
+    INTO CORRESPONDING FIELDS OF TABLE gt_display1
+  FROM zca_rbkp AS rbkp
+    INNER JOIN zca_lfa1 AS lfa1
+    ON rbkp~ltfnr = lfa1~lifnr
+  WHERE rbkp~invnr IN so_invnr
+    AND rbkp~gjahr IN so_gjahr
+    AND rbkp~bldat IN so_bldat
+    AND rbkp~ltfnr IN so_ltfnr.
+
+  LOOP AT gt_display1 INTO gs_display1.
+    IF gs_display1-rbstat = 'X'.
+      gs_display1-icon = icon_led_red.
+    ELSE.
+      gs_display1-icon = icon_led_green.
+    ENDIF.
+    MODIFY gt_display1 FROM gs_display1.
+  ENDLOOP.
+
+ENDFORM.
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*& Form hotspot_click</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+FORM hotspot_click_head  USING p_row_id
+                          p_column_id.
+
+  READ TABLE gt_display1 INTO gs_display1 INDEX p_row_id.
+
+<font color ="#0000FF">* 아이템 채우기</font>
+  SELECT *
+<font color ="#0000FF">*    rseg~invnr</font>
+<font color ="#0000FF">*         rseg~gjahr</font>
+<font color ="#0000FF">*         rseg~buzei</font>
+<font color ="#0000FF">*         rseg~ltfnr</font>
+<font color ="#0000FF">*         rseg~ebeln</font>
+<font color ="#0000FF">*         rseg~matnr</font>
+<font color ="#0000FF">*         rseg~werks</font>
+<font color ="#0000FF">*         rseg~ivamt</font>
+<font color ="#0000FF">*         rseg~meinh</font>
+<font color ="#0000FF">*         rseg~wrbtr</font>
+<font color ="#0000FF">*         rseg~waers</font>
+<font color ="#0000FF">*         rseg~lgort</font>
+<font color ="#0000FF">*         makt~maktx</font>
+<font color ="#0000FF">*         t001l~lgobe</font>
+<font color ="#0000FF">*         t001w~pname</font>
+<font color ="#0000FF">*         lfa1~name1</font>
+    INTO CORRESPONDING FIELDS OF TABLE gt_display2
+    FROM zca_rseg AS rseg
+    INNER JOIN zca_lfa1 AS lfa1
+    ON rseg~ltfnr = lfa1~lifnr
+    INNER JOIN zca_t001w AS t001w
+    ON t001w~werks = rseg~werks
+    INNER JOIN zca_t001l AS t001l
+    ON t001l~lgort = rseg~lgort
+    AND t001l~werks = t001w~werks
+    INNER JOIN zca_makt AS makt
+    ON makt~matnr = rseg~matnr
+    WHERE rseg~invnr = gs_display1-invnr
+      AND rseg~gjahr = gs_display1-gjahr
+      AND makt~spras = sy-langu.
+
+<font color ="#0000FF">* 오른쪽에 정보 띄우기</font>
+
+  MOVE-CORRESPONDING gs_display1 TO zca_rbkp.
+
+  CALL METHOD go_alv2-&gt;get_frontend_layout
+    IMPORTING
+      es_layout = gs_layo2.  " Layout
+  gs_layo2-cwidth_opt = 'X'.
+  CALL METHOD go_alv2-&gt;set_frontend_layout
+    EXPORTING
+      is_layout = gs_layo2.                 " Layout
+
+  CALL METHOD go_alv2-&gt;refresh_table_display.
+
+  LEAVE SCREEN.
+
+
+ENDFORM.
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*& Form on_hotspot_click</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+FORM on_hotspot_click .
+
+  CREATE OBJECT g_application.  " 객체 생성
+  SET HANDLER g_application-&gt;handler_hotspot_click_head FOR go_alv1.
+
+ENDFORM.
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*& Form hotspot_click_item</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+FORM hotspot_click_item  USING    e_row_id
+                                  e_column_id.
+
+  READ TABLE gt_display2 INTO gs_display2 INDEX e_row_id.
+
+<font color ="#0000FF">* 오른쪽에 정보 띄우기</font>
+
+  MOVE-CORRESPONDING gs_display2 TO zca_rseg.
+
+  LEAVE SCREEN.
+
+
+ENDFORM.
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*& Form on_hotspot_click_item</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+FORM on_hotspot_click_item .
+
+  CREATE OBJECT g_application.  " 객체 생성
+  SET HANDLER g_application-&gt;handler_hotspot_click_item FOR go_alv2.
+
+ENDFORM.
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*& Form SEND_DOCUMENT</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+FORM send_document.
+
+  IF zca_rbkp-rbstat = 'X'.
+    SUBMIT zca_fi130
+        WITH pa_gjahr = zca_rbkp-gjahr
+        WITH pa_invnr = zca_rbkp-invnr
+        VIA SELECTION-SCREEN
+        AND RETURN.
+
+  ELSE.
+    MESSAGE '이미 보낸 정보입니다.' TYPE 'W' DISPLAY LIKE 'I'.
+  ENDIF.
+ENDFORM.
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*& Form save_document</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+FORM save_document .
+
+  zca_rbkp-aenam = sy-uname.
+  zca_rbkp-aedat = sy-datum.
+  zca_rbkp-aezet = sy-uzeit.
+  zca_rseg-aenam = sy-uname.
+  zca_rseg-aedat = sy-datum.
+  zca_rseg-aezet = sy-uzeit.
+  UPDATE zca_rbkp FROM zca_rbkp.
+  UPDATE zca_rseg FROM zca_rseg.
+
+ENDFORM.
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*& Form arrange</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+FORM arrange .
+
+  CALL METHOD go_alv1-&gt;get_frontend_layout
+    IMPORTING
+      es_layout = gs_layo.  " Layout
+  gs_layo-cwidth_opt = 'X'.
+  CALL METHOD go_alv1-&gt;set_frontend_layout
+    EXPORTING
+      is_layout = gs_layo.                 " Layout
+
+  " ALV 갱신
+  CALL METHOD go_alv1-&gt;refresh_table_display.
+
+  CALL METHOD go_alv2-&gt;get_frontend_layout
+    IMPORTING
+      es_layout = gs_layo2.  " Layout
+  gs_layo-cwidth_opt = 'X'.
+  CALL METHOD go_alv2-&gt;set_frontend_layout
+    EXPORTING
+      is_layout = gs_layo2.                 " Layout
+
+  " ALV 갱신
+  CALL METHOD go_alv2-&gt;refresh_table_display.
+
+
+ENDFORM.
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*& Form DELETE_ADJACENT_DUPLICATES</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+FORM delete_adjacent_duplicates .
+
+<font color ="#0000FF">*  SORT gt_display1 BY banfn .</font>
+<font color ="#0000FF">*  DELETE ADJACENT DUPLICATES FROM gt_display1 COMPARING banfn.</font>
+
+ENDFORM.
+</pre>
+<hr>
+<font size="2" face = "Sans Serif">Extracted by Direct Download Enterprise version 1.3.1 - E.G.Mellodew. 1998-2005 UK. Sap Release 758
+</font>
+</body>
+</html>

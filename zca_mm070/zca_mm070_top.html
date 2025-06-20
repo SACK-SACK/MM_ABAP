@@ -1,0 +1,56 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2//EN">
+<html>
+<head>
+<title>ZCA_MM070_TOP</title>
+</head>
+<body bgcolor="#FFFFE0">
+<font size="3" face = "Arial" color="#000000"><b>Code listing for: ZCA_MM070_TOP</b></font>
+<br>
+<font size="3" face = "Arial" color="#000000"><b>Description:  TOP</b></font>
+<hr>
+<pre width="100">
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*& Include          ZCA_MM070_TOP</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+
+TABLES: zca_mmt010.
+
+DATA: gt_mmt010 TYPE TABLE OF zca_mmt010, " 배치정보 인터널 테이블
+      gs_mmt010 LIKE LINE OF  gt_mmt010.
+
+DATA: BEGIN OF gs_display.
+        include structure <a href ="zca_mmt010/dictionary-zca_mmt010.html">zca_mmt010</a>.
+DATA:   icon  TYPE char4,
+        maktx TYPE zca_maktx,
+        pname TYPE zca_pname,
+        lgobe TYPE zca_lgobe,
+      END OF gs_display.
+DATA: gt_display LIKE TABLE OF gs_display.
+
+DATA ok_code TYPE sy-ucomm. " OK_CODE
+
+<font color ="#0000FF">* ALV 관련</font>
+DATA: go_custom_con TYPE REF TO cl_gui_custom_container,      " 컨테이너
+      go_alv        TYPE REF TO cl_gui_alv_grid.              " ALV GRID
+
+DATA: gs_fieldcat TYPE lvc_s_fcat,
+      gt_fieldcat TYPE lvc_t_fcat,
+      gs_layo     TYPE lvc_s_layo,
+      gs_sort     TYPE lvc_s_sort,
+      gt_sort     TYPE lvc_t_sort,
+      gs_variant  TYPE disvariant,
+      gs_save     TYPE c.
+
+
+CLASS lcl_application DEFINITION DEFERRED.
+DATA: g_application TYPE REF TO lcl_application.  " 핫스팟 이벤트
+
+DATA: vfdat TYPE zca_vfdat,     " 오른쪽 화면 필드
+      today TYPE datum,
+      dday  TYPE i.
+</pre>
+<hr>
+<font size="2" face = "Sans Serif">Extracted by Direct Download Enterprise version 1.3.1 - E.G.Mellodew. 1998-2005 UK. Sap Release 758
+</font>
+</body>
+</html>

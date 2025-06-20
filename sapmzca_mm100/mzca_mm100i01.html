@@ -1,0 +1,89 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2//EN">
+<html>
+<head>
+<title>MZCA_MM100I01</title>
+</head>
+<body bgcolor="#FFFFE0">
+<font size="3" face = "Arial" color="#000000"><b>Code listing for: MZCA_MM100I01</b></font>
+<br>
+<font size="3" face = "Arial" color="#000000"><b>Description:  IO1</b></font>
+<hr>
+<pre width="100">
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*& Include          MZCA_MM100I01</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*&      Module  USER_COMMAND_0100  INPUT</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+MODULE USER_COMMAND_0100 INPUT.
+
+  CASE OK_CODE.
+    WHEN 'CANC'.
+      PERFORM CLEAR_DATA.
+    WHEN 'BACK'.
+      LEAVE TO SCREEN 0.
+
+    WHEN 'BTN_OK'.
+      PERFORM BANPR_W_D USING '승인 처리 하시겠습니까?'
+                               'A'
+                               GO_ALV_GRID.
+    WHEN 'BTN_NO'.
+      PERFORM BANPR_W_D USING '반려 처리 하시겠습니까?'
+                         'D'
+                         GO_ALV_GRID.
+
+
+  ENDCASE.
+
+  PERFORM DATA_SELECT.
+  GO_ALV_GRID-&gt;REFRESH_TABLE_DISPLAY( ).
+
+ENDMODULE.
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*&      Module  USER_COMMAND_0110  INPUT</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+MODULE USER_COMMAND_0110 INPUT.
+
+  CASE OK_CODE .
+
+    WHEN 'CANC_110'.
+      LEAVE SCREEN.
+
+    WHEN 'BTN_OK2'.
+      PERFORM BANPR_W_D USING '승인 처리 하시겠습니까?'
+                               'A'
+                               GO_ALV_GRID2.
+    WHEN 'BTN_NO2'.
+      PERFORM BANPR_W_D USING '반려 처리 하시겠습니까?'
+                         'D'
+                         GO_ALV_GRID2.
+
+
+  ENDCASE.
+
+
+  PERFORM DATA_SELECT.
+
+
+ENDMODULE.
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*&      Module  USER_COMMAND_0120  INPUT</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+MODULE USER_COMMAND_0120 INPUT.
+
+  CASE OK_CODE.
+    WHEN 'CANC'.
+      CLEAR ZCA_MARA.
+      CLEAR ZCA_PPT030.
+      CLEAR ZCA_MAKT.
+      CLEAR ZCA_T001W.
+      LEAVE SCREEN.
+  ENDCASE.
+
+ENDMODULE.
+</pre>
+<hr>
+<font size="2" face = "Sans Serif">Extracted by Direct Download Enterprise version 1.3.1 - E.G.Mellodew. 1998-2005 UK. Sap Release 758
+</font>
+</body>
+</html>

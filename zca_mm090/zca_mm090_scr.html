@@ -1,0 +1,28 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2//EN">
+<html>
+<head>
+<title>ZCA_MM090_SCR</title>
+</head>
+<body bgcolor="#FFFFE0">
+<font size="3" face = "Arial" color="#000000"><b>Code listing for: ZCA_MM090_SCR</b></font>
+<br>
+<font size="3" face = "Arial" color="#000000"><b>Description:  Screen</b></font>
+<hr>
+<pre width="100">
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*& Include          ZCA_MM090_SCR</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+
+SELECTION-SCREEN BEGIN OF BLOCK b01 WITH FRAME TITLE TEXT-t01.
+
+  SELECT-OPTIONS : SO_BEDAT FOR ZCA_EKKO-BEDAT OBLIGATORY DEFAULT sy-datum,  " 구매오더 일자
+                   so_werks FOR ZCA_EKKO-werks,  " 플랜드
+                   SO_LTFNR FOR ZCA_EKKO-LTFNR.  " 자재코드
+
+SELECTION-SCREEN END OF BLOCK b01.
+</pre>
+<hr>
+<font size="2" face = "Sans Serif">Extracted by Direct Download Enterprise version 1.3.1 - E.G.Mellodew. 1998-2005 UK. Sap Release 758
+</font>
+</body>
+</html>

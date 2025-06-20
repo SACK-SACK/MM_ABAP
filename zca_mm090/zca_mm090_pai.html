@@ -1,0 +1,173 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2//EN">
+<html>
+<head>
+<title>ZCA_MM090_PAI</title>
+</head>
+<body bgcolor="#FFFFE0">
+<font size="3" face = "Arial" color="#000000"><b>Code listing for: ZCA_MM090_PAI</b></font>
+<br>
+<font size="3" face = "Arial" color="#000000"><b>Description:  PAI</b></font>
+<hr>
+<pre width="100">
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*& Include          ZCA_MM090_PAI</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*&      Module  USER_COMMAND_0100  INPUT</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+MODULE user_command_0100 INPUT.
+
+  CASE ok_code.
+    WHEN 'BACK'.
+      LEAVE TO SCREEN 0.
+    WHEN 'TAB1' OR 'TAB2'.
+      my_tabstrip-activetab = ok_code.
+    WHEN 'DELIV'.
+
+      IF zca_ekko-ebeln IS NOT INITIAL AND gs_display1-icon = icon_led_red.
+
+
+
+        READ TABLE gt_display1 INTO gs_display1 WITH KEY ebeln = zca_ekko-ebeln.
+        IF sy-subrc = 0 AND gs_display1-icon = icon_led_red.
+          gs_display1-elikz = 'X'.
+          gs_display1-icon = icon_led_yellow.
+            gs_display1-e_icon = '@0V@'.
+          UPDATE zca_ekko SET elikz = 'X' WHERE ebeln = gs_display1-ebeln.
+          MODIFY gt_display1 FROM gs_display1 INDEX sy-tabix.
+        ENDIF.
+
+        CALL METHOD go_alv1-&gt;get_frontend_layout
+          IMPORTING
+            es_layout = gs_layo1.  " Layout
+        gs_layo1-cwidth_opt = 'X'.
+        CALL METHOD go_alv2-&gt;set_frontend_layout
+          EXPORTING
+            is_layout = gs_layo1.                 " Layout
+
+      ELSE.
+
+        MESSAGE '이미 배송완료된 자재입니다.' TYPE 'E' DISPLAY LIKE 'I'.
+
+      ENDIF.
+
+    WHEN 'STORE'.
+
+      " 오른쪽 필드에 들어왔고 그 정보가 입고 대기중일때 (노란불)
+      IF zca_ekko-ebeln IS NOT INITIAL AND gs_display1-icon = icon_led_yellow.
+
+        LOOP AT gt_display2 INTO gs_display2.
+
+          call function <a href ="zca_mm_stock_item/zca_mm_stock_item.html">'ZCA_MM_STOCK_ITEM'</a>
+            EXPORTING
+              iv_matnr = gs_display2-matnr                 " 자재코드
+              iv_btqty = gs_display2-menge                 " 가용수량
+              iv_werks = 'P001'                        " 플랜트 ID
+              iv_lgort = 'SL03'                        " 창고 코드 (저장 위치)
+              iv_trqua = 0                             " 폐기수량
+              iv_bwart = '101'                         " 이동 유형 코드
+              iv_ebeln = gs_display2-ebeln.                " 구매 오더 코드
+
+        ENDLOOP.
+
+        " 이게 헤더 db에 수정입니다.
+        SELECT SINGLE * FROM zca_ekko INTO gs_ekko
+          WHERE ebeln = gs_display2-ebeln.
+
+        gs_ekko-wepos = 'X'.
+        gs_ekko-indat = sy-datum.
+        gs_ekko-aenam = sy-uname.
+        gs_ekko-aedat = sy-datum.
+        gs_ekko-aezet = sy-uzeit.
+
+
+        UPDATE zca_ekko FROM gs_ekko.
+
+        " 이게 보이는거 수정
+        READ TABLE gt_display1 INTO gs_display1 WITH KEY ebeln = gs_ekko-ebeln.
+        IF sy-subrc = 0.
+          gs_display1-wepos = 'X'.
+          gs_display1-aenam = sy-uname.
+          gs_display1-aedat = sy-datum.
+          gs_display1-aezet = sy-uzeit.
+          gs_display1-icon = icon_led_green.
+          gs_display1-b_icon = '@0V@'.
+          gs_display1-indat = sy-datum.
+<font color ="#0000FF">*          UPDATE zca_ekko FROM gs_display1.</font>
+          MODIFY gt_display1 FROM gs_display1 INDEX sy-tabix.
+        ENDIF.
+
+<font color ="#0000FF">*       송장발행</font>
+        PERFORM invoice_issuance.
+
+        MESSAGE '입고가 완료됐습니다.' TYPE 'I' DISPLAY LIKE 'I'.
+
+<font color ="#0000FF">*        SUBMIT zca_fi130</font>
+        SUBMIT zca_fi130_bdc
+          WITH pa_invnr = gs_rbkp-invnr
+          WITH pa_gjahr = gs_rbkp-gjahr
+          WITH p_mode = 'D'
+          AND RETURN .
+
+        CLEAR: zca_ekko, zca_ekpo,gt_rseg,gt_rbkp.
+
+      ELSE.
+        MESSAGE '입고대기중인 재고만 입고할 수 있습니다.' TYPE 'W' DISPLAY LIKE 'I'.
+      ENDIF.
+  ENDCASE.
+
+ENDMODULE.
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*&      Module  EXIT  INPUT</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+MODULE exit INPUT.
+
+  CASE ok_code.
+    WHEN 'EXIT'.
+      LEAVE PROGRAM.
+    WHEN 'CANC'.
+      LEAVE TO SCREEN 0.
+  ENDCASE.
+
+ENDMODULE.
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*& Module STATUS_0110 OUTPUT</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+MODULE status_0110 OUTPUT.
+  SET PF-STATUS 'S0110'.
+  SET TITLEBAR 'T0110'.
+ENDMODULE.
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*&      Module  USER_COMMAND_0110  INPUT</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+MODULE user_command_0110 INPUT.
+
+  CASE ok_code.
+    WHEN 'BACK'.
+      LEAVE TO SCREEN 0.
+    WHEN 'STOCK'.
+
+<font color ="#0000FF">*      LOOP AT gt_ekpo INTO gs_ekpo.</font>
+<font color ="#0000FF">*</font>
+<font color ="#0000FF">*        CALL FUNCTION 'ZCA_MM_CREATE_BATCH'</font>
+<font color ="#0000FF">*          EXPORTING</font>
+<font color ="#0000FF">*            iv_matnr = gs_ekpo-matnr                 " 자재코드</font>
+<font color ="#0000FF">*            iv_btqty = gs_ekpo-menge                 " 가용수량</font>
+<font color ="#0000FF">*            iv_werks = 'P001'                 " 플랜트 ID</font>
+<font color ="#0000FF">*            iv_lgort = 'SL03'                 " 창고 코드 (저장 위치)</font>
+<font color ="#0000FF">*            iv_trqua = 0                 " 폐기수량</font>
+<font color ="#0000FF">*            iv_bwart = 105.                 " 이동 유형 코드</font>
+<font color ="#0000FF">*      ENDLOOP.</font>
+<font color ="#0000FF">*</font>
+<font color ="#0000FF">*      READ TABLE gt_ekko INTO gs_ekko WITH KEY ebeln = gs_ekpo-ebeln.</font>
+<font color ="#0000FF">*</font>
+<font color ="#0000FF">*      gs_ekko-wepos = 'X'.</font>
+  ENDCASE.
+
+ENDMODULE.
+</pre>
+<hr>
+<font size="2" face = "Sans Serif">Extracted by Direct Download Enterprise version 1.3.1 - E.G.Mellodew. 1998-2005 UK. Sap Release 758
+</font>
+</body>
+</html>

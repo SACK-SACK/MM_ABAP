@@ -1,0 +1,326 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2//EN">
+<html>
+<head>
+<title>ZCA_MM020_F01</title>
+</head>
+<body bgcolor="#FFFFE0">
+<font size="3" face = "Arial" color="#000000"><b>Code listing for: ZCA_MM020_F01</b></font>
+<br>
+<font size="3" face = "Arial" color="#000000"><b>Description:  서브루틴</b></font>
+<hr>
+<pre width="100">
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*& Include          ZCA_MM020_F01</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*& Form select_data</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+FORM select_data .
+
+  SELECT *
+INTO CORRESPONDING FIELDS OF TABLE gt_mseg
+FROM zca_mkpf AS mkpf
+INNER JOIN zca_mseg AS mseg
+ON mkpf~mblnr = mseg~mblnr
+AND mkpf~mjahr = mseg~mjahr
+WHERE mseg~matnr IN so_matnr
+AND mkpf~mjahr IN so_mjahr
+AND mkpf~werks IN so_werks
+AND mseg~bwart = '101'
+AND mseg~ernam IN so_ernam
+AND mseg~erdat IN so_erdat.
+
+  SELECT *
+INTO CORRESPONDING FIELDS OF TABLE gt_mkpf
+FROM zca_mkpf AS mkpf
+WHERE mkpf~mjahr IN so_mjahr
+AND mkpf~werks IN so_werks
+AND mkpf~ernam IN so_ernam
+AND mkpf~erdat IN so_erdat
+    AND mkpf~matnr IN so_matnr.
+
+
+
+
+
+ENDFORM.
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*& Form create_data</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+FORM create_data .
+
+  CREATE OBJECT g_custom_con     " CONTANIER생성
+    EXPORTING
+      container_name = 'CCON_ITEM'.
+
+  CREATE OBJECT g_alv            " CONTAINER위에 ALV생성
+    EXPORTING
+      i_parent = g_custom_con.   " Parent Container
+
+
+ENDFORM.
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*& Form make_fieldcat</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+FORM make_fieldcat .
+
+  CLEAR gs_fieldcat.
+  gs_fieldcat-fieldname = 'MBLNR'.
+  APPEND gs_fieldcat TO gt_fieldcat. CLEAR gs_fieldcat.
+
+  gs_fieldcat-fieldname = 'MJAHR'.
+  gs_fieldcat-key = 'X'.
+  APPEND gs_fieldcat TO gt_fieldcat. CLEAR gs_fieldcat.
+
+
+  gs_fieldcat-fieldname = 'MATNR'.
+  APPEND gs_fieldcat TO gt_fieldcat. CLEAR gs_fieldcat.
+
+  gs_fieldcat-fieldname = 'CHARG'.
+  APPEND gs_fieldcat TO gt_fieldcat. CLEAR gs_fieldcat.
+
+  gs_fieldcat-fieldname = 'BWART'.
+  APPEND gs_fieldcat TO gt_fieldcat. CLEAR gs_fieldcat.
+
+  gs_fieldcat-fieldname = 'PLANTFR'.
+  APPEND gs_fieldcat TO gt_fieldcat. CLEAR gs_fieldcat.
+
+  gs_fieldcat-fieldname = 'PLANTTO'.
+  APPEND gs_fieldcat TO gt_fieldcat. CLEAR gs_fieldcat.
+
+  gs_fieldcat-fieldname = 'MENGE'.
+  APPEND gs_fieldcat TO gt_fieldcat. CLEAR gs_fieldcat.
+
+  gs_fieldcat-fieldname = 'MEINH'.
+  APPEND gs_fieldcat TO gt_fieldcat. CLEAR gs_fieldcat.
+
+
+ENDFORM.
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*& Form display_data</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+FORM display_data .
+
+  CALL METHOD g_alv-&gt;set_table_for_first_display
+    EXPORTING
+      i_structure_name = 'ZCA_MSEG'              " 송장아이템의 구조로 보여줌
+      is_layout        = gs_layo                 " Layout 나중에 디자인할 예정
+      i_save           = gs_save
+      is_variant       = gs_variant
+    CHANGING
+      it_outtab        = gt_mseg                 " 인터널 테이블의 정보를 보여준다.
+      it_fieldcatalog  = gt_fieldcat.
+
+<font color ="#0000FF">*CLEAR gt_mseg.</font>
+
+
+ENDFORM.
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*& Form on_hotspot_click</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+FORM on_hotspot_click .
+<font color ="#0000FF">*</font>
+  CREATE OBJECT g_application.  " 객체 생성
+  SET HANDLER g_application-&gt;handler_hotspot_click FOR g_alv.
+
+
+ENDFORM.
+
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*& Form make_lao</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+FORM make_lao .
+
+  gs_layo-cwidth_opt = 'X'.
+  gs_layo-zebra = 'X'.
+  gs_save = 'A'.
+  gs_variant-report = sy-cprog.
+
+ENDFORM.
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*& Form refresh_grid</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+FORM refresh_grid .
+
+  DATA: l_scroll TYPE lvc_s_stbl.
+  l_scroll-row = 'X'.  " 새로고침해도 스크롤 위치가 고정된다.
+  l_scroll-col = 'X'.
+  CALL METHOD g_alv-&gt;refresh_table_display  " alv데이터를 화면에 다시 그려준다.
+    EXPORTING
+      i_soft_refresh = ''
+      is_stable      = l_scroll.
+
+
+ENDFORM.
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*& Form hotspot_click</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+FORM hotspot_click  USING    p_row_id
+                             p_column_id.
+
+  READ TABLE gt_mseg INTO gs_mseg INDEX p_row_id.
+
+  gs_mkpf-mblnr = gs_mseg-mblnr.
+  gs_mkpf-mjahr = gs_mseg-mjahr.
+
+  SELECT SINGLE *
+    FROM zca_mkpf
+    INTO CORRESPONDING FIELDS OF gs_mkpf
+    WHERE mblnr = gs_mkpf-mblnr
+      AND mjahr = gs_mkpf-mjahr.
+
+  " 화면 필드에 값 설정
+  MOVE-CORRESPONDING gs_mkpf TO zca_mkpf.
+
+  LEAVE TO SCREEN 100.
+
+
+ENDFORM.
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*& Form CREATE_ITEM</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+FORM create_item .
+
+  PERFORM create_data.       " contanier과 alv grid를 생성한다.
+  PERFORM make_lao.          " LAYOUT을 설정한다.
+  PERFORM make_fieldcat.     " field cat를 생성한다.
+  PERFORM on_hotspot_click.  " hotspot click method를 등록한다.
+  PERFORM display_data.      " 완성된 정보를 화면에 보여준다.
+
+ENDFORM.
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*& Form create_head</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+FORM create_head .
+
+  PERFORM create_data1.       " contanier과 alv grid를 생성한다.
+  PERFORM make_lao1.          " LAYOUT을 설정한다.
+  PERFORM make_fieldcat1.     " field cat를 생성한다.
+  PERFORM display_data1.      " 완성된 정보를 화면에 보여준다.
+
+ENDFORM.
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*& Form create_data1</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+FORM create_data1 .
+
+  CREATE OBJECT g_custom_con1     " CONTANIER생성
+    EXPORTING
+      container_name = 'CCON_HEAD'.
+
+  CREATE OBJECT g_alv1            " CONTAINER위에 ALV생성
+    EXPORTING
+      i_parent = g_custom_con1.   " Parent Container
+
+
+ENDFORM.
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*& Form make_lao1</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+FORM make_lao1 .
+
+ENDFORM.
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*& Form make_fieldcat1</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+FORM make_fieldcat1 .
+
+ENDFORM.
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*& Form display_data1</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+FORM display_data1 .
+
+  CALL METHOD g_alv1-&gt;set_table_for_first_display
+    EXPORTING
+      i_structure_name = 'ZCA_MKPF'              " 송장아이템의 구조로 보여줌
+      is_layout        = gs_layo1                 " Layout 나중에 디자인할 예정
+    CHANGING
+      it_outtab        = gt_mkpf                 " 인터널 테이블의 정보를 보여준다.
+      it_fieldcatalog  = gt_fieldcat1.
+
+
+ENDFORM.
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*& Form init_120</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+FORM init_120 .
+
+  PERFORM create_data120.       " contanier과 alv grid를 생성한다.
+  PERFORM display_data120.      " 완성된 정보를 화면에 보여준다.
+
+
+ENDFORM.
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*& Form create_data120</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+FORM create_data120 .
+
+  CREATE OBJECT g_custom_con120     " CONTANIER생성
+    EXPORTING
+      container_name = 'CCON_120'.
+
+  CREATE OBJECT g_alv120            " CONTAINER위에 ALV생성
+    EXPORTING
+      i_parent = g_custom_con120.   " Parent Container
+
+
+ENDFORM.
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*& Form display_data120</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+FORM display_data120 .
+
+  CALL METHOD g_alv120-&gt;set_table_for_first_display
+    EXPORTING
+      i_structure_name = 'ZCA_MSEG'              " 송장아이템의 구조로 보여줌
+      is_layout        = gs_layo                 " Layout 나중에 디자인할 예정
+    CHANGING
+      it_outtab        = gt_mseg                 " 인터널 테이블의 정보를 보여준다.
+      it_fieldcatalog  = gt_fieldcat.
+
+ENDFORM.
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*& Form init_130</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+FORM init_130 .
+
+  PERFORM create_data130.       " contanier과 alv grid를 생성한다.
+  PERFORM display_data130.      " 완성된 정보를 화면에 보여준다.
+
+
+ENDFORM.
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*& Form create_data130</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+FORM create_data130 .
+
+  CREATE OBJECT g_custom_con130     " CONTANIER생성
+    EXPORTING
+      container_name = 'CCON_130'.
+
+  CREATE OBJECT g_alv130            " CONTAINER위에 ALV생성
+    EXPORTING
+      i_parent = g_custom_con130.   " Parent Container
+
+ENDFORM.
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*& Form display_data130</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+FORM display_data130 .
+
+  CALL METHOD g_alv130-&gt;set_table_for_first_display
+    EXPORTING
+      i_structure_name = 'ZCA_MSEG'              " 송장아이템의 구조로 보여줌
+      is_layout        = gs_layo                 " Layout 나중에 디자인할 예정
+    CHANGING
+      it_outtab        = gt_mseg                 " 인터널 테이블의 정보를 보여준다.
+      it_fieldcatalog  = gt_fieldcat.
+
+ENDFORM.
+</pre>
+<hr>
+<font size="2" face = "Sans Serif">Extracted by Direct Download Enterprise version 1.3.1 - E.G.Mellodew. 1998-2005 UK. Sap Release 758
+</font>
+</body>
+</html>

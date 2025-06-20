@@ -1,0 +1,376 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2//EN">
+<html>
+<head>
+<title>ZCA_MM070_F01</title>
+</head>
+<body bgcolor="#FFFFE0">
+<font size="3" face = "Arial" color="#000000"><b>Code listing for: ZCA_MM070_F01</b></font>
+<br>
+<font size="3" face = "Arial" color="#000000"><b>Description:  서브 루틴</b></font>
+<hr>
+<pre width="100">
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*& Include          ZCA_MM070_F01</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*& Form create_data</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+FORM create_ccon .
+
+  CREATE OBJECT go_custom_con     " CONTANIER생성
+    EXPORTING
+      container_name = 'CCON'.
+
+  CREATE OBJECT go_alv            " CONTAINER위에 ALV생성
+    EXPORTING
+      i_parent = go_custom_con.   " Parent Container
+
+
+ENDFORM.
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*& Form make_layout</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+FORM make_layout .
+
+  gs_layo-cwidth_opt = 'X'.
+  gs_layo-zebra = 'X'.
+  gs_save = 'A'.
+  gs_variant-report = sy-cprog.
+
+ENDFORM.
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*& Form make_fieldcat</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+FORM make_fieldcat .
+
+  " 남은기간
+  CLEAR gs_fieldcat.
+  gs_fieldcat-fieldname = 'ICON'.
+  gs_fieldcat-coltext = '남은기간'.
+  gs_fieldcat-col_opt = 1.
+  gs_fieldcat-just = 'C'.
+  gs_fieldcat-outputlen = 1.
+  gs_fieldcat-key = 'X'.
+  APPEND gs_fieldcat TO gt_fieldcat. CLEAR gs_fieldcat.
+
+  " 배치코드
+  CLEAR gs_fieldcat.
+  gs_fieldcat-fieldname = 'CHARG'.
+  gs_fieldcat-coltext = '배치코드'.
+  gs_fieldcat-col_opt = 2.
+  gs_fieldcat-hotspot = 'X'.
+  APPEND gs_fieldcat TO gt_fieldcat. CLEAR gs_fieldcat.
+
+  " 이전배치
+  CLEAR gs_fieldcat.
+  gs_fieldcat-fieldname = 'CHARGFR'.
+  gs_fieldcat-coltext = '이전 배치번호'.
+  gs_fieldcat-col_opt = 3.
+  APPEND gs_fieldcat TO gt_fieldcat. CLEAR gs_fieldcat.
+
+  " 자재코드
+  CLEAR gs_fieldcat.
+  gs_fieldcat-fieldname = 'MATNR'.
+  gs_fieldcat-coltext = '자재코드'.
+  gs_fieldcat-col_opt = 4.
+  APPEND gs_fieldcat TO gt_fieldcat. CLEAR gs_fieldcat.
+
+  " 자재명
+  CLEAR gs_fieldcat.
+  gs_fieldcat-fieldname = 'MAKTX'.
+  gs_fieldcat-coltext = '자재명'.
+  gs_fieldcat-col_opt = 5.
+  APPEND gs_fieldcat TO gt_fieldcat. CLEAR gs_fieldcat.
+
+  " 플랜드ID
+  CLEAR gs_fieldcat.
+  gs_fieldcat-fieldname = 'WERKS'.
+  gs_fieldcat-coltext = '플랜트ID'.
+  gs_fieldcat-col_opt = 6.
+  APPEND gs_fieldcat TO gt_fieldcat. CLEAR gs_fieldcat.
+
+  " 플랜트명
+  CLEAR gs_fieldcat.
+  gs_fieldcat-fieldname = 'PNAME'.
+  gs_fieldcat-coltext = '플랜트명'.
+  gs_fieldcat-col_opt = 7.
+  APPEND gs_fieldcat TO gt_fieldcat. CLEAR gs_fieldcat.
+
+  " 창고코드
+  CLEAR gs_fieldcat.
+  gs_fieldcat-fieldname = 'LGORT'.
+  gs_fieldcat-coltext = '창고ID'.
+  gs_fieldcat-col_opt = 8.
+  APPEND gs_fieldcat TO gt_fieldcat. CLEAR gs_fieldcat.
+
+  " 창고명
+  CLEAR gs_fieldcat.
+  gs_fieldcat-fieldname = 'LGOBE'.
+  gs_fieldcat-coltext = '창고이름'.
+  gs_fieldcat-col_opt = 9.
+  APPEND gs_fieldcat TO gt_fieldcat. CLEAR gs_fieldcat.
+
+  " 삭제여부
+  CLEAR gs_fieldcat.
+  gs_fieldcat-fieldname = 'LVORM'.
+  gs_fieldcat-coltext = '삭제여부'.
+  gs_fieldcat-col_opt = 10.
+  APPEND gs_fieldcat TO gt_fieldcat. CLEAR gs_fieldcat.
+
+  " 유통기한
+  CLEAR gs_fieldcat.
+  gs_fieldcat-fieldname = 'VFDAT'.
+  gs_fieldcat-coltext = '유통기한'.
+  gs_fieldcat-col_opt = 11.
+  APPEND gs_fieldcat TO gt_fieldcat. CLEAR gs_fieldcat.
+
+  " 자재유형
+  CLEAR gs_fieldcat.
+  gs_fieldcat-fieldname = 'MATTYPE'.
+  gs_fieldcat-coltext = '자재유형'.
+  gs_fieldcat-col_opt = 12.
+  APPEND gs_fieldcat TO gt_fieldcat. CLEAR gs_fieldcat.
+
+  " 배치수량
+  CLEAR gs_fieldcat.
+  gs_fieldcat-fieldname = 'BTQTY'.
+  gs_fieldcat-qfieldname = 'UNIT'.
+  gs_fieldcat-coltext = '배치수량'.
+  gs_fieldcat-col_opt = 13.
+  APPEND gs_fieldcat TO gt_fieldcat. CLEAR gs_fieldcat.
+
+  " 단위
+  CLEAR gs_fieldcat.
+  gs_fieldcat-fieldname = 'UNIT'.
+  gs_fieldcat-coltext = '단위'.
+  gs_fieldcat-col_opt = 14.
+  APPEND gs_fieldcat TO gt_fieldcat. CLEAR gs_fieldcat.
+
+ENDFORM.
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*& Form display_data</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+FORM display_data .
+
+  CALL METHOD go_alv-&gt;set_table_for_first_display
+    EXPORTING
+      is_layout       = gs_layo                 " 열최적화와 ZEBRA기능구현
+      i_save          = gs_save
+      is_variant      = gs_variant
+    CHANGING
+      it_outtab       = gt_display              " 인터널 테이블의 정보를 보여준다.
+      it_fieldcatalog = gt_fieldcat.
+
+ENDFORM.
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*& Form find_data</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+FORM find_data .
+
+  CLEAR: gt_display, gt_mmt010.
+
+  DATA lv_date TYPE datum.
+
+  SELECT a~charg
+         a~chargfr
+         a~matnr
+         a~werks
+         a~lgort
+         a~lvorm
+         a~vfdat
+         a~mattype
+         a~btqty
+         a~unit
+         t001w~pname
+         t001l~lgobe
+         makt~maktx
+    FROM zca_mmt010 AS a
+    INNER JOIN zca_makt AS makt
+    ON a~matnr = makt~matnr
+    INNER JOIN zca_t001w AS t001w
+    ON a~werks = t001w~werks
+    INNER JOIN zca_t001l AS t001l
+    ON a~lgort = t001l~lgort
+    AND t001l~werks = t001w~werks
+    INTO CORRESPONDING FIELDS OF TABLE gt_display
+    WHERE a~matnr IN so_matnr
+      AND a~lgort IN so_lgort
+      AND a~werks = pa_werks
+      AND a~lvorm &lt;&gt; 'X'
+      AND makt~spras = sy-langu
+    ORDER BY a~vfdat.
+
+  LOOP AT gt_display INTO gs_display.
+
+    lv_date = gs_display-vfdat - sy-datum.      " 남은날이 1일이하 -&gt; 빨간불
+    IF lv_date &lt;= 1.
+      gs_display-icon = icon_led_red.
+    ELSEIF lv_date &lt;= 3.                        " 남은날이 3일이하 -&gt; 노란불
+      gs_display-icon = icon_led_yellow.
+    ELSE.                                       " 나머지는 -&gt; 파란불
+      gs_display-icon = icon_led_green.
+    ENDIF.
+    MODIFY gt_display FROM gs_display.
+  ENDLOOP.
+
+  CALL METHOD go_alv-&gt;get_frontend_layout
+    IMPORTING
+      es_layout = gs_layo.  " Layout
+  gs_layo-cwidth_opt = 'X'.
+  CALL METHOD go_alv-&gt;set_frontend_layout
+    EXPORTING
+      is_layout = gs_layo.                 " Layout
+
+
+ENDFORM.
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*& Form send_mail</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+FORM send_mail .
+
+<font color ="#0000FF">* 누르면 red light정보가 싹 메일로 보내진다</font>
+<font color ="#0000FF">* 필드추가 -&gt; 날짜 누구한테 보냈는지?</font>
+
+  DATA: lo_send_request TYPE REF TO cl_bcs,
+        lo_document     TYPE REF TO cl_document_bcs,
+        lt_mail_body    TYPE bcsy_text,
+        lv_line         TYPE string,
+        lo_sender       TYPE REF TO if_sender_bcs,
+        lo_recipient    TYPE REF TO if_recipient_bcs,
+        ls_display      LIKE LINE OF gt_display.
+
+<font color ="#0000FF">* 메일 객체 생성</font>
+  lo_send_request = cl_bcs=&gt;create_persistent( ).
+
+<font color ="#0000FF">* html 테이블 시작</font>
+  APPEND '&lt;html&gt;&lt;body&gt;' TO lt_mail_body.
+  APPEND '&lt;h3&gt;유통기한 지난 목록은 다음과 같습니다.&lt;/h3&gt;' TO lt_mail_body.
+  APPEND '&lt;table border="1" cellpadding="5" cellspacing="0" style="border-collapse:collapse;"&gt;' TO lt_mail_body.
+
+<font color ="#0000FF">* 테이블 헤더 작성</font>
+  lv_line = '&lt;tr&gt;&lt;th&gt;배치코드&lt;/th&gt;&lt;th&gt;자재명&lt;/th&gt;&lt;th&gt;플랜트명&lt;/th&gt;&lt;th&gt;창고명&lt;/th&gt;&lt;/tr&gt;'. " 컬럼명 수정
+  APPEND lv_line TO lt_mail_body.
+
+<font color ="#0000FF">* GT_DISPLAY 내용을 HTML 테이블로 변환</font>
+  LOOP AT gt_display INTO ls_display.
+    IF ls_display-icon = icon_led_red.
+      lv_line = |&lt;tr&gt;&lt;td&gt;{ ls_display-charg }&lt;/td&gt;&lt;td&gt;{ ls_display-maktx }&lt;/td&gt;&lt;td&gt;{ ls_display-pname }&lt;/td&gt;&lt;td&gt;{ ls_display-lgobe }&lt;/td&gt;|.
+      APPEND lv_line TO lt_mail_body.
+    ENDIF.
+  ENDLOOP.
+
+<font color ="#0000FF">* HTML 테이블 닫기</font>
+  APPEND '&lt;/table&gt;' TO lt_mail_body.
+  APPEND '&lt;/body&gt;&lt;/html&gt;' TO lt_mail_body.
+
+<font color ="#0000FF">* 메일 문서 작성 (htm 타입)</font>
+  lo_document = cl_document_bcs=&gt;create_document(
+                  i_type    = 'HTM'
+                  i_text    = lt_mail_body
+                  i_subject = |{ sy-datum }일자 유통기한 만료 목록| ).
+
+  lo_send_request-&gt;set_document( lo_document ).
+
+<font color ="#0000FF">* 보내는 요청에 문서 추가</font>
+  lo_send_request-&gt;set_document( lo_document ).
+
+<font color ="#0000FF">* 송신자 설정 (현재 사용자)</font>
+  lo_sender = cl_sapuser_bcs=&gt;create( sy-uname ).
+  lo_send_request-&gt;set_sender( lo_sender ).
+
+<font color ="#0000FF">* 수신자 설정 (SAP 사용자)</font>
+  CASE ls_display-werks.
+    WHEN 'P001'.
+      lo_recipient = cl_sapuser_bcs=&gt;create( 'LSYN-C-16' ).  " 여기 사용자 ID 넣기
+    WHEN 'P002'.
+      lo_recipient = cl_sapuser_bcs=&gt;create( 'LSYN-C-16' ).  " 여기 사용자 ID 넣기
+    WHEN 'P003'.
+      lo_recipient = cl_sapuser_bcs=&gt;create( 'LSYN-C-16' ).  " 여기 사용자 ID 넣기
+    WHEN 'P004'.
+      lo_recipient = cl_sapuser_bcs=&gt;create( 'LSYN-C-16' ).  " 여기 사용자 ID 넣기
+  ENDCASE.
+  lo_send_request-&gt;add_recipient(
+    i_recipient = lo_recipient
+    i_express   = 'X' ).
+
+  TRY.
+<font color ="#0000FF">* 메일 발송</font>
+      lo_send_request-&gt;send( i_with_error_screen = 'X' ).
+
+<font color ="#0000FF">* 커밋</font>
+      COMMIT WORK.
+    CATCH cx_send_req_bcs INTO DATA(lx_send).
+      MESSAGE lx_send-&gt;get_text( ) TYPE 'E'.
+    CATCH cx_address_bcs INTO DATA(lx_addr).
+      MESSAGE lx_addr-&gt;get_text( ) TYPE 'E'.
+    CATCH cx_document_bcs INTO DATA(lx_doc).
+      MESSAGE lx_doc-&gt;get_text( ) TYPE 'E'.
+  ENDTRY.
+
+ENDFORM.
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*& Form on_hotspot_click</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+FORM on_hotspot_click .
+
+  CREATE OBJECT g_application.  " 객체 생성
+  SET HANDLER g_application-&gt;handler_hotspot_click FOR go_alv.
+  SET HANDLER g_application-&gt;on_toolbar FOR go_alv.
+  SET HANDLER g_application-&gt;on_user_command FOR go_alv.
+
+ENDFORM.
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*& Form hotspot_click</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+FORM hotspot_click  USING    p_row_id
+                             p_column_id.
+
+  READ TABLE gt_display INTO gs_display INDEX p_row_id.
+
+<font color ="#0000FF">* 오른쪽에 정보 띄우기</font>
+  vfdat = gs_display-vfdat.
+  today = sy-datum.
+  dday  = vfdat - today.
+
+  LEAVE SCREEN.
+
+ENDFORM.
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*& Form ON_CLICK</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+FORM on_click  USING e_ucomm.
+
+  PERFORM find_data.
+
+  CASE e_ucomm.
+
+    WHEN 'GREEN'.
+
+      DELETE gt_display WHERE icon &lt;&gt; icon_led_green.
+
+    WHEN 'YELLOW'.
+      DELETE gt_display WHERE icon &lt;&gt; icon_led_yellow.
+
+    WHEN 'RED'.
+      DELETE gt_display WHERE icon &lt;&gt; icon_led_red.
+
+    WHEN 'ALL'.
+
+
+  ENDCASE.
+
+  go_alv-&gt;refresh_table_display( ).
+
+ENDFORM.
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*& Form delete_adjacent_duplicates</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+FORM delete_adjacent_duplicates .
+
+ENDFORM.
+</pre>
+<hr>
+<font size="2" face = "Sans Serif">Extracted by Direct Download Enterprise version 1.3.1 - E.G.Mellodew. 1998-2005 UK. Sap Release 758
+</font>
+</body>
+</html>

@@ -1,0 +1,54 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2//EN">
+<html>
+<head>
+<title>ZCA_MM050_CLS</title>
+</head>
+<body bgcolor="#FFFFE0">
+<font size="3" face = "Arial" color="#000000"><b>Code listing for: ZCA_MM050_CLS</b></font>
+<br>
+<font size="3" face = "Arial" color="#000000"><b>Description:  CLS</b></font>
+<hr>
+<pre width="100">
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*& Include          ZCA_MM050_CLS</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+CLASS LCL_EVENT_HANDLER DEFINITION.
+  PUBLIC SECTION.
+    CLASS-METHODS:
+      ON_HOTSPOT_CLICK  " 더블클릭 대신 핫스팟 핸들러만 사용
+        FOR EVENT HOTSPOT_CLICK OF CL_GUI_ALV_GRID
+        IMPORTING E_ROW_ID E_COLUMN_ID.
+ENDCLASS.
+
+CLASS LCL_EVENT_HANDLER IMPLEMENTATION.
+  METHOD ON_HOTSPOT_CLICK.
+    " 기존 더블클릭 로직을 그대로 가져옴
+<font color ="#0000FF">*    MESSAGE 'test' TYPE 'I'.   "hotspot test</font>
+
+    DATA LS_EKKO TYPE ZCA_EKKO.
+    READ TABLE GT_DISPLAY INTO GS_DISPLAY INDEX E_ROW_ID.
+    LS_EKKO-EBELN = GS_DISPLAY-EBELN.
+
+<font color ="#0000FF">*    IF sy-subrc EQ 0 AND zca_ekko-ebeln IS NOT INITIAL.</font>
+    IF SY-SUBRC EQ 0 AND LS_EKKO-EBELN IS NOT INITIAL.
+      DATA LS_EBELN LIKE LS_EKKO-EBELN.
+      LS_EBELN = LS_EKKO-EBELN.
+      SELECT SINGLE *
+        FROM ZCA_EKKO
+        INTO CORRESPONDING FIELDS OF LS_EKKO
+        WHERE EBELN = LS_EBELN.
+
+      " 화면 필드에 값 설정
+      MOVE-CORRESPONDING LS_EKKO TO ZCA_EKKO.
+
+      LEAVE TO SCREEN 100.
+
+    ENDIF.
+  ENDMETHOD.
+ENDCLASS.
+</pre>
+<hr>
+<font size="2" face = "Sans Serif">Extracted by Direct Download Enterprise version 1.3.1 - E.G.Mellodew. 1998-2005 UK. Sap Release 758
+</font>
+</body>
+</html>

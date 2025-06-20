@@ -1,0 +1,52 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2//EN">
+<html>
+<head>
+<title>ZCA_MM050</title>
+</head>
+<body bgcolor="#FFFFE0">
+<font size="3" face = "Arial" color="#000000"><b>Code listing for: ZCA_MM050</b></font>
+<br>
+<font size="3" face = "Arial" color="#000000"><b>Description:  [MM] 구매 오더 조회</b></font>
+<hr>
+<pre width="100">
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*& Report ZCA_MM050</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*& [MM] 구매 오더 조회</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+REPORT ZCA_MM050.
+
+
+include <a href ="zca_mm050_top.html">ZCA_MM050_TOP</a>.
+include <a href ="zca_mm050_scr.html">ZCA_MM050_SCR</a>.
+include <a href ="zca_mm050_cls.html">ZCA_MM050_CLS</a>.
+include <a href ="zca_mm050_pbo.html">ZCA_MM050_PBO</a>.
+include <a href ="zca_mm050_pai.html">ZCA_MM050_PAI</a>.
+include <a href ="zca_mm050_f01.html">ZCA_MM050_F01</a>.
+
+
+INITIALIZATION.
+  BTN_TEXT = |@10@ 검색|.
+
+AT SELECTION-SCREEN.
+
+START-OF-SELECTION.
+
+  CALL SCREEN 100.
+
+<font color ="#0000FF">*GUI Texts</font>
+<font color ="#0000FF">*----------------------------------------------------------</font>
+<font color ="#0000FF">* T-100 --&gt; [MM] 구매 오더 조회 프로그램</font>
+
+
+<font color ="#0000FF">*Selection texts</font>
+<font color ="#0000FF">*----------------------------------------------------------</font>
+<font color ="#0000FF">* SO_BEDAT D       .</font>
+<font color ="#0000FF">* SO_EBELN         구매 오더 코드</font>
+<font color ="#0000FF">* SO_LTFNR D       .</font>
+</pre>
+<hr>
+<font size="2" face = "Sans Serif">Extracted by Direct Download Enterprise version 1.3.1 - E.G.Mellodew. 1998-2005 UK. Sap Release 758
+</font>
+</body>
+</html>

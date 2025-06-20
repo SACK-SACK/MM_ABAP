@@ -1,0 +1,123 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2//EN">
+<html>
+<head>
+<title>MZCA_MM080_TOP</title>
+</head>
+<body bgcolor="#FFFFE0">
+<font size="3" face = "Arial" color="#000000"><b>Code listing for: MZCA_MM080_TOP</b></font>
+<br>
+<font size="3" face = "Arial" color="#000000"><b>Description:  Include MZCA_MM080_TOP</b></font>
+<hr>
+<pre width="100">
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*& Include MZCA_MM080_TOP                           - Module Pool      SAPMZCA_MM080</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+PROGRAM sapmzca_mm080 MESSAGE-ID zca_msg.
+
+TABLES: zca_marc,zca_mard,zca_t001w,zca_mmt010,zca_t001l.
+
+DATA ok_code TYPE sy-ucomm.
+
+DATA: gt_marc  TYPE TABLE OF zca_marc,
+      gs_marc  LIKE LINE OF  gt_marc,
+      gt_mard  TYPE TABLE OF zca_mard,
+      gs_mard  LIKE LINE OF  gt_mard,
+      gt_t001w TYPE TABLE OF zca_t001w,
+      gs_t001w LIKE LINE OF  gt_t001w,
+      gt_t010  TYPE TABLE OF zca_mmt010,
+      gs_t010  LIKE LINE OF  gt_t010.
+
+" 120번 화면
+DATA: BEGIN OF gs_sd090.
+        include structure <a href ="zca_sdt090/dictionary-zca_sdt090.html">zca_sdt090</a>.
+DATA:   werks TYPE zca_werks,
+        lgort TYPE zca_lgort,
+      END OF gs_sd090.
+DATA: gt_sd090 LIKE TABLE OF gs_sd090.
+
+" 110번 화면
+DATA: BEGIN OF gs_popup.
+        include structure <a href ="zca_mmt010/dictionary-zca_mmt010.html">zca_mmt010</a>.
+DATA:   pname TYPE zca_pname,
+        lgobe TYPE zca_lgobe,
+        maktx TYPE zca_maktx,
+      END OF gs_popup.
+DATA: gt_popup LIKE TABLE OF gs_popup.
+
+
+
+" 출력전용데이터를 선언하기 -&gt; SE11에서 STRUCTURE만들어도됌 BEGIN OF END OF도 가능
+DATA: BEGIN OF gs_display1.
+        include structure <a href ="zca_mard/dictionary-zca_mard.html">zca_mard</a>.
+DATA:   maktx TYPE zca_maktx,
+        pname TYPE zca_pname,
+      END OF gs_display1.
+DATA: gt_display1 LIKE TABLE OF gs_display1.
+
+<font color ="#0000FF">* TREE 관련</font>
+TYPES:node_table_type  LIKE STANDARD TABLE OF mtreesnode WITH DEFAULT KEY. " 트리노드구조
+DATA: tree_con TYPE REF TO cl_gui_custom_container,                         " 컨테이너
+      go_tree  TYPE REF TO cl_gui_simple_tree.                              " 트리 컨테이너 참조변수
+
+" TOP에다가 작성
+DATA: node_table TYPE node_table_type,      " 트리 값들 관계 넣어주기위해
+      events     TYPE cntl_simple_events,   " 더블클릭 이벤트 하나
+      event      TYPE cntl_simple_event.    " event를 events테이블에 append해서 한번에 등록
+
+
+<font color ="#0000FF">* ALV 관련</font>
+DATA: go_custom_con TYPE REF TO cl_gui_custom_container,      " 0100번 화면 컨테이너
+      go_alv        TYPE REF TO cl_gui_alv_grid.              " ALV GRID
+
+DATA: go_popup_con TYPE REF TO cl_gui_custom_container,       " 0110번 화면 컨테이너
+      go_popup_alv TYPE REF TO cl_gui_alv_grid.
+
+DATA: go_con_sd TYPE REF TO cl_gui_custom_container,       " 0110번 화면 컨테이너
+      go_alv_sd TYPE REF TO cl_gui_alv_grid.
+
+DATA: gs_fieldcat  TYPE lvc_s_fcat,
+      gt_fieldcat  TYPE lvc_t_fcat,
+      gs_layo      TYPE lvc_s_layo,
+      gs_sort      TYPE lvc_s_sort,
+      gt_sort      TYPE lvc_t_sort,
+      gs_functions TYPE ui_functions,  " 트리를 사용할 때 등장하는 버튼목록
+      gs_refto     TYPE REF TO data,
+      gs_pos       TYPE i.
+
+DATA: gs_fieldcat2 TYPE lvc_s_fcat,   " 0110번화면 fieldcat
+      gt_fieldcat2 TYPE lvc_t_fcat,
+      gs_layo_2     TYPE lvc_s_layo.
+
+DATA: gs_fieldcat_3 TYPE lvc_s_fcat,   " 0110번화면 fieldcat
+      gt_fieldcat_3 TYPE lvc_t_fcat,
+      gs_layo_3     TYPE lvc_s_layo,
+      gs_variant_3  TYPE disvariant,
+      gs_save_3     TYPE c.
+
+CLASS lcl_application DEFINITION DEFERRED.
+DATA: go_application TYPE REF TO lcl_application.  " 더블클릭과 핫스팟 이벤트
+
+DATA: ccon_werks TYPE zca_werks,                    " ccon에서의
+      ccon_pname TYPE zca_pname.
+
+DATA: popup_moving TYPE char0008,
+      popup_stock  TYPE char0008,
+      popup_movest TYPE char0008,
+      popup_date   TYPE datum,
+      popup_lgort1 TYPE zca_lgort,
+      popup_lgort2 TYPE zca_lgort,
+      popup_matnr  TYPE zca_maktx,
+      popup_lgobe1 TYPE zca_lgobe,
+      popup_logbe2 TYPE zca_lgobe,  " structure 구조로 만들어보기
+      popup_ki     TYPE zca_meins,
+      popup_e      TYPE zca_meins,
+      popup_ip     TYPE zca_meins.
+
+DATA : go_docking_container TYPE REF TO cl_gui_docking_container,
+       go_splitter          TYPE REF TO cl_gui_splitter_container.
+</pre>
+<hr>
+<font size="2" face = "Sans Serif">Extracted by Direct Download Enterprise version 1.3.1 - E.G.Mellodew. 1998-2005 UK. Sap Release 758
+</font>
+</body>
+</html>

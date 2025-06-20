@@ -1,0 +1,65 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2//EN">
+<html>
+<head>
+<title>MZCA_MM090TOP</title>
+</head>
+<body bgcolor="#FFFFE0">
+<font size="3" face = "Arial" color="#000000"><b>Code listing for: MZCA_MM090TOP</b></font>
+<br>
+<font size="3" face = "Arial" color="#000000"><b>Description:  TOP</b></font>
+<hr>
+<pre width="100">
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*& Include          MZCA_MM090TOP</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+PROGRAM sapmzca_mm090 MESSAGE-ID zca_msg.
+TABLES: zca_ekko, zca_ekpo.
+
+DATA: gt_ekko TYPE TABLE OF zca_ekko,
+      gs_ekko LIKE LINE OF  gt_ekko,
+      gt_ekpo TYPE TABLE OF zca_ekpo,
+      gs_ekpo LIKE LINE OF  gt_ekpo,
+      gt_mard TYPE TABLE OF zca_mard,
+      gs_mard LIKE LINE OF  gt_mard.
+
+DATA: BEGIN OF gs_display1.
+        include structure <a href ="zca_ekko/dictionary-zca_ekko.html">zca_ekko</a>.
+DATA:   icon TYPE char4,
+      END OF gs_display1.
+DATA: gt_display1 LIKE TABLE OF gs_display1.
+
+DATA ok_code TYPE sy-ucomm.
+
+<font color ="#0000FF">* ALV 관련</font>
+DATA: go_custom_con1 TYPE REF TO cl_gui_custom_container,      " 컨테이너
+      go_alv1        TYPE REF TO cl_gui_alv_grid.              " ALV GRID
+
+DATA: go_custom_con2 TYPE REF TO cl_gui_custom_container,      " 컨테이너
+      go_alv2        TYPE REF TO cl_gui_alv_grid.              " ALV GRID
+
+DATA: go_custom_con3 TYPE REF TO cl_gui_custom_container,      " 컨테이너
+      go_alv3        TYPE REF TO cl_gui_alv_grid.              " ALV GRID
+
+
+DATA: gs_fieldcat1 TYPE lvc_s_fcat,
+      gt_fieldcat1 TYPE lvc_t_fcat,
+      gs_layo1     TYPE lvc_s_layo.
+
+DATA: gs_fieldcat2 TYPE lvc_s_fcat,
+      gt_fieldcat2 TYPE lvc_t_fcat,
+      gs_layo2     TYPE lvc_s_layo.
+
+DATA: gs_fieldcat3 TYPE lvc_s_fcat,
+      gt_fieldcat3 TYPE lvc_t_fcat,
+      gs_layo3     TYPE lvc_s_layo.
+
+CLASS lcl_application DEFINITION DEFERRED.
+DATA: g_application TYPE REF TO lcl_application.  " 핫스팟 이벤트
+
+DATA: today TYPE datum.
+</pre>
+<hr>
+<font size="2" face = "Sans Serif">Extracted by Direct Download Enterprise version 1.3.1 - E.G.Mellodew. 1998-2005 UK. Sap Release 758
+</font>
+</body>
+</html>

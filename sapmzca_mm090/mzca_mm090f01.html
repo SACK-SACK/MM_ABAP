@@ -1,0 +1,308 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2//EN">
+<html>
+<head>
+<title>MZCA_MM090F01</title>
+</head>
+<body bgcolor="#FFFFE0">
+<font size="3" face = "Arial" color="#000000"><b>Code listing for: MZCA_MM090F01</b></font>
+<br>
+<font size="3" face = "Arial" color="#000000"><b>Description:  서브루틴</b></font>
+<hr>
+<pre width="100">
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*& Include          MZCA_MM090F01</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*& Form select_data</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+FORM select_data .
+
+  SELECT *
+    INTO CORRESPONDING FIELDS OF TABLE gt_display1
+    FROM zca_ekko
+    WHERE lvorm &lt;&gt; 'X'.
+
+  LOOP AT gt_display1 INTO gs_display1.
+    IF gs_display1-elikz &lt;&gt; 'X' AND gs_display1-wepos &lt;&gt; 'X'.
+      gs_display1-icon = icon_led_red.
+    ELSEIF gs_display1-elikz = 'X' AND gs_display1-wepos &lt;&gt; 'X'.
+      gs_display1-icon = icon_led_yellow.
+    ELSEIF gs_display1-elikz = 'X' AND gs_display1-wepos = 'X'.
+      gs_display1-icon = icon_led_green.
+    ENDIF.
+    MODIFY gt_display1 FROM gs_display1.
+  ENDLOOP.
+
+  SELECT *
+    INTO CORRESPONDING FIELDS OF TABLE gt_mard
+    FROM zca_mard
+    WHERE lgort = 'SL03'
+      AND werks = 'P001'.
+
+ENDFORM.
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*& Module INIT_ALV OUTPUT</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+MODULE init_alv OUTPUT.
+
+  IF go_custom_con1 IS INITIAL. " CUSTOM CONTAINER가 없는경우에만 로직을 수행한다.
+
+    PERFORM create_ccon_head.
+    PERFORM create_ccon_item.
+    PERFORM create_ccon_NOW.
+
+  ELSE.
+
+    CALL METHOD go_alv1-&gt;refresh_table_display.
+    CALL METHOD go_alv2-&gt;refresh_table_display.
+
+  ENDIF.
+
+
+ENDMODULE.
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*& Form create_ccon_head</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+FORM create_ccon_head .
+
+  PERFORM create_data.       " contanier과 alv grid를 생성한다.
+  PERFORM make_layout.       " LAYOUT을 생성한다.
+  PERFORM make_fieldcat.     " field cat를 생성한다.
+  PERFORM on_hotspot_click.  " hotspot click method를 등록한다.
+  PERFORM display_data.      " 완성된 정보를 화면에 보여준다.
+
+
+ENDFORM.
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*& Form create_ccon_item</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+FORM create_ccon_item .
+
+  PERFORM create_data2.       " contanier과 alv grid를 생성한다.
+  PERFORM make_layout2.       " LAYOUT을 생성한다.
+  PERFORM make_fieldcat2.     " field cat를 생성한다.
+  PERFORM on_hotspot_click2.  " hotspot click method를 등록한다.
+  PERFORM display_data2.      " 완성된 정보를 화면에 보여준다.
+
+
+ENDFORM.
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*& Form create_data</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+FORM create_data .
+
+  CREATE OBJECT go_custom_con1     " CONTANIER생성
+    EXPORTING
+      container_name = 'CCON_HEAD'.
+
+  CREATE OBJECT go_alv1            " CONTAINER위에 ALV생성
+    EXPORTING
+      i_parent = go_custom_con1.   " Parent Container
+
+
+ENDFORM.
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*& Form make_layout</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+FORM make_layout .
+
+  gs_layo1-grid_title = '구매오더 현황'.
+  gs_layo1-cwidth_opt = 'X'.
+  gs_layo1-zebra = 'X'.
+
+ENDFORM.
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*& Form make_fieldcat</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+FORM make_fieldcat .
+
+  " ICON
+  CLEAR gs_fieldcat1.
+  gs_fieldcat1-fieldname = 'ICON'.
+  gs_fieldcat1-coltext = '입고상태'.
+  gs_fieldcat1-col_opt = 1.
+  gs_fieldcat1-outputlen = 5.
+  gs_fieldcat1-just = 'C'.
+  gs_fieldcat1-key = 'X'.
+  APPEND gs_fieldcat1 TO gt_fieldcat1. CLEAR gs_fieldcat1.
+
+  " 송장번호
+  CLEAR gs_fieldcat1.
+  gs_fieldcat1-fieldname = 'EBELN'.
+  gs_fieldcat1-coltext = '구매오더번호'.
+  gs_fieldcat1-col_opt = 2.
+  gs_fieldcat1-hotspot = 'X'.
+  gs_fieldcat1-key = 'X'.
+  APPEND gs_fieldcat1 TO gt_fieldcat1. CLEAR gs_fieldcat1.
+
+ENDFORM.
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*& Form on_hotspot_click</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+FORM on_hotspot_click .
+
+  CREATE OBJECT g_application.  " 객체 생성
+  SET HANDLER g_application-&gt;handler_hotspot_click_head FOR go_alv1.
+
+ENDFORM.
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*& Form display_data</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+FORM display_data .
+
+  CALL METHOD go_alv1-&gt;set_table_for_first_display
+    EXPORTING
+      i_structure_name = 'ZCA_EKKO'              " 송장아이템의 구조로 보여줌
+      is_layout        = gs_layo1                 " 열최적화와 ZEBRA기능구현
+    CHANGING
+      it_outtab        = gt_display1             " 인터널 테이블의 정보를 보여준다.
+      it_fieldcatalog  = gt_fieldcat1.
+
+ENDFORM.
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*& Form create_data2</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+FORM create_data2 .
+
+  CREATE OBJECT go_custom_con2     " CONTANIER생성
+    EXPORTING
+      container_name = 'CCON_ITEM'.
+
+  CREATE OBJECT go_alv2            " CONTAINER위에 ALV생성
+    EXPORTING
+      i_parent = go_custom_con2.   " Parent Container
+
+
+ENDFORM.
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*& Form make_layout2</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+FORM make_layout2 .
+
+  gs_layo2-grid_title = '벤더별 납품현황'.
+  gs_layo2-cwidth_opt = 'X'.
+  gs_layo2-zebra = 'X'.
+
+ENDFORM.
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*& Form make_fieldcat2</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+FORM make_fieldcat2 .
+
+ENDFORM.
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*& Form on_hotspot_click2</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+FORM on_hotspot_click2 .
+
+ENDFORM.
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*& Form display_data2</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+FORM display_data2 .
+
+  CALL METHOD go_alv2-&gt;set_table_for_first_display
+    EXPORTING
+      i_structure_name = 'ZCA_EKPO'              " 송장아이템의 구조로 보여줌
+      is_layout        = gs_layo2                 " 열최적화와 ZEBRA기능구현
+    CHANGING
+      it_outtab        = gt_ekpo             " 인터널 테이블의 정보를 보여준다.
+      it_fieldcatalog  = gt_fieldcat2.
+
+ENDFORM.
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*& Form hotspot_click_head</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+FORM hotspot_click_head  USING p_row_id
+                               p_column_id.
+
+  READ TABLE gt_display1 INTO gs_display1 INDEX p_row_id.
+
+<font color ="#0000FF">* 아이템 띄우기</font>
+
+  SELECT * INTO CORRESPONDING FIELDS OF TABLE gt_ekpo
+    FROM zca_ekpo
+    WHERE ebeln = gs_display1-ebeln.
+
+  zca_ekko-ebeln = gs_display1-ebeln.
+
+  CALL METHOD go_alv2-&gt;refresh_table_display.
+
+  LEAVE SCREEN.
+
+ENDFORM.
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*& Form hotspot_click_item</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+FORM hotspot_click_item  USING    p_e_row_id
+                                  p_e_column_id.
+
+ENDFORM.
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*& Form create_ccon_NOW</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+FORM create_ccon_NOW .
+
+  PERFORM create_data3.       " contanier과 alv grid를 생성한다.
+  PERFORM make_layout3.       " LAYOUT을 생성한다.
+  PERFORM make_fieldcat3.     " field cat를 생성한다.
+  PERFORM on_hotspot_click3.  " hotspot click method를 등록한다.
+  PERFORM display_data3.      " 완성된 정보를 화면에 보여준다.
+
+ENDFORM.
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*& Form create_data3</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+FORM create_data3 .
+
+  CREATE OBJECT go_custom_con3     " CONTANIER생성
+    EXPORTING
+      container_name = 'CCON_NOW'.
+
+  CREATE OBJECT go_alv3            " CONTAINER위에 ALV생성
+    EXPORTING
+      i_parent = go_custom_con3.   " Parent Container
+
+ENDFORM.
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*& Form make_layout3</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+FORM make_layout3 .
+
+  gs_layo3-grid_title = '자재 재고 내역'.
+  gs_layo3-cwidth_opt = 'X'.
+  gs_layo3-zebra = 'X'.
+
+ENDFORM.
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*& Form make_fieldcat3</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+FORM make_fieldcat3 .
+
+ENDFORM.
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*& Form on_hotspot_click3</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+FORM on_hotspot_click3 .
+
+ENDFORM.
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*& Form display_data3</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+FORM display_data3 .
+
+  CALL METHOD go_alv3-&gt;set_table_for_first_display
+    EXPORTING
+      i_structure_name = 'ZCA_MARD'              " 송장아이템의 구조로 보여줌
+      is_layout        = gs_layo3                 " 열최적화와 ZEBRA기능구현
+    CHANGING
+      it_outtab        = gt_mard             " 인터널 테이블의 정보를 보여준다.
+      it_fieldcatalog  = gt_fieldcat3.
+
+ENDFORM.
+</pre>
+<hr>
+<font size="2" face = "Sans Serif">Extracted by Direct Download Enterprise version 1.3.1 - E.G.Mellodew. 1998-2005 UK. Sap Release 758
+</font>
+</body>
+</html>

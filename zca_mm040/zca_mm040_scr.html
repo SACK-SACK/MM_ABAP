@@ -1,0 +1,32 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2//EN">
+<html>
+<head>
+<title>ZCA_MM040_SCR</title>
+</head>
+<body bgcolor="#FFFFE0">
+<font size="3" face = "Arial" color="#000000"><b>Code listing for: ZCA_MM040_SCR</b></font>
+<br>
+<font size="3" face = "Arial" color="#000000"><b>Description:  scr</b></font>
+<hr>
+<pre width="100">
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*& Include          ZCA_MM040_SCR</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+SELECTION-SCREEN BEGIN OF SCREEN 1100 AS SUBSCREEN.
+  SELECTION-SCREEN BEGIN OF BLOCK B1 WITH FRAME TITLE TEXT-001.
+
+    SELECT-OPTIONS: SO_MATNR FOR ZCA_MARD-MATNR, " 자재 코드
+                    SO_WERKS FOR ZCA_MARD-WERKS, " 플랜트 코드
+                    SO_LGORT FOR ZCA_MARD-LGORT. " 창고 코드
+    SELECTION-SCREEN SKIP.
+
+    SELECTION-SCREEN PUSHBUTTON 77(20) BTN_TEXT USER-COMMAND BTN_SO MODIF ID BT1.
+
+  SELECTION-SCREEN END OF BLOCK B1.
+SELECTION-SCREEN END OF SCREEN 1100.
+</pre>
+<hr>
+<font size="2" face = "Sans Serif">Extracted by Direct Download Enterprise version 1.3.1 - E.G.Mellodew. 1998-2005 UK. Sap Release 758
+</font>
+</body>
+</html>

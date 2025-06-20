@@ -1,0 +1,122 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2//EN">
+<html>
+<head>
+<title>MZCA_MM100O01</title>
+</head>
+<body bgcolor="#FFFFE0">
+<font size="3" face = "Arial" color="#000000"><b>Code listing for: MZCA_MM100O01</b></font>
+<br>
+<font size="3" face = "Arial" color="#000000"><b>Description:  PBO</b></font>
+<hr>
+<pre width="100">
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*& Include          MZCA_MM100O01</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*& Module STATUS_0100 OUTPUT</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+
+MODULE STATUS_0100 OUTPUT.
+  SET PF-STATUS 'S-100'.
+  SET TITLEBAR 'T-100'.
+ENDMODULE.
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*& Module CLEAR_OK_CODE OUTPUT</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+MODULE CLEAR_OK_CODE OUTPUT.
+  CLEAR OK_CODE.
+ENDMODULE.
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*& Module ALV_100 OUTPUT</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+
+MODULE ALV_100 OUTPUT.
+
+
+
+  IF GO_CONTAINER IS INITIAL.
+
+    PERFORM CREATE USING GO_CONTAINER
+                         GO_ALV_GRID
+                         'CCON'.
+    PERFORM LAYO.
+    PERFORM FCAT.
+
+    SET HANDLER LCL_EVENT_HANDLER=&gt;ON_TOOLBAR FOR GO_ALV_GRID.
+    SET HANDLER LCL_EVENT_HANDLER=&gt;ON_USER_COMMAND FOR GO_ALV_GRID.
+    SET HANDLER LCL_EVENT_HANDLER=&gt;ON_DOUBLE_CLICK FOR GO_ALV_GRID.
+
+    PERFORM DISPLAY USING GO_ALV_GRID.
+
+  ELSE.
+    GO_ALV_GRID-&gt;REFRESH_TABLE_DISPLAY( ).
+
+  ENDIF.
+
+
+ENDMODULE.
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*& Module STATUS_0110 OUTPUT</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*&</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+MODULE STATUS_0110 OUTPUT.
+  SET PF-STATUS 'S-110'.
+  SET TITLEBAR 'T-110' WITH SY-UZEIT.
+ENDMODULE.
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*& Module ALV_110 OUTPUT</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+MODULE ALV_110 OUTPUT.
+
+
+  IF GO_CONTAINER2 IS INITIAL.
+    PERFORM CREATE USING GO_CONTAINER2
+                         GO_ALV_GRID2
+                         'CCON2'.
+<font color ="#0000FF">*    PERFORM LAYO.</font>
+<font color ="#0000FF">*    PERFORM FCAT.</font>
+    PERFORM DISPLAY USING GO_ALV_GRID2.
+
+  ENDIF.
+ENDMODULE.
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*& Module STATUS_0120 OUTPUT</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*&</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+MODULE STATUS_0120 OUTPUT.
+  SET PF-STATUS 'S-120'.
+  SET TITLEBAR 'T-120'.
+ENDMODULE.
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*& Module STATUS_0130 OUTPUT</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*&</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+MODULE STATUS_0130 OUTPUT.
+  SET PF-STATUS 'S-130'.
+  SET TITLEBAR 'T-130'.
+ENDMODULE.
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*& Module STATUS_0140 OUTPUT</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*&</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+MODULE STATUS_0140 OUTPUT.
+ SET PF-STATUS 'S-120'.
+ SET TITLEBAR 'T-140'.
+ENDMODULE.
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*& Module STATUS_0150 OUTPUT</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+MODULE STATUS_0150 OUTPUT.
+ SET PF-STATUS 'S-120'.
+ SET TITLEBAR 'T-150'.
+ENDMODULE.
+</pre>
+<hr>
+<font size="2" face = "Sans Serif">Extracted by Direct Download Enterprise version 1.3.1 - E.G.Mellodew. 1998-2005 UK. Sap Release 758
+</font>
+</body>
+</html>

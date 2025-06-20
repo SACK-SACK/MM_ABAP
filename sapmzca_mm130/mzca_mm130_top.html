@@ -1,0 +1,162 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2//EN">
+<html>
+<head>
+<title>MZCA_MM130_TOP</title>
+</head>
+<body bgcolor="#FFFFE0">
+<font size="3" face = "Arial" color="#000000"><b>Code listing for: MZCA_MM130_TOP</b></font>
+<br>
+<font size="3" face = "Arial" color="#000000"><b>Description:  Include MZCA_MM130_TOP</b></font>
+<hr>
+<pre width="100">
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*& Include MZCA_MM130_TOP                           - Module Pool      SAPMZCA_MM130</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+PROGRAM SAPMZCA_MM130 MESSAGE-ID ZCA_MSG.
+
+
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">* TABLES 선언</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+TABLES: ZCA_EINA, ZCA_EORD, ZCA_MAKT, ZCA_LFA1.
+
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">* DISPLAY를 위한 변수</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+
+DATA :BEGIN OF GS_DISPLAY.
+        include structure <a href ="zca_eina/dictionary-zca_eina.html">ZCA_EINA</a>.
+DATA:   MAKTX     TYPE ZCA_MAKT-MAKTX,
+        SPRAS     TYPE ZCA_MAKT-SPRAS,
+        CELLSTYLE TYPE LVC_T_STYL,
+      END OF GS_DISPLAY.
+
+DATA  GT_DISPLAY LIKE TABLE OF GS_DISPLAY.
+DATA  GT_ORIGINAL LIKE TABLE OF GS_DISPLAY.
+DATA  GT_SELECT_DISPLAY LIKE TABLE OF GS_DISPLAY.
+DATA  GS_SELECT_DISPLAY LIKE GS_DISPLAY.
+DATA  GS_SELECT_DISPLAY2 LIKE GS_DISPLAY.
+
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">* 선택한 행 보관</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+
+DATA: GT_SELECTED_ROWS TYPE LVC_T_ROW,
+      GV_EDIT_MODE     TYPE C.
+
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">* 선택한 샐 정보</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+
+DATA:
+  GT_SELECTED_ROW TYPE LVC_T_ROW,
+  GV_INDEX        TYPE I,
+  GV_INDEX2       TYPE I.
+
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">* DISPLAY120을 위한 변수</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+
+DATA GV_MANTR TYPE ZCA_MARA-MATNR.
+
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">* ALV 관련 변수 CCON1</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+
+DATA: GO_CONTAINER TYPE REF TO CL_GUI_CUSTOM_CONTAINER,
+      GO_ALV_GRID  TYPE REF TO CL_GUI_ALV_GRID,
+      GS_LAYOUT    TYPE LVC_S_LAYO,
+      GT_FIELDCAT  TYPE LVC_T_FCAT,
+      GS_FIELDCAT  TYPE LVC_S_FCAT,
+      OK_CODE      TYPE SY-UCOMM,
+      GT_SORT      TYPE LVC_T_SORT,
+      GS_SORT      TYPE LVC_S_SORT,
+      LT_FILTER    TYPE LVC_T_FILT,
+      LS_FILTER    TYPE LVC_S_FILT,
+      GS_VARIANT   TYPE DISVARIANT.
+
+DATA GV_LVORM TYPE C.
+
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">* ALV 관련 변수 CCON2</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+
+DATA: GO_CONTAINER2 TYPE REF TO CL_GUI_CUSTOM_CONTAINER,
+      GO_ALV_GRID2  TYPE REF TO CL_GUI_ALV_GRID,
+      GS_LAYOUT2    TYPE LVC_S_LAYO,
+      GT_FIELDCAT2  TYPE LVC_T_FCAT,
+      GS_FIELDCAT2  TYPE LVC_S_FCAT,
+      GS_VARIANT2   TYPE DISVARIANT.
+<font color ="#0000FF">*      GV_TEXT      TYPE CHAR10.</font>
+
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">* CCON3를 위한 변수</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+
+DATA GS_DISPLAY2 TYPE ZCA_LFA1.
+DATA GT_DISPLAY2 LIKE TABLE OF ZCA_LFA1.
+
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">* ALV 관련 변수 CCON3</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+
+DATA: GO_CONTAINER3 TYPE REF TO CL_GUI_CUSTOM_CONTAINER,
+      GO_ALV_GRID3  TYPE REF TO CL_GUI_ALV_GRID,
+      GS_LAYOUT3    TYPE LVC_S_LAYO,
+      GT_FIELDCAT3  TYPE LVC_T_FCAT,
+      GS_FIELDCAT3  TYPE LVC_S_FCAT,
+      GS_VARIANT3   TYPE DISVARIANT.
+
+
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">* CCON3를 위한 변수</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+
+DATA: BEGIN OF GS_DISPLAY3.
+        include structure <a href ="zca_makt/dictionary-zca_makt.html">ZCA_MAKT</a>.
+DATA:   LIFNR TYPE  ZCA_EINA-LIFNR,
+      END OF GS_DISPLAY3.
+DATA GT_DISPLAY3 LIKE TABLE OF GS_DISPLAY3.
+DATA  GT_SELECT_DISPLAY2 LIKE TABLE OF GS_DISPLAY.
+
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">* 조건 검색을 위한 변수</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+
+DATA INPUT TYPE ZCA_EINA.
+
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">* 생성을 위한 변수</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+
+DATA GT_MARA TYPE TABLE OF ZCA_MARA.
+DATA GS_MARA TYPE ZCA_MARA.
+
+DATA GT_MAKT TYPE TABLE OF ZCA_MAKT.
+DATA GS_MAKT TYPE ZCA_MAKT.
+
+
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">* 언어 설정을 위한 변수</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+DATA GV_LANG TYPE ZCA_MAKT-SPRAS.
+
+DATA GV_LVORM_TYPE TYPE C.
+
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">* 소스리스트 관리용</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+DATA: GS_EORD TYPE ZCA_EORD,
+      GT_EORD LIKE TABLE OF GS_EORD.
+
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">* 저장 생성용도</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+DATA LV_SAVE TYPE C.
+DATA LV_NEW TYPE C.
+</pre>
+<hr>
+<font size="2" face = "Sans Serif">Extracted by Direct Download Enterprise version 1.3.1 - E.G.Mellodew. 1998-2005 UK. Sap Release 758
+</font>
+</body>
+</html>

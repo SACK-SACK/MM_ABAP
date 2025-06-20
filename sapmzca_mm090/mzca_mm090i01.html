@@ -1,0 +1,110 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2//EN">
+<html>
+<head>
+<title>MZCA_MM090I01</title>
+</head>
+<body bgcolor="#FFFFE0">
+<font size="3" face = "Arial" color="#000000"><b>Code listing for: MZCA_MM090I01</b></font>
+<br>
+<font size="3" face = "Arial" color="#000000"><b>Description:  PAI</b></font>
+<hr>
+<pre width="100">
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*& Include          MZCA_MM090I01</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*&      Module  USER_COMMAND_0100  INPUT</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+MODULE user_command_0100 INPUT.
+
+  CASE ok_code.
+    WHEN 'BACK'.
+      LEAVE TO SCREEN 0.
+    WHEN 'STORE'.
+
+      " 오른쪽 필드에 들어왔고 그 정보가 입고 대기중일때 (노란불)
+      IF zca_ekko-ebeln IS NOT INITIAL AND gs_display1-icon = icon_led_yellow.
+        LOOP AT gt_ekpo INTO gs_ekpo.
+
+          call function <a href ="zca_mm_stock_item/zca_mm_stock_item.html">'ZCA_MM_STOCK_ITEM'</a>
+            EXPORTING
+              iv_matnr = gs_ekpo-matnr                 " 자재코드
+              iv_btqty = gs_ekpo-menge                 " 가용수량
+              iv_werks = 'P001'                        " 플랜트 ID
+              iv_lgort = 'SL03'                        " 창고 코드 (저장 위치)
+              iv_trqua = 0                             " 폐기수량
+              iv_bwart = '101'                         " 이동 유형 코드
+              iv_ebeln = gs_ekpo-ebeln.                " 구매 오더 코드
+
+        ENDLOOP.
+
+        SELECT SINGLE * FROM zca_ekko INTO gs_ekko
+          WHERE ebeln = gs_ekpo-ebeln.
+
+        gs_ekko-wepos = 'X'.
+        gs_ekko-indat = sy-datum.
+
+        UPDATE zca_ekko FROM gs_ekko.
+
+        MESSAGE '입고가 완료됐습니다.' TYPE 'I' DISPLAY LIKE 'I'.
+
+      ELSE.
+        MESSAGE '입고대기중인 재고만 입고할 수 있습니다.' TYPE 'W' DISPLAY LIKE 'I'.
+      ENDIF.
+  ENDCASE.
+
+ENDMODULE.
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*&      Module  EXIT  INPUT</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+MODULE exit INPUT.
+
+  CASE ok_code.
+    WHEN 'EXIT'.
+      LEAVE PROGRAM.
+    WHEN 'CANC'.
+      LEAVE TO SCREEN 0.
+  ENDCASE.
+
+ENDMODULE.
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*& Module STATUS_0110 OUTPUT</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+MODULE status_0110 OUTPUT.
+  SET PF-STATUS 'S0110'.
+  SET TITLEBAR 'T0110'.
+ENDMODULE.
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*&      Module  USER_COMMAND_0110  INPUT</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+MODULE user_command_0110 INPUT.
+
+  CASE ok_code.
+    WHEN 'BACK'.
+      LEAVE TO SCREEN 0.
+    WHEN 'STOCK'.
+
+<font color ="#0000FF">*      LOOP AT gt_ekpo INTO gs_ekpo.</font>
+<font color ="#0000FF">*</font>
+<font color ="#0000FF">*        CALL FUNCTION 'ZCA_MM_CREATE_BATCH'</font>
+<font color ="#0000FF">*          EXPORTING</font>
+<font color ="#0000FF">*            iv_matnr = gs_ekpo-matnr                 " 자재코드</font>
+<font color ="#0000FF">*            iv_btqty = gs_ekpo-menge                 " 가용수량</font>
+<font color ="#0000FF">*            iv_werks = 'P001'                 " 플랜트 ID</font>
+<font color ="#0000FF">*            iv_lgort = 'SL03'                 " 창고 코드 (저장 위치)</font>
+<font color ="#0000FF">*            iv_trqua = 0                 " 폐기수량</font>
+<font color ="#0000FF">*            iv_bwart = 105.                 " 이동 유형 코드</font>
+<font color ="#0000FF">*      ENDLOOP.</font>
+<font color ="#0000FF">*</font>
+<font color ="#0000FF">*      READ TABLE gt_ekko INTO gs_ekko WITH KEY ebeln = gs_ekpo-ebeln.</font>
+<font color ="#0000FF">*</font>
+<font color ="#0000FF">*      gs_ekko-wepos = 'X'.</font>
+  ENDCASE.
+
+ENDMODULE.
+</pre>
+<hr>
+<font size="2" face = "Sans Serif">Extracted by Direct Download Enterprise version 1.3.1 - E.G.Mellodew. 1998-2005 UK. Sap Release 758
+</font>
+</body>
+</html>

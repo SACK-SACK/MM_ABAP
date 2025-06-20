@@ -1,0 +1,159 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2//EN">
+<html>
+<head>
+<title>MZCA_MM080_PBO</title>
+</head>
+<body bgcolor="#FFFFE0">
+<font size="3" face = "Arial" color="#000000"><b>Code listing for: MZCA_MM080_PBO</b></font>
+<br>
+<font size="3" face = "Arial" color="#000000"><b>Description:  PBO</b></font>
+<hr>
+<pre width="100">
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*& Include          MZCA_MM080_PBO</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*& Module STATUS_0100 OUTPUT</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+MODULE status_0100 OUTPUT.
+  SET PF-STATUS 'S0100'.
+  SET TITLEBAR 'T0100'.
+
+<font color ="#0000FF">*PERFORM select_data.</font>
+
+ENDMODULE.
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*& Module CLEAR_OK_CODE OUTPUT</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+MODULE clear_ok_code OUTPUT.
+
+  CLEAR ok_code.
+
+ENDMODULE.
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*& Module INIT_ALV OUTPUT</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+MODULE init_alv OUTPUT.
+
+  IF go_custom_con IS INITIAL. " CUSTOM CONTAINER가 없는경우에만 로직을 수행한다.
+
+    PERFORM select_data.   " 앞서 선언한 인터널 테이블에 정보를 모두 삽입하는 서브루틴
+    PERFORM create_ccon.       " alv와 ccon을 생성한다.
+    PERFORM set_layout.
+    PERFORM make_fieldcat.     " field cat를 생성한다.
+    PERFORM on_hotspot_click.  " hotspot click method를 등록한다.
+
+    PERFORM display_data.
+
+  ELSE.
+    CALL METHOD go_alv-&gt;refresh_table_display.
+
+  ENDIF.
+
+
+ENDMODULE.
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*& Module INIT_TREE OUTPUT</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+MODULE init_tree OUTPUT.
+
+  IF go_tree IS INITIAL.
+
+    PERFORM create_tree.                        " CCON을 만들어준다.
+    PERFORM make_node.                          " 노드를 생성하는 서브루틴
+    PERFORM event_handeler.                     " 더블클릭 이벤트 등록
+
+  ENDIF.
+
+ENDMODULE.
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*& Module STATUS_0110 OUTPUT</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+MODULE status_0110 OUTPUT.
+  SET PF-STATUS 'S0110'.
+  SET TITLEBAR 'T0110'.
+ENDMODULE.
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*& Module CREATE_BATCH_CON OUTPUT</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+MODULE create_batch_con OUTPUT.
+
+  IF go_popup_con IS INITIAL. " CUSTOM CONTAINER가 없는경우에만 로직을 수행한다.
+
+    PERFORM create_0110.       " contanier과 alv grid를 생성한다.
+    PERFORM make_lao_0110.          " LAYOUT을 설정한다.
+    PERFORM make_fieldcat_0110.     " field cat를 생성한다.
+    PERFORM display_0110.      " 완성된 정보를 화면에 보여준다.
+
+ELSE.
+
+    CALL METHOD go_popup_alv-&gt;refresh_table_display.
+
+  ENDIF.
+
+ENDMODULE.
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*& Module INIT_ALV_0100 OUTPUT</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+MODULE init_alv_0100 OUTPUT.
+
+<font color ="#0000FF">*CREATE OBJECT go_docking_container</font>
+<font color ="#0000FF">*    EXPORTING</font>
+<font color ="#0000FF">*      repid     = sy-repid                " Report to Which This Docking Control is Linked</font>
+<font color ="#0000FF">*      dynnr     = sy-dynnr                " Screen to Which This Docking Control is Linked</font>
+<font color ="#0000FF">*      side      = cl_gui_docking_container=&gt;dock_at_left     " Side to Which Control is Docked</font>
+<font color ="#0000FF">*      extension = 1500.               " Control Extension</font>
+<font color ="#0000FF">*</font>
+<font color ="#0000FF">*  " 화면 분할</font>
+<font color ="#0000FF">*  CREATE OBJECT go_splitter</font>
+<font color ="#0000FF">*    EXPORTING</font>
+<font color ="#0000FF">*      parent  = go_docking_container                  " Parent Container</font>
+<font color ="#0000FF">*      rows    = 1                 " Number of Rows to be displayed</font>
+<font color ="#0000FF">*      columns = 2.                 " Number of Columns to be Displayed</font>
+<font color ="#0000FF">*</font>
+<font color ="#0000FF">*  CALL METHOD go_splitter-&gt;get_container</font>
+<font color ="#0000FF">*    EXPORTING</font>
+<font color ="#0000FF">*      row       = 1                 " Row</font>
+<font color ="#0000FF">*      column    = 1                 " Column</font>
+<font color ="#0000FF">*    RECEIVING</font>
+<font color ="#0000FF">*      container = tree_con.                " Container</font>
+<font color ="#0000FF">*</font>
+<font color ="#0000FF">*  CALL METHOD go_splitter-&gt;get_container</font>
+<font color ="#0000FF">*    EXPORTING</font>
+<font color ="#0000FF">*      row       = 1                 " Row</font>
+<font color ="#0000FF">*      column    = 2                 " Column</font>
+<font color ="#0000FF">*    RECEIVING</font>
+<font color ="#0000FF">*      container = go_custom_con.                " Container</font>
+<font color ="#0000FF">*</font>
+<font color ="#0000FF">**  CALL METHOD go_splitter-&gt;get_container</font>
+<font color ="#0000FF">**    EXPORTING</font>
+<font color ="#0000FF">**      row       = 1                 " Row</font>
+<font color ="#0000FF">**      column    = 3                 " Column</font>
+<font color ="#0000FF">**    RECEIVING</font>
+<font color ="#0000FF">**      container = go_container_3.                " Container</font>
+<font color ="#0000FF">*</font>
+<font color ="#0000FF">*  " container - screen 연결</font>
+<font color ="#0000FF">*  CREATE OBJECT go_alv</font>
+<font color ="#0000FF">*    EXPORTING</font>
+<font color ="#0000FF">*      i_parent = go_custom_con.                " Parent Container</font>
+<font color ="#0000FF">*</font>
+<font color ="#0000FF">*  CREATE OBJECT go_tree</font>
+<font color ="#0000FF">*    EXPORTING</font>
+<font color ="#0000FF">*      i_parent = tree_con.                " Parent Container</font>
+
+
+
+ENDMODULE.
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*& Module STATUS_0120 OUTPUT</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+MODULE status_0120 OUTPUT.
+ SET PF-STATUS 'S0120'.
+ SET TITLEBAR 'T0120'.
+ENDMODULE.
+</pre>
+<hr>
+<font size="2" face = "Sans Serif">Extracted by Direct Download Enterprise version 1.3.1 - E.G.Mellodew. 1998-2005 UK. Sap Release 758
+</font>
+</body>
+</html>

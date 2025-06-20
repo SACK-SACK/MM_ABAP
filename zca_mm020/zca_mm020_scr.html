@@ -1,0 +1,32 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2//EN">
+<html>
+<head>
+<title>ZCA_MM020_SCR</title>
+</head>
+<body bgcolor="#FFFFE0">
+<font size="3" face = "Arial" color="#000000"><b>Code listing for: ZCA_MM020_SCR</b></font>
+<br>
+<font size="3" face = "Arial" color="#000000"><b>Description:  Selection Screen</b></font>
+<hr>
+<pre width="100">
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*& Include          ZCA_MM020_SCR</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+
+<font color ="#0000FF">* 자재코드, plant정하기</font>
+SELECTION-SCREEN BEGIN OF BLOCK b01 WITH FRAME TITLE TEXT-t01.
+
+  SELECT-OPTIONS : so_mjahr FOR ZCA_mkpf-mjahr,  " 년도
+                   so_werks FOR ZCA_mkpf-werks,  " 플랜드
+                   so_matnr FOR ZCA_mseg-matnr,  " 자재코드
+                   so_ERNAM FOR zca_mkpf-ernam,  " 생성자
+                   so_erdat FOR zca_mkpf-erdat DEFAULT sy-datum.  " 생성일자
+
+
+SELECTION-SCREEN END OF BLOCK b01.
+</pre>
+<hr>
+<font size="2" face = "Sans Serif">Extracted by Direct Download Enterprise version 1.3.1 - E.G.Mellodew. 1998-2005 UK. Sap Release 758
+</font>
+</body>
+</html>

@@ -1,0 +1,226 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2//EN">
+<html>
+<head>
+<title>ZCA_MM050_F01</title>
+</head>
+<body bgcolor="#FFFFE0">
+<font size="3" face = "Arial" color="#000000"><b>Code listing for: ZCA_MM050_F01</b></font>
+<br>
+<font size="3" face = "Arial" color="#000000"><b>Description:  F01</b></font>
+<hr>
+<pre width="100">
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*& Include          ZCA_MM050_F01</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*& Form CREATE</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+FORM CREATE .
+
+  CREATE OBJECT GO_CONTAINER
+    EXPORTING
+      CONTAINER_NAME = 'CCON'.              " Name of the Screen CustCtrl Name to Link Container To
+
+  CREATE OBJECT GO_ALV_GRID
+    EXPORTING
+<font color ="#0000FF">*     I_SHELLSTYLE            = 0                " Control Style</font>
+<font color ="#0000FF">*     I_LIFETIME              =                  " Lifetime</font>
+      I_PARENT = GO_CONTAINER             " Parent Container
+<font color ="#0000FF">*     I_APPL_EVENTS           = SPACE            " Register Events as Application Events</font>
+<font color ="#0000FF">*     I_PARENTDBG             =                  " Internal, Do not Use</font>
+<font color ="#0000FF">*     I_APPLOGPARENT          =                  " Container for Application Log</font>
+<font color ="#0000FF">*     I_GRAPHICSPARENT        =                  " Container for Graphics</font>
+<font color ="#0000FF">*     I_NAME   =                  " Name</font>
+<font color ="#0000FF">*     I_FCAT_COMPLETE         = SPACE            " Boolean Variable (X=True, Space=False)</font>
+<font color ="#0000FF">*     O_PREVIOUS_SRAL_HANDLER =</font>
+<font color ="#0000FF">*     I_USE_ONE_UX_APPEARANCE = ABAP_FALSE</font>
+<font color ="#0000FF">*     O_COMMON_HUB            =</font>
+<font color ="#0000FF">*   EXCEPTIONS</font>
+<font color ="#0000FF">*     ERROR_CNTL_CREATE       = 1                " Error when creating the control</font>
+<font color ="#0000FF">*     ERROR_CNTL_INIT         = 2                " Error While Initializing Control</font>
+<font color ="#0000FF">*     ERROR_CNTL_LINK         = 3                " Error While Linking Control</font>
+<font color ="#0000FF">*     ERROR_DP_CREATE         = 4                " Error While Creating DataProvider Control</font>
+<font color ="#0000FF">*     OTHERS   = 5</font>
+    .
+
+ENDFORM.
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*& Form DISPLAY</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+FORM DISPLAY .
+
+  GO_ALV_GRID-&gt;SET_TABLE_FOR_FIRST_DISPLAY(
+    EXPORTING
+<font color ="#0000FF">*    I_BUFFER_ACTIVE               =                  " Buffering Active</font>
+<font color ="#0000FF">*    I_BYPASSING_BUFFER            =                  " Switch Off Buffer</font>
+<font color ="#0000FF">*    I_CONSISTENCY_CHECK           =                  " Starting Consistency Check for Interface Error Recognition</font>
+      I_STRUCTURE_NAME              =    'ZCA_EKPO'              " Internal Output Table Structure Name
+<font color ="#0000FF">*    IS_VARIANT                    =                  " Layout</font>
+<font color ="#0000FF">*    I_SAVE                        =                  " Save Layout</font>
+<font color ="#0000FF">*    I_DEFAULT                     = 'X'              " Default Display Variant</font>
+    IS_LAYOUT                     =   GS_LAYOUT               " Layout
+<font color ="#0000FF">*    IS_PRINT                      =                  " Print Control</font>
+<font color ="#0000FF">*    IT_SPECIAL_GROUPS             =                  " Field Groups</font>
+<font color ="#0000FF">*    IT_TOOLBAR_EXCLUDING          =                  " Excluded Toolbar Standard Functions</font>
+<font color ="#0000FF">*    IT_HYPERLINK                  =                  " Hyperlinks</font>
+<font color ="#0000FF">*    IT_ALV_GRAPHICS               =                  " Table of Structure DTC_S_TC</font>
+<font color ="#0000FF">*    IT_EXCEPT_QINFO               =                  " Table for Exception Quickinfo</font>
+<font color ="#0000FF">*    IR_SALV_ADAPTER               =                  " Internal Usage only !!! - obsolete</font>
+    CHANGING
+      IT_OUTTAB                     =    GT_DISPLAY           " Output Table
+    IT_FIELDCATALOG               =  GT_FIELDCAT                " Field Catalog
+<font color ="#0000FF">*    IT_SORT                       =                  " Sort Criteria</font>
+<font color ="#0000FF">*    IT_FILTER                     =                  " Filter Criteria</font>
+).
+
+
+ENDFORM.
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*& Form ALV_FCAT</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+FORM ALV_FCAT .
+
+  CLEAR GS_FIELDCAT.
+  GS_FIELDCAT-FIELDNAME = 'EBELN'.
+  GS_FIELDCAT-HOTSPOT = ABAP_ON.
+  GS_FIELDCAT-COLTEXT = '구매오더'.  " 컬럼 헤더 텍스트
+  APPEND GS_FIELDCAT TO GT_FIELDCAT.
+
+  CLEAR GS_FIELDCAT.
+  GS_FIELDCAT-FIELDNAME = 'ERZET'.
+  GS_FIELDCAT-NO_OUT = ABAP_ON.
+  APPEND GS_FIELDCAT TO GT_FIELDCAT.
+
+  CLEAR GS_FIELDCAT.
+  GS_FIELDCAT-FIELDNAME = 'AENAM'.
+  GS_FIELDCAT-NO_OUT = ABAP_ON.
+  APPEND GS_FIELDCAT TO GT_FIELDCAT.
+
+  CLEAR GS_FIELDCAT.
+  GS_FIELDCAT-FIELDNAME = 'AEDAT'.
+  GS_FIELDCAT-NO_OUT = ABAP_ON.
+  APPEND GS_FIELDCAT TO GT_FIELDCAT.
+
+  CLEAR GS_FIELDCAT.
+  GS_FIELDCAT-FIELDNAME = 'AEZET'.
+  GS_FIELDCAT-NO_OUT = ABAP_ON.
+  APPEND GS_FIELDCAT TO GT_FIELDCAT.
+
+  CLEAR GS_FIELDCAT.
+  GS_FIELDCAT-FIELDNAME = 'ERNAM'.
+  GS_FIELDCAT-COLTEXT ='생성자'.
+  GS_FIELDCAT-NO_OUT = ABAP_ON.
+  APPEND GS_FIELDCAT TO GT_FIELDCAT.
+
+  CLEAR GS_FIELDCAT.
+  GS_FIELDCAT-FIELDNAME = 'ERDAT'.
+  GS_FIELDCAT-COLTEXT ='생성일'.
+  GS_FIELDCAT-NO_OUT = ABAP_ON.
+  APPEND GS_FIELDCAT TO GT_FIELDCAT.
+
+
+
+  CLEAR GS_FIELDCAT.
+  GS_FIELDCAT-FIELDNAME = 'LTFNR'.
+  GS_FIELDCAT-COLTEXT ='공급업체'.
+  APPEND GS_FIELDCAT TO GT_FIELDCAT.
+
+
+  CLEAR GS_FIELDCAT.
+  GS_FIELDCAT-FIELDNAME = 'LGORT'.
+  GS_FIELDCAT-COLTEXT ='창고'.
+  APPEND GS_FIELDCAT TO GT_FIELDCAT.
+
+  CLEAR GS_FIELDCAT.
+  GS_FIELDCAT-FIELDNAME = 'EBELP'.
+  GS_FIELDCAT-COLTEXT ='구매 오더 등록 번호'.
+  APPEND GS_FIELDCAT TO GT_FIELDCAT.
+
+
+ENDFORM.
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*& Form ALV_LAO</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+FORM ALV_LAO .
+
+  GS_LAYOUT-CWIDTH_OPT = 'X'.  " 컬럼 너비 최적화
+  GS_LAYOUT-ZEBRA = 'X'.       " 줄무늬 패턴
+
+ENDFORM.
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*& Form REFRESH_INPUT</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+FORM REFRESH_INPUT .
+
+  CLEAR ZCA_EKPO-EBELN.
+  CLEAR ZCA_EKPO-EBELP.
+  CLEAR ZCA_EKPO-BANFN.
+  CLEAR ZCA_EKPO-MATNR.
+  CLEAR ZCA_EKPO-LTFNR.
+  CLEAR ZCA_EKKO-EBELN    .
+  CLEAR ZCA_EKKO-WERKS    .
+  CLEAR ZCA_EKKO-BEDAT    .
+  CLEAR ZCA_EKKO-LTFNR  .
+  CLEAR ZCA_EKKO-BRTWR    .
+
+
+
+
+ENDFORM.
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*& Form DISPLAY_DATA</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+FORM DISPLAY_DATA .
+  CLEAR GT_DISPLAY.
+
+  SELECT ZCA_EKPO~EBELN,
+         ZCA_EKPO~EBELP,
+         ZCA_EKPO~BANFN,
+         ZCA_EKPO~MATNR,
+         ZCA_EKPO~LGORT,
+         ZCA_EKPO~NETPR,
+         ZCA_EKPO~DMBTR,
+         ZCA_EKPO~WAERS,
+         ZCA_EKPO~MENGE,
+         ZCA_EKPO~MEINH,
+         ZCA_EKKO~MANDT,
+         ZCA_EKKO~BEDAT,
+         ZCA_EKKO~LTFNR,
+         ZCA_EKKO~WERKS,
+         ZCA_EKKO~BRTWR,
+         ZCA_EKKO~ELIKZ,
+         ZCA_EKKO~WEPOS,
+         ZCA_EKKO~INDAT
+    FROM ZCA_EKKO
+    INNER JOIN ZCA_EKPO
+    ON ZCA_EKKO~EBELN EQ ZCA_EKPO~EBELN
+    WHERE ZCA_EKKO~LTFNR IN @SO_LTFNR
+    AND   ZCA_EKKO~EBELN IN @SO_EBELN
+    AND   BEDAT IN @SO_BEDAT
+    AND   ZCA_EKKO~LVORM EQ ' '
+    INTO CORRESPONDING FIELDS OF TABLE @GT_DISPLAY.
+
+ENDFORM.
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*& Form SELECT_EMPTY_INPUT</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+FORM SELECT_EMPTY_INPUT .
+
+  IF ZCA_EKPO-EBELN IS INITIAL
+  AND ZCA_EKPO-BANFN IS INITIAL
+  AND ZCA_EKPO-MATNR IS INITIAL
+  AND ZCA_EKPO-LTFNR IS INITIAL
+  AND ZCA_EKPO-EBELP IS INITIAL.
+
+    SELECT *
+      FROM ZCA_EKPO
+      INTO CORRESPONDING FIELDS OF TABLE GT_DISPLAY.
+  ENDIF.
+
+ENDFORM.
+</pre>
+<hr>
+<font size="2" face = "Sans Serif">Extracted by Direct Download Enterprise version 1.3.1 - E.G.Mellodew. 1998-2005 UK. Sap Release 758
+</font>
+</body>
+</html>

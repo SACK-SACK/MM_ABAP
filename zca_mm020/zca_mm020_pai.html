@@ -1,0 +1,112 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2//EN">
+<html>
+<head>
+<title>ZCA_MM020_PAI</title>
+</head>
+<body bgcolor="#FFFFE0">
+<font size="3" face = "Arial" color="#000000"><b>Code listing for: ZCA_MM020_PAI</b></font>
+<br>
+<font size="3" face = "Arial" color="#000000"><b>Description:  PAI</b></font>
+<hr>
+<pre width="100">
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*& Include          ZCA_MM020_PAI</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*&      Module  USER_COMMAND_0100  INPUT</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+MODULE
+  user_command_0100 INPUT.
+
+  CASE ok_code.
+    WHEN 'BACK'.
+      LEAVE TO SCREEN 0.
+    WHEN 'TAB1'.
+
+      SELECT *
+INTO CORRESPONDING FIELDS OF TABLE gt_mseg
+FROM zca_mkpf AS mkpf
+INNER JOIN zca_mseg AS mseg
+ON mkpf~mblnr = mseg~mblnr
+AND mkpf~mjahr = mseg~mjahr
+WHERE mseg~matnr IN so_matnr
+AND mkpf~mjahr IN so_mjahr
+AND mkpf~werks IN so_werks
+AND mseg~bwart = '101'
+        AND mseg~ernam IN so_ernam
+        AND mseg~erdat IN so_erdat.
+
+      my_tabstrip-activetab = ok_code.
+    WHEN 'TAB2'.
+
+      SELECT *
+INTO CORRESPONDING FIELDS OF TABLE gt_mseg
+FROM zca_mkpf AS mkpf
+INNER JOIN zca_mseg AS mseg
+ON mkpf~mblnr = mseg~mblnr
+AND mkpf~mjahr = mseg~mjahr
+WHERE mseg~matnr IN so_matnr
+AND mkpf~mjahr IN so_mjahr
+AND mkpf~werks IN so_werks
+AND mseg~bwart = '261'
+        AND mseg~ernam IN so_ernam
+        AND mseg~erdat IN so_erdat.
+      my_tabstrip-activetab = ok_code.
+
+    WHEN 'TAB3'.
+
+      SELECT *
+INTO CORRESPONDING FIELDS OF TABLE gt_mseg
+FROM zca_mkpf AS mkpf
+INNER JOIN zca_mseg AS mseg
+ON mkpf~mblnr = mseg~mblnr
+AND mkpf~mjahr = mseg~mjahr
+WHERE mseg~matnr IN so_matnr
+AND mkpf~mjahr IN so_mjahr
+AND mkpf~werks IN so_werks
+AND mseg~bwart = '601'
+        AND mseg~ernam IN so_ernam
+        AND mseg~erdat IN so_erdat.
+
+      my_tabstrip-activetab = ok_code.
+
+    WHEN 'TAB4'.
+
+      SELECT *
+INTO CORRESPONDING FIELDS OF TABLE gt_mseg
+FROM zca_mkpf AS mkpf
+INNER JOIN zca_mseg AS mseg
+ON mkpf~mblnr = mseg~mblnr
+AND mkpf~mjahr = mseg~mjahr
+WHERE mseg~matnr IN so_matnr
+AND mkpf~mjahr IN so_mjahr
+AND mkpf~werks IN so_werks
+AND mseg~bwart = '301'
+        AND mseg~ernam IN so_ernam
+        AND mseg~erdat IN so_erdat.
+
+
+      my_tabstrip-activetab = ok_code.
+
+
+  ENDCASE.
+
+ENDMODULE.
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*&      Module  EXIT  INPUT</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+MODULE exit INPUT.
+  CASE ok_code.
+    WHEN 'EXIT'.
+      LEAVE PROGRAM.
+    WHEN 'CANC'.
+      LEAVE TO SCREEN 0.
+  ENDCASE.
+
+ENDMODULE.
+</pre>
+<hr>
+<font size="2" face = "Sans Serif">Extracted by Direct Download Enterprise version 1.3.1 - E.G.Mellodew. 1998-2005 UK. Sap Release 758
+</font>
+</body>
+</html>

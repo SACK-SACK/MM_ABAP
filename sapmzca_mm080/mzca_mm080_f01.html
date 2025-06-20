@@ -1,0 +1,1763 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2//EN">
+<html>
+<head>
+<title>MZCA_MM080_F01</title>
+</head>
+<body bgcolor="#FFFFE0">
+<font size="3" face = "Arial" color="#000000"><b>Code listing for: MZCA_MM080_F01</b></font>
+<br>
+<font size="3" face = "Arial" color="#000000"><b>Description:  F01</b></font>
+<hr>
+<pre width="100">
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*& Include          MZCA_MM080_F01</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*& Form select_data</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+FORM select_data .
+
+  SELECT matnr
+         werks
+         lvorm
+         eisbe
+    FROM zca_marc
+    INTO CORRESPONDING FIELDS OF TABLE gt_marc.
+
+  SELECT werks
+         bukrs
+         ptype
+         pname
+         padrs
+         phone
+         loekz
+    FROM zca_t001w
+    INTO CORRESPONDING FIELDS OF TABLE gt_t001w.
+
+
+ENDFORM.
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*& Form set_layout</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+FORM set_layout .
+
+  gs_layo-grid_title = '창고별 자재현황'.
+  gs_layo-sel_mode = 'B'.
+  gs_layo-cwidth_opt = 'X'.  " 열최적화
+  gs_layo-zebra = 'X'.       " 가독성 ZEBRA
+
+ENDFORM.
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*& Form create_ccon</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+FORM create_ccon .
+  CREATE OBJECT go_custom_con     " CONTANIER생성
+    EXPORTING
+      container_name = 'CCON_ITEM'.
+
+  CREATE OBJECT go_alv            " CONTAINER위에 ALV생성
+    EXPORTING
+      i_parent = go_custom_con.   " Parent Container
+
+
+ENDFORM.
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*& Form make_fieldcat</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+FORM make_fieldcat .
+
+  " 원하는 필드로 se11에서 structure만들기
+  " clear refresh fieldcat해주기
+  " 수량 금액은 가운데정렬 하지 않기 -&gt; 오른쪽
+  " 모든 데이터가 길이가 똑같은 경우에만 정렬해주기
+  " 문자 -&gt; 왼쪽정렬
+
+  " 자재명
+  gs_fieldcat-fieldname = 'MATNR'.
+  gs_fieldcat-just = 'C'.
+  gs_fieldcat-coltext = '자재코드'.
+  gs_fieldcat-key = 'X'.
+  gs_fieldcat-hotspot = 'X'.
+  APPEND gs_fieldcat TO gt_fieldcat. CLEAR gs_fieldcat. " 자재코드뒤에 자재명넣기
+
+  " 자재명
+  gs_fieldcat-fieldname = 'MAKTX'.
+  gs_fieldcat-key = 'X'.
+  gs_fieldcat-coltext = '자재명'.
+  APPEND gs_fieldcat TO gt_fieldcat. CLEAR gs_fieldcat.
+
+  " 사업장
+  gs_fieldcat-fieldname = 'WERKS'.
+  gs_fieldcat-just = 'C'.
+  gs_fieldcat-key = 'X'.
+  gs_fieldcat-coltext = '사업장'.
+  APPEND gs_fieldcat TO gt_fieldcat. CLEAR gs_fieldcat.
+
+  " PLANT명
+  gs_fieldcat-fieldname = 'PNAME'.
+  gs_fieldcat-key = 'X'.
+  gs_fieldcat-coltext = '사업장명'.
+  APPEND gs_fieldcat TO gt_fieldcat. CLEAR gs_fieldcat.
+
+  " 창고
+  gs_fieldcat-fieldname = 'LGORT'.
+  gs_fieldcat-just = 'C'.
+  gs_fieldcat-key = 'X'.
+  gs_fieldcat-coltext = '창고'.
+  APPEND gs_fieldcat TO gt_fieldcat. CLEAR gs_fieldcat.
+
+  " 창고명 필드
+  gs_fieldcat-fieldname = 'LGOBE'.
+  gs_fieldcat-coltext = '창고명'.
+  APPEND gs_fieldcat TO gt_fieldcat. CLEAR gs_fieldcat.
+
+  " 가용재고
+  gs_fieldcat-fieldname = 'LABST'.
+  gs_fieldcat-coltext = '가용재고'.
+  gs_fieldcat-qfieldname = 'MEINS'.
+  APPEND gs_fieldcat TO gt_fieldcat. CLEAR gs_fieldcat.
+
+  " 불용재고
+  gs_fieldcat-fieldname = 'SPEME'.
+  gs_fieldcat-coltext = '불용재고'.
+  gs_fieldcat-qfieldname = 'MEINS'.
+  APPEND gs_fieldcat TO gt_fieldcat. CLEAR gs_fieldcat.
+
+  " 총재고
+  gs_fieldcat-fieldname = 'TSTOCK'.
+  gs_fieldcat-coltext = '총재고'.
+  gs_fieldcat-qfieldname = 'MEINS'.
+  APPEND gs_fieldcat TO gt_fieldcat. CLEAR gs_fieldcat.
+
+  " 단위
+  gs_fieldcat-fieldname = 'MEINS'.
+  gs_fieldcat-coltext = '단위'.
+  APPEND gs_fieldcat TO gt_fieldcat. CLEAR gs_fieldcat.
+
+  " 입고예정재고
+  gs_fieldcat-fieldname = 'UMLME'.
+  gs_fieldcat-coltext = '입고예정재고'.
+  gs_fieldcat-qfieldname = 'MEINS'.
+  APPEND gs_fieldcat TO gt_fieldcat. CLEAR gs_fieldcat.
+
+ENDFORM.
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*& Form display_data</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+FORM display_data .
+
+  CALL METHOD go_alv-&gt;set_table_for_first_display
+    EXPORTING
+<font color ="#0000FF">*     i_structure_name = 'ZCA_MARD'              " mard table의 구조로 보여줌</font>
+      is_layout       = gs_layo
+    CHANGING
+      it_outtab       = gt_display1                 " 인터널 테이블의 정보를 보여준다.
+      it_fieldcatalog = gt_fieldcat.
+
+
+ENDFORM.
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*& Form create_tree</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+FORM create_tree .
+
+  CREATE OBJECT tree_con  " CCON_TREE CONTAINER를 생성
+    EXPORTING
+      container_name = 'CCON_TREE'.
+
+  CREATE OBJECT go_tree
+    EXPORTING
+      parent              = tree_con                 " CONTAINER위에 TREE생성
+      node_selection_mode = cl_gui_simple_tree=&gt;node_sel_mode_single. " 단일선택방식
+
+
+ENDFORM.
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*& Form make_node</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+FORM make_node .
+
+  PERFORM build_node_table USING node_table.
+
+  CALL METHOD go_tree-&gt;add_nodes            " tree에 node를 추가하는 method
+    EXPORTING
+      table_structure_name = 'MTREESNODE'  " tree node정보를 담고 있는 structure
+      node_table           = node_table.   " 트리 데이터 들어가있는 int
+
+  CREATE OBJECT go_application.
+
+  event-eventid = cl_gui_simple_tree=&gt;eventid_node_double_click. " 더블클릭 이벤트를 등록한다.
+  event-appl_event = 'X'.
+  APPEND event TO events.
+
+<font color ="#0000FF">* 트리 이벤트 등록</font>
+  CALL METHOD go_tree-&gt;set_registered_events
+    EXPORTING
+      events                    = events
+    EXCEPTIONS
+      cntl_error                = 1
+      cntl_system_error         = 2
+      illegal_event_combination = 3.
+  IF sy-subrc &lt;&gt; 0.
+  ENDIF.
+
+
+ENDFORM.
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*& Form build_node_table</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+FORM build_node_table  USING    p_node_table.
+
+  DATA: lt_mard_unique TYPE TABLE OF zca_mard.  " mard에서 창고의 중복을 제거하기 위해 선언
+
+  SELECT matnr
+         werks
+         lgort
+         lgobe
+         labst
+         speme
+         tstock
+         meins
+         umlme
+         topri
+         waers
+    INTO CORRESPONDING FIELDS OF TABLE gt_mard
+    FROM zca_mard.
+
+  lt_mard_unique = gt_mard.
+  SORT lt_mard_unique BY werks lgort. " LT_MARD_UNIQUE를 WERKS와 LGORT의 정보를 이용해 정렬
+  DELETE ADJACENT DUPLICATES FROM lt_mard_unique COMPARING werks lgort. " 인접한 중복값을 제거
+
+  DATA: node LIKE mtreesnode.
+
+  CLEAR node.
+  node-node_key = 'ROOT'.     " tree 상위항목
+  node-isfolder = 'X'.        " 폴더모양으로 표시
+  node-text = '플랜트/창고'.     " 플랜트/창고라는 텍스트로 표시
+  APPEND node TO node_table.
+
+  LOOP AT gt_t001w INTO gs_t001w.
+
+    CLEAR node.
+    node-node_key = gs_t001w-werks.     " root 하위 항목
+    node-relatkey = 'ROOT'.
+    node-isfolder = 'X'.
+    node-text = gs_t001w-pname.         " 공장코드가 들어가도록
+    node-expander = 'X'.                " 아래에 확장
+    APPEND node TO node_table.
+
+  ENDLOOP.
+
+  LOOP AT lt_mard_unique INTO gs_mard.  " 중복값을 제거한 인터널 테이블을 돈다.
+    CLEAR node.
+    node-node_key = |_{ gs_mard-werks }_{ gs_mard-lgort }|.
+    node-relatkey = gs_mard-werks.
+    node-text = |{ gs_mard-lgort }-{ gs_mard-lgobe }|.
+    APPEND node TO node_table.
+
+  ENDLOOP.
+
+
+ENDFORM.
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*& Form hotspot_click</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+FORM hotspot_click  USING    p_row_id
+                             p_column_id.
+
+  READ TABLE gt_display1 INTO gs_display1 INDEX p_row_id.
+
+  zca_marc-matnr = gs_display1-matnr.
+  zca_marc-werks = gs_display1-werks.
+  popup_lgort1 = gs_display1-lgort.
+  popup_lgobe1 = gs_display1-lgobe.
+
+  SELECT SINGLE matnr
+                werks
+                lvorm
+                eisbe
+  FROM zca_marc
+  INTO CORRESPONDING FIELDS OF gs_marc  " 선택한 mard정보로 marc에 정보를 넣는다.
+  WHERE matnr = gs_display1-matnr
+    AND werks = gs_display1-werks.
+
+  " 화면 필드에 값 설정
+  MOVE-CORRESPONDING gs_marc TO zca_marc.
+
+  LEAVE TO SCREEN 100.
+
+
+
+ENDFORM.
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*& Form node_double_click_0100</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+FORM node_double_click_0100  USING p_node_key.
+
+  CASE p_node_key.
+
+    WHEN 'ROOT'.         " 루트를 클릭했을시 모든 데이터를 보여준다.
+
+      SELECT mard~matnr
+               mard~werks
+               mard~lgort
+               mard~lgobe
+               mard~labst
+               mard~speme
+               mard~tstock
+               mard~meins
+               mard~umlme
+               mard~topri
+               mard~waers
+               t001w~pname
+               makt~maktx
+        INTO CORRESPONDING FIELDS OF TABLE gt_display1
+        FROM zca_mard AS mard
+        INNER JOIN zca_t001w AS t001w
+      ON mard~werks = t001w~werks
+        INNER JOIN zca_makt AS makt
+        ON mard~matnr = makt~matnr
+        WHERE makt~spras = '3'
+      ORDER BY mard~werks ASCENDING
+               mard~lgort ASCENDING
+               mard~matnr ASCENDING.
+
+      zca_t001w-werks = ''.
+      zca_t001w-pname = ''.
+      zca_marc-matnr = ''.
+
+
+    WHEN OTHERS.
+
+      CLEAR gt_mard.
+
+      " p_node_key가 P001 ~ P006 같은 플랜트 코드라면
+      IF p_node_key(1) EQ 'P'.  " EQ가 가장 빠르다.
+        " WERKS로 필터링해서 데이터 조회
+        SELECT mard~matnr
+               mard~werks
+               mard~lgort
+               mard~lgobe
+               mard~labst
+               mard~speme
+               mard~tstock
+               mard~meins
+               mard~umlme
+               mard~topri
+               mard~waers
+               t001w~pname
+               makt~maktx
+          INTO CORRESPONDING FIELDS OF TABLE gt_display1
+          FROM zca_mard AS mard
+          INNER JOIN zca_t001w AS t001w
+          ON mard~werks = t001w~werks
+          INNER JOIN zca_makt AS makt
+          ON mard~matnr = makt~matnr
+          WHERE makt~spras = '3'
+          AND mard~werks = p_node_key
+          ORDER BY mard~lgort ASCENDING
+                   mard~matnr ASCENDING.
+
+        READ TABLE gt_display1 INTO gs_display1
+          WITH KEY werks = p_node_key.
+
+        READ TABLE gt_t001w INTO gs_t001w
+        WITH KEY werks = p_node_key.
+
+        zca_t001w-werks = p_node_key.
+        zca_t001w-pname = gs_t001w-pname.
+        zca_marc-matnr = ''.
+
+      ELSE.
+
+        DATA: lt_mard LIKE TABLE OF zca_mard,
+              ls_mard LIKE LINE OF  lt_mard.
+
+        DATA: lv_werks TYPE zca_werks,
+              lv_lgort TYPE zca_lgort.
+
+        lv_werks = p_node_key+1(4).
+        lv_lgort = p_node_key+6(4).
+
+        CLEAR gt_display1.
+
+        SELECT mard~matnr
+               mard~werks
+               mard~lgort
+               mard~lgobe
+               mard~labst
+               mard~speme
+               mard~tstock
+               mard~meins
+               mard~umlme
+               mard~topri
+               mard~waers
+               t001w~pname
+               makt~maktx
+          INTO CORRESPONDING FIELDS OF TABLE gt_display1
+          FROM zca_mard AS mard
+          INNER JOIN zca_t001w AS t001w
+          ON mard~werks = t001w~werks
+          INNER JOIN zca_makt AS makt
+          ON mard~matnr = makt~matnr
+          WHERE makt~spras = '3'
+            AND mard~werks = lv_werks
+            AND mard~lgort = lv_lgort
+          ORDER BY mard~matnr ASCENDING.
+
+        READ TABLE gt_t001w INTO gs_t001w WITH KEY werks = lv_werks.
+
+        IF sy-subrc = 0.
+
+          zca_t001w-werks = gs_t001w-werks.
+          zca_t001w-pname = gs_t001w-pname.
+
+        ENDIF.
+
+      ENDIF.
+
+  ENDCASE.
+
+  CALL METHOD go_alv-&gt;get_frontend_layout
+    IMPORTING
+      es_layout = gs_layo.  " Layout
+  gs_layo-cwidth_opt = 'X'.
+  CALL METHOD go_alv-&gt;set_frontend_layout
+    EXPORTING
+      is_layout = gs_layo.                 " Layout
+
+  " ALV 갱신
+  CALL METHOD go_alv-&gt;refresh_table_display.
+
+ENDFORM.
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*& Form event_handeler</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+FORM event_handeler .
+
+  SET HANDLER go_application-&gt;handle_node_double_click FOR go_tree. " 더블클릭 이벤트
+
+ENDFORM.
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*& Form on_hotspot_click</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+FORM on_hotspot_click .
+
+  CREATE OBJECT go_application.  " 객체 생성
+  SET HANDLER go_application-&gt;handler_hotspot_click FOR go_alv.
+
+ENDFORM.
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*& Form create_0110</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+FORM create_0110 .
+
+  CREATE OBJECT go_popup_con     " CONTANIER생성
+    EXPORTING
+      container_name = 'CCON_BATCH'.
+
+  CREATE OBJECT go_popup_alv            " CONTAINER위에 ALV생성
+    EXPORTING
+      i_parent = go_popup_con.   " Parent Container
+
+
+ENDFORM.
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*& Form display_0110</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+FORM display_0110 .
+
+  CALL METHOD go_popup_alv-&gt;set_table_for_first_display
+    EXPORTING
+      is_layout       = gs_layo_2                 " Layout 나중에 디자인할 예정
+    CHANGING
+      it_outtab       = gt_popup                   " 인터널 테이블의 정보를 보여준다.
+      it_fieldcatalog = gt_fieldcat2.
+
+
+ENDFORM.
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*& Form make_fieldcat_0110</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+FORM make_fieldcat_0110 .
+
+  CLEAR gs_fieldcat2.
+  gs_fieldcat2-fieldname = 'CHARG'.
+  gs_fieldcat2-coltext = '배치코드'.
+  gs_fieldcat2-key = 'X'.
+  gs_fieldcat2-col_opt = 2.
+  APPEND gs_fieldcat2 TO gt_fieldcat2. CLEAR gs_fieldcat2.
+
+  " 이전배치
+  CLEAR gs_fieldcat2.
+  gs_fieldcat2-fieldname = 'CHARGFR'.
+  gs_fieldcat2-coltext = '이전 배치번호'.
+  gs_fieldcat2-col_opt = 3.
+  APPEND gs_fieldcat2 TO gt_fieldcat2. CLEAR gs_fieldcat2.
+
+  " 자재코드
+  CLEAR gs_fieldcat2.
+  gs_fieldcat2-fieldname = 'MATNR'.
+  gs_fieldcat2-coltext = '자재코드'.
+  gs_fieldcat2-col_opt = 4.
+  gs_fieldcat2-key = 'X'.
+  APPEND gs_fieldcat2 TO gt_fieldcat2. CLEAR gs_fieldcat2.
+
+  " 자재명
+  CLEAR gs_fieldcat2.
+  gs_fieldcat2-fieldname = 'MAKTX'.
+  gs_fieldcat2-coltext = '자재명'.
+  gs_fieldcat2-col_opt = 5.
+  APPEND gs_fieldcat2 TO gt_fieldcat2. CLEAR gs_fieldcat2.
+
+  " 플랜드ID
+  CLEAR gs_fieldcat2.
+  gs_fieldcat2-fieldname = 'WERKS'.
+  gs_fieldcat2-coltext = '플랜트ID'.
+  gs_fieldcat2-col_opt = 6.
+  APPEND gs_fieldcat2 TO gt_fieldcat2. CLEAR gs_fieldcat2.
+
+  " 플랜트명
+  CLEAR gs_fieldcat2.
+  gs_fieldcat2-fieldname = 'PNAME'.
+  gs_fieldcat2-coltext = '플랜트명'.
+  gs_fieldcat2-col_opt = 7.
+  APPEND gs_fieldcat2 TO gt_fieldcat2. CLEAR gs_fieldcat2.
+
+  " 창고코드
+  CLEAR gs_fieldcat2.
+  gs_fieldcat2-fieldname = 'LGORT'.
+  gs_fieldcat2-coltext = '창고ID'.
+  gs_fieldcat2-col_opt = 8.
+  APPEND gs_fieldcat2 TO gt_fieldcat2. CLEAR gs_fieldcat2.
+
+  " 창고명
+  CLEAR gs_fieldcat2.
+  gs_fieldcat2-fieldname = 'LGOBE'.
+  gs_fieldcat2-coltext = '창고이름'.
+  gs_fieldcat2-col_opt = 9.
+  APPEND gs_fieldcat2 TO gt_fieldcat2. CLEAR gs_fieldcat2.
+
+  " 삭제여부
+  CLEAR gs_fieldcat2.
+  gs_fieldcat2-fieldname = 'LVORM'.
+  gs_fieldcat2-coltext = '삭제여부'.
+  gs_fieldcat2-col_opt = 10.
+  APPEND gs_fieldcat2 TO gt_fieldcat2. CLEAR gs_fieldcat2.
+
+  " 유통기한
+  CLEAR gs_fieldcat2.
+  gs_fieldcat2-fieldname = 'VFDAT'.
+  gs_fieldcat2-coltext = '유통기한'.
+  gs_fieldcat2-col_opt = 11.
+  APPEND gs_fieldcat2 TO gt_fieldcat2. CLEAR gs_fieldcat2.
+
+  " 자재유형
+  CLEAR gs_fieldcat2.
+  gs_fieldcat2-fieldname = 'MATTYPE'.
+  gs_fieldcat2-coltext = '자재유형'.
+  gs_fieldcat2-col_opt = 12.
+  APPEND gs_fieldcat2 TO gt_fieldcat2. CLEAR gs_fieldcat2.
+
+  " 배치수량
+  CLEAR gs_fieldcat2.
+  gs_fieldcat2-fieldname = 'BTQTY'.
+  gs_fieldcat2-qfieldname = 'UNIT'.
+  gs_fieldcat2-coltext = '배치수량'.
+  gs_fieldcat2-col_opt = 13.
+  APPEND gs_fieldcat2 TO gt_fieldcat2. CLEAR gs_fieldcat2.
+
+  " 단위
+  CLEAR gs_fieldcat2.
+  gs_fieldcat2-fieldname = 'UNIT'.
+  gs_fieldcat2-coltext = '단위'.
+  gs_fieldcat2-col_opt = 14.
+  APPEND gs_fieldcat2 TO gt_fieldcat2. CLEAR gs_fieldcat2.
+
+
+ENDFORM.
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*& Form make_lao_0110</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+FORM make_lao_0110 .
+
+  gs_layo_2-cwidth_opt = 'X'. " 열최적화
+  gs_layo_2-zebra      = 'X'. " 얼룩무늬
+
+
+ENDFORM.
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*& Form calculate</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+FORM calculate .
+
+  DATA: lt_makt LIKE TABLE OF zca_makt,
+        ls_makt LIKE LINE OF  lt_makt,
+        lt_mard TYPE TABLE OF zca_mard,
+        ls_mard LIKE LINE OF  lt_mard.
+
+  popup_date = sy-datum.
+  popup_moving = zca_mmt010-btqty.
+
+  SELECT SINGLE matnr
+                werks
+                lgort
+                lgobe
+                labst
+                speme
+                tstock
+                meins
+                umlme
+                topri
+                waers
+    FROM zca_mard INTO CORRESPONDING FIELDS OF ls_mard
+    WHERE lgort = zca_t001l-lgort
+      AND werks = ccon_werks
+      AND matnr = zca_marc-matnr.
+
+  popup_stock = ls_mard-tstock.
+  popup_movest = popup_stock + popup_moving.
+  popup_ki = ls_mard-meins.
+  popup_e  = ls_mard-meins.
+  popup_ip = ls_mard-meins.
+
+
+ENDFORM.
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*& Form MATCHING_PNAME</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+FORM matching_pname .
+
+  IF zca_t001w-werks IS INITIAL AND zca_marc-matnr IS INITIAL AND ccon_werks IS INITIAL.
+
+    MESSAGE e200 DISPLAY LIKE 'I'.  " 플랜트와 자재코드를 입력해주세요
+
+  ELSE.
+
+    DATA ls_makt TYPE zca_makt.
+
+    SELECT
+      matnr
+      werks
+      lgort
+      lgobe
+      labst
+      speme
+      tstock
+      meins
+      umlme
+      topri
+      waers
+      FROM zca_mard
+  INTO CORRESPONDING FIELDS OF TABLE gt_mard.
+
+    SELECT SINGLE matnr
+                  spras
+                  maktx
+      FROM zca_makt
+      INTO CORRESPONDING FIELDS OF ls_makt
+      WHERE matnr = zca_marc-matnr
+        AND spras = '3'.
+
+    popup_matnr = ls_makt-maktx.
+
+    CLEAR gt_t010.
+
+<font color ="#0000FF">* 배치정보 SELECT</font>
+    SELECT
+      010~charg
+      010~chargfr
+      010~matnr
+      makt~maktx
+      010~werks
+      t001w~pname
+      010~lgort
+      t001l~lgobe
+      010~lvorm
+      010~vfdat
+      010~mattype
+      010~btqty
+      010~unit
+      INTO CORRESPONDING FIELDS OF TABLE gt_popup
+      FROM zca_mmt010 AS 010
+      INNER JOIN zca_t001w AS t001w
+      ON 010~werks = t001w~werks
+      INNER JOIN zca_t001l AS t001l
+      ON 010~werks = t001l~werks
+      AND 010~lgort = t001l~lgort
+      INNER JOIN zca_makt AS makt
+      ON makt~matnr = 010~matnr
+      WHERE 010~matnr = zca_marc-matnr
+        AND 010~werks = zca_t001w-werks
+        AND 010~lgort = popup_lgort1
+        AND 010~lvorm = ''
+        AND makt~spras = '3'.
+
+<font color ="#0000FF">* 공장이름 select</font>
+    READ TABLE gt_t001w INTO gs_t001w
+      WITH KEY werks = ccon_werks.
+
+    IF sy-subrc = 0. " READ TABLE이 성공해야 이름 들어감
+      ccon_pname = gs_t001w-pname.
+    ENDIF.
+<font color ="#0000FF">***</font>
+    IF go_popup_alv IS BOUND. " 참조변수에 객체가 연결되어 있어면 BIND되어있다고 본다.
+      " 여기서 열 최적화룰 적어준다. 새로고침도
+      CALL METHOD go_alv-&gt;get_frontend_layout
+        IMPORTING
+          es_layout = gs_layo.  " Layout
+      gs_layo-cwidth_opt = 'X'.
+      CALL METHOD go_alv-&gt;set_frontend_layout
+        EXPORTING
+          is_layout = gs_layo.                 " Layout
+
+      " ALV 갱신
+      CALL METHOD go_alv-&gt;refresh_table_display.
+
+    ENDIF.
+
+    CLEAR: zca_mmt010-btqty, popup_stock, zca_t001l-lgobe, zca_t001l-lgort,
+           popup_movest, popup_moving, popup_date.
+
+    CALL SCREEN 0110 STARTING AT 5 2.
+
+  ENDIF.
+
+ENDFORM.
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*& Form SELECT_BATCH</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+FORM select_batch .
+
+<font color ="#0000FF">* 배치정보 SELECT</font>
+  SELECT
+    charg
+    chargfr
+    matnr
+    werks
+    lgort
+    lvorm
+    vfdat
+    mattype
+    btqty
+    unit
+     FROM zca_mmt010
+    INTO CORRESPONDING FIELDS OF TABLE gt_t010
+    WHERE matnr = zca_marc-matnr
+      AND werks = zca_t001w-werks
+      AND lgort = popup_lgort1.
+
+
+  CALL METHOD go_popup_alv-&gt;refresh_table_display
+    EXPORTING
+      i_soft_refresh = 'X'.  " 부드러운 갱신, 레이아웃 유지
+
+
+ENDFORM.
+<font color ="#0000FF">**&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">**& Form move_stock - Optimized Version</font>
+<font color ="#0000FF">**&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*FORM move_stock .</font>
+<font color ="#0000FF">*</font>
+<font color ="#0000FF">*  DATA: lt_mmt010    TYPE TABLE OF zca_mmt010,</font>
+<font color ="#0000FF">*        lt_mard      TYPE TABLE OF zca_mard,</font>
+<font color ="#0000FF">*        lt_mkpf      TYPE TABLE OF zca_mkpf,</font>
+<font color ="#0000FF">*        lt_mseg      TYPE TABLE OF zca_mseg,</font>
+<font color ="#0000FF">*        ls_mmt010    TYPE zca_mmt010,</font>
+<font color ="#0000FF">*        ls_mard      TYPE zca_mard,</font>
+<font color ="#0000FF">*        ls_mkpf      TYPE zca_mkpf,</font>
+<font color ="#0000FF">*        ls_mseg      TYPE zca_mseg,</font>
+<font color ="#0000FF">*        lv_price     TYPE zca_topri,</font>
+<font color ="#0000FF">*        lv_price2    TYPE zca_topri,</font>
+<font color ="#0000FF">*        lv_price3    TYPE zca_topri,</font>
+<font color ="#0000FF">*        lv_total_qty TYPE zca_btqty,</font>
+<font color ="#0000FF">*        lv_num       TYPE zca_btqty.</font>
+<font color ="#0000FF">*</font>
+<font color ="#0000FF">*  " 배치 이동 처리 함수 호출</font>
+<font color ="#0000FF">*  CALL FUNCTION 'ZCA_MM_GRANT_BATCH'</font>
+<font color ="#0000FF">*    EXPORTING</font>
+<font color ="#0000FF">*      iv_matnr   = zca_marc-matnr</font>
+<font color ="#0000FF">*      iv_btqty   = zca_mmt010-btqty</font>
+<font color ="#0000FF">*      iv_werksfr = zca_t001w-werks</font>
+<font color ="#0000FF">*      iv_lgortfr = popup_lgort1</font>
+<font color ="#0000FF">*      iv_werksto = ccon_werks</font>
+<font color ="#0000FF">*      iv_lgortto = zca_t001l-lgort.</font>
+<font color ="#0000FF">*</font>
+<font color ="#0000FF">*  " 배치 데이터 전체 조회</font>
+<font color ="#0000FF">*  SELECT * FROM zca_mmt010</font>
+<font color ="#0000FF">*    INTO TABLE lt_mmt010</font>
+<font color ="#0000FF">*    WHERE matnr = zca_marc-matnr</font>
+<font color ="#0000FF">*      AND lvorm &lt;&gt; 'X'.</font>
+<font color ="#0000FF">*</font>
+<font color ="#0000FF">*  " 기존 재고량 불러오기</font>
+<font color ="#0000FF">*  SELECT SINGLE * FROM zca_mard</font>
+<font color ="#0000FF">*    INTO ls_mard</font>
+<font color ="#0000FF">*    WHERE matnr = zca_marc-matnr</font>
+<font color ="#0000FF">*      AND werks = zca_t001w-werks</font>
+<font color ="#0000FF">*      AND lgort = popup_lgort1.</font>
+<font color ="#0000FF">*</font>
+<font color ="#0000FF">*  gs_display1-tstock = ls_mard-tstock.</font>
+<font color ="#0000FF">*  lv_price2 = ls_mard-topri.</font>
+<font color ="#0000FF">*  CLEAR: ls_mard.</font>
+<font color ="#0000FF">*</font>
+<font color ="#0000FF">*  " FROM 쪽 재고 차감</font>
+<font color ="#0000FF">*  LOOP AT lt_mmt010 INTO ls_mmt010 WHERE lgort = popup_lgort1 AND werks = zca_t001w-werks AND matnr = zca_marc-matnr.</font>
+<font color ="#0000FF">*    ls_mard-matnr = ls_mmt010-matnr.</font>
+<font color ="#0000FF">*    ls_mard-werks = ls_mmt010-werks.</font>
+<font color ="#0000FF">*    ls_mard-lgort = ls_mmt010-lgort.</font>
+<font color ="#0000FF">*    IF ls_mmt010-lgort = 'SL04'.</font>
+<font color ="#0000FF">*      ls_mard-speme += ls_mmt010-btqty.</font>
+<font color ="#0000FF">*    ELSE.</font>
+<font color ="#0000FF">*      ls_mard-labst += ls_mmt010-btqty.</font>
+<font color ="#0000FF">*    ENDIF.</font>
+<font color ="#0000FF">*  ENDLOOP.</font>
+<font color ="#0000FF">*</font>
+<font color ="#0000FF">*  ls_mard-tstock = ls_mard-labst + ls_mard-speme.</font>
+<font color ="#0000FF">*  ls_mard-topri = lv_price2 * ls_mard-tstock / gs_display1-tstock.</font>
+<font color ="#0000FF">*  lv_price = lv_price2 - ls_mard-topri.</font>
+<font color ="#0000FF">*  ls_mard-aenam = sy-uname.</font>
+<font color ="#0000FF">*  ls_mard-aedat = sy-datum.</font>
+<font color ="#0000FF">*  ls_mard-aezet = sy-uzeit.</font>
+<font color ="#0000FF">*</font>
+<font color ="#0000FF">*  UPDATE zca_mard SET labst = ls_mard-labst</font>
+<font color ="#0000FF">*                      speme = ls_mard-speme</font>
+<font color ="#0000FF">*                      tstock = ls_mard-tstock</font>
+<font color ="#0000FF">*                      topri = ls_mard-topri</font>
+<font color ="#0000FF">*                      aenam = ls_mard-aenam</font>
+<font color ="#0000FF">*                      aedat = ls_mard-aedat</font>
+<font color ="#0000FF">*                      aezet = ls_mard-aezet</font>
+<font color ="#0000FF">*    WHERE matnr = ls_mard-matnr</font>
+<font color ="#0000FF">*      AND werks = ls_mard-werks</font>
+<font color ="#0000FF">*      AND lgort = ls_mard-lgort.</font>
+<font color ="#0000FF">*</font>
+<font color ="#0000FF">*  IF sy-subrc &lt;&gt; 0.</font>
+<font color ="#0000FF">*</font>
+<font color ="#0000FF">*  ENDIF.</font>
+<font color ="#0000FF">*</font>
+<font color ="#0000FF">*  " TO 쪽 재고 추가</font>
+<font color ="#0000FF">*  CLEAR ls_mard.</font>
+<font color ="#0000FF">*  SELECT SINGLE * FROM zca_mard</font>
+<font color ="#0000FF">*  INTO ls_mard</font>
+<font color ="#0000FF">*  WHERE matnr = zca_marc-matnr</font>
+<font color ="#0000FF">*    AND werks = ccon_werks</font>
+<font color ="#0000FF">*    AND lgort = zca_t001l-lgort .</font>
+<font color ="#0000FF">*  LOOP AT lt_mmt010 INTO ls_mmt010 WHERE lgort = zca_t001l-lgort AND werks = ccon_werks.</font>
+<font color ="#0000FF">*    ls_mard-matnr = ls_mmt010-matnr.</font>
+<font color ="#0000FF">*    ls_mard-werks = ccon_werks.</font>
+<font color ="#0000FF">*    ls_mard-lgort = zca_t001l-lgort.</font>
+<font color ="#0000FF">*    IF ls_mmt010-lgort = 'SL04'.</font>
+<font color ="#0000FF">*      ls_mard-speme += ls_mmt010-btqty.</font>
+<font color ="#0000FF">*    ELSE.</font>
+<font color ="#0000FF">*      ls_mard-labst += ls_mmt010-btqty.</font>
+<font color ="#0000FF">*    ENDIF.</font>
+<font color ="#0000FF">*    ls_mard-tstock += ls_mmt010-btqty.</font>
+<font color ="#0000FF">*    ls_mard-meins = ls_mmt010-unit.</font>
+<font color ="#0000FF">*  ENDLOOP.</font>
+<font color ="#0000FF">*</font>
+<font color ="#0000FF">*  ls_mard-topri += lv_price.    " 기존 가격을 더해야됌</font>
+<font color ="#0000FF">*  ls_mard-aenam = sy-uname.</font>
+<font color ="#0000FF">*  ls_mard-aedat = sy-datum.</font>
+<font color ="#0000FF">*  ls_mard-aezet = sy-uzeit.</font>
+<font color ="#0000FF">*</font>
+<font color ="#0000FF">*  UPDATE zca_mard SET labst = ls_mard-labst</font>
+<font color ="#0000FF">*                      speme = ls_mard-speme</font>
+<font color ="#0000FF">*                      tstock = ls_mard-tstock</font>
+<font color ="#0000FF">*                      topri = ls_mard-topri</font>
+<font color ="#0000FF">*                      aenam = ls_mard-aenam</font>
+<font color ="#0000FF">*                      aedat = ls_mard-aedat</font>
+<font color ="#0000FF">*                      aezet = ls_mard-aezet</font>
+<font color ="#0000FF">*    WHERE matnr = zca_marc-matnr</font>
+<font color ="#0000FF">*      AND werks = ccon_werks</font>
+<font color ="#0000FF">*      AND lgort = zca_t001l-lgort.</font>
+<font color ="#0000FF">*</font>
+<font color ="#0000FF">*  IF sy-subrc &lt;&gt; 0.</font>
+<font color ="#0000FF">*    ls_mard-ernam = sy-uname.</font>
+<font color ="#0000FF">*    ls_mard-erdat = sy-datum.</font>
+<font color ="#0000FF">*    ls_mard-erzet = sy-uzeit.</font>
+<font color ="#0000FF">*    INSERT zca_mard FROM ls_mard.</font>
+<font color ="#0000FF">*  ENDIF.</font>
+<font color ="#0000FF">*</font>
+<font color ="#0000FF">*  " 자재문서 생성 - HEADER</font>
+<font color ="#0000FF">*  CALL FUNCTION 'NUMBER_GET_NEXT'</font>
+<font color ="#0000FF">*    EXPORTING</font>
+<font color ="#0000FF">*      nr_range_nr = '01'</font>
+<font color ="#0000FF">*      object      = 'ZCA_MBLNR'</font>
+<font color ="#0000FF">*    IMPORTING</font>
+<font color ="#0000FF">*      number      = ls_mkpf-mblnr.</font>
+<font color ="#0000FF">*</font>
+<font color ="#0000FF">*  ls_mkpf-mblnr = |MD{ ls_mkpf-mblnr }|.</font>
+<font color ="#0000FF">*  ls_mkpf-mjahr = sy-datum(4).</font>
+<font color ="#0000FF">*  ls_mkpf-werks = zca_marc-werks.</font>
+<font color ="#0000FF">*  ls_mkpf-mdart = 'WL'.</font>
+<font color ="#0000FF">*  ls_mkpf-budat = sy-datum.</font>
+<font color ="#0000FF">*  ls_mkpf-ernam = sy-uname.</font>
+<font color ="#0000FF">*  ls_mkpf-erdat = sy-datum.</font>
+<font color ="#0000FF">*  ls_mkpf-erzet = sy-uzeit.</font>
+<font color ="#0000FF">*  INSERT zca_mkpf FROM ls_mkpf.</font>
+<font color ="#0000FF">*</font>
+<font color ="#0000FF">*  " 자재문서 생성 - ITEM</font>
+<font color ="#0000FF">*  lv_num = zca_mmt010-btqty.</font>
+<font color ="#0000FF">*  LOOP AT lt_mmt010 INTO ls_mmt010 WHERE lgort = zca_t001l-lgort AND werks = ccon_werks.</font>
+<font color ="#0000FF">*    CLEAR ls_mseg.</font>
+<font color ="#0000FF">*    ls_mseg-mblnr = ls_mkpf-mblnr.</font>
+<font color ="#0000FF">*    ls_mseg-mjahr = sy-datum(4).</font>
+<font color ="#0000FF">*    ls_mseg-matnr = zca_marc-matnr.</font>
+<font color ="#0000FF">*    ls_mseg-charg = ls_mmt010-charg.</font>
+<font color ="#0000FF">*    ls_mseg-bwart = '301'.</font>
+<font color ="#0000FF">*    ls_mseg-plantfr = zca_marc-werks.</font>
+<font color ="#0000FF">*    ls_mseg-plantto = ccon_werks.</font>
+<font color ="#0000FF">*    ls_mseg-meinh = ls_mmt010-unit.</font>
+<font color ="#0000FF">*    ls_mseg-ernam = sy-uname.</font>
+<font color ="#0000FF">*    ls_mseg-erdat = sy-datum.</font>
+<font color ="#0000FF">*    ls_mseg-erzet = sy-uzeit.</font>
+<font color ="#0000FF">*</font>
+<font color ="#0000FF">*    IF ls_mmt010-btqty &lt; lv_num.</font>
+<font color ="#0000FF">*      ls_mseg-menge = ls_mmt010-btqty.</font>
+<font color ="#0000FF">*      lv_num -= ls_mmt010-btqty.</font>
+<font color ="#0000FF">*    ELSE.</font>
+<font color ="#0000FF">*      ls_mseg-menge = lv_num.</font>
+<font color ="#0000FF">*      APPEND ls_mseg TO lt_mseg.</font>
+<font color ="#0000FF">*      EXIT.</font>
+<font color ="#0000FF">*    ENDIF.</font>
+<font color ="#0000FF">*</font>
+<font color ="#0000FF">*    APPEND ls_mseg TO lt_mseg.</font>
+<font color ="#0000FF">*  ENDLOOP.</font>
+<font color ="#0000FF">*</font>
+<font color ="#0000FF">*  INSERT zca_mseg FROM TABLE lt_mseg.</font>
+<font color ="#0000FF">*  CLEAR: lt_mseg, ls_mseg, lt_mkpf, ls_mkpf.</font>
+<font color ="#0000FF">*</font>
+<font color ="#0000FF">*ENDFORM.</font>
+
+
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*& Form move_stock</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+FORM move_stock .
+
+  DATA: lt_mard   TYPE TABLE OF zca_mard,
+        ls_mard   LIKE LINE OF  lt_mard,
+        lt_marc   TYPE TABLE OF zca_marc,
+        ls_marc   LIKE LINE OF  lt_mard,
+        lt_010    TYPE TABLE OF zca_mmt010,
+        ls_010    LIKE LINE OF  lt_010,
+        lt_mkpf   TYPE TABLE OF zca_mkpf,
+        ls_mkpf   LIKE LINE OF  lt_mkpf,
+        lt_mseg   TYPE TABLE OF zca_mseg,
+        ls_mseg   LIKE LINE OF  lt_mseg,
+        lv_price  TYPE zca_topri,
+        lv_price2 TYPE zca_topri.
+
+
+  SELECT charg
+         chargfr
+         matnr
+         werks
+         lgort
+         lvorm
+         vfdat
+         mattype
+         btqty
+         unit
+    FROM zca_mmt010
+    INTO CORRESPONDING FIELDS OF TABLE lt_010.
+
+  " 배치를 다룬다.
+
+  call function <a href ="zca_mm_grant_batch/zca_mm_grant_batch.html">'ZCA_MM_GRANT_BATCH'</a>
+    EXPORTING
+      iv_matnr   = zca_marc-matnr      " 자재코드
+      iv_btqty   = zca_mmt010-btqty    " 이동수량
+      iv_werksfr = zca_t001w-werks     " 출발플랜트
+      iv_lgortfr = popup_lgort1        " 출발창고 (저장 위치)
+      iv_werksto = ccon_werks          " 도착플랜트
+      iv_lgortto = zca_t001l-lgort.    " 도착창고 (저장 위치)
+
+  IF sy-subrc = 0.
+    COMMIT WORK.
+  ELSE.
+    ROLLBACK WORK.
+    MESSAGE '재고 이동중 오류가 발생했습니다.' TYPE 'W' DISPLAY LIKE 'I'.
+  ENDIF.
+
+<font color ="#0000FF">* batch table보고 mard수정하기</font>
+
+<font color ="#0000FF">* mard에서 빼는 로직</font>
+  IF zca_t001l-lgort &lt;&gt; 'SL04'.       " 폐기가 아닌경우 배치로 이동한다.
+    SELECT charg    " 창고 플랜트 자재코드 기반으로 배치선택
+           chargfr
+           matnr
+           werks
+           lgort
+           lvorm
+           vfdat
+           mattype
+           btqty
+           unit
+      FROM zca_mmt010
+      INTO CORRESPONDING FIELDS OF TABLE lt_010
+      WHERE matnr = zca_marc-matnr
+        AND lgort = popup_lgort1
+        AND werks = zca_t001w+3(4)
+        AND lvorm &lt;&gt; 'X'.
+
+    CLEAR ls_mard.
+
+    SELECT SINGLE * FROM zca_mard
+  INTO CORRESPONDING FIELDS OF ls_mard
+  WHERE matnr = zca_marc-matnr
+    AND werks = zca_t001w-werks
+    AND lgort = popup_lgort1.
+
+    CLEAR lv_price2.
+    gs_display1-tstock = ls_mard-tstock.
+    lv_price2 = ls_mard-topri.
+    CLEAR ls_mard.
+
+    LOOP AT lt_010 INTO ls_010.   " 선택된 배치 테이블을 더해
+
+      CLEAR ls_mseg.
+
+      ls_mard-matnr = ls_010-matnr.
+      ls_mard-werks = ls_010-werks.
+      ls_mard-lgort = ls_010-lgort.
+
+      IF ls_010-lgort = 'SL04'.
+        ls_mard-speme += ls_010-btqty.
+      ELSE.
+        ls_mard-labst += ls_010-btqty.
+      ENDIF.
+
+    ENDLOOP.
+
+    ls_mard-tstock = ls_mard-labst + ls_mard-speme.
+    ls_mard-topri = lv_price2 * ls_mard-tstock / gs_display1-tstock.
+    lv_price = lv_price2 - ls_mard-topri.
+    ls_mard-aenam = sy-uname.
+    ls_mard-aedat = sy-datum.
+    ls_mard-aezet = sy-uzeit.
+
+
+    UPDATE zca_mard SET labst = ls_mard-labst
+                        speme = ls_mard-speme
+                        tstock = ls_mard-tstock
+                        topri = ls_mard-topri
+                        aenam = ls_mard-aenam
+                        aedat = ls_mard-aedat
+                        aezet = ls_mard-aezet
+                        WHERE matnr EQ ls_010-matnr
+                          AND werks EQ ls_010-werks
+                          AND lgort EQ ls_010-lgort.
+
+
+<font color ="#0000FF">* mard에 더하는 로직</font>
+    REFRESH lt_010.
+
+    SELECT charg
+     chargfr
+     matnr
+     werks
+     lgort
+     lvorm
+     vfdat
+     mattype
+     btqty
+     unit
+FROM zca_mmt010
+INTO CORRESPONDING FIELDS OF TABLE lt_010
+WHERE matnr = zca_marc-matnr
+  AND lgort = zca_t001l-lgort
+  AND werks = ccon_werks
+  AND lvorm &lt;&gt; 'X'.
+
+
+    CLEAR ls_mard.
+
+    ls_mard-matnr = ls_010-matnr.
+    ls_mard-werks = ccon_werks.
+    ls_mard-lgort = zca_t001l-lgort.
+
+    LOOP AT lt_010 INTO ls_010.
+
+      IF ls_010-lgort = 'SL04'.
+        ls_mard-speme += ls_010-btqty.
+      ELSE.
+        ls_mard-labst += ls_010-btqty.
+      ENDIF.
+      ls_mard-tstock += ls_010-btqty.
+      ls_mard-meins = ls_010-unit.
+    ENDLOOP.
+
+    ls_mard-topri += lv_price.
+    ls_mard-aenam = sy-uname.
+    ls_mard-aedat = sy-datum.
+    ls_mard-aezet = sy-uzeit.
+
+<font color ="#0000FF">*    UPDATE zca_mard FROM ls_mard .</font>
+    UPDATE zca_mard SET labst = ls_mard-labst
+                        speme = ls_mard-speme
+                        tstock = ls_mard-tstock
+                        topri = ls_mard-topri
+                        aenam = ls_mard-aenam
+                        aedat = ls_mard-aedat
+                        aezet = ls_mard-aezet
+                        WHERE matnr EQ zca_marc-matnr
+                          AND werks EQ ccon_werks
+                          AND lgort EQ zca_t001l-lgort.
+
+    IF sy-subrc &lt;&gt; 0.
+      ls_mard-ernam = sy-uname.
+      ls_mard-erdat = sy-datum.
+      ls_mard-erzet = sy-uzeit.
+
+      INSERT zca_mard FROM ls_mard.
+    ENDIF.
+
+
+  ELSE. " 폐기창고로 들어가는 경우
+
+    " FROM 창고만 업데이트
+    SELECT
+           charg    " 창고 플랜트 자재코드 기반으로 배치선택
+           chargfr
+           matnr
+           werks
+           lgort
+           lvorm
+           vfdat
+           mattype
+           btqty
+           unit
+      INTO CORRESPONDING FIELDS OF TABLE lt_010
+            FROM zca_mmt010
+      WHERE matnr = zca_marc-matnr
+        AND lgort = popup_lgort1
+        AND werks = zca_t001w+3(4)
+        AND lvorm &lt;&gt; 'X'.
+
+    SELECT SINGLE *
+      INTO CORRESPONDING FIELDS OF ls_mard
+      FROM zca_mard
+      WHERE matnr = zca_marc-matnr
+        AND lgort = popup_lgort1
+        AND werks = zca_t001w+3(4).
+
+    CLEAR: ls_mard-speme, ls_mard-labst.
+
+    LOOP AT lt_010 INTO ls_010.   " 선택된 배치 테이블을 더해
+
+      CLEAR ls_mseg.
+
+      ls_mard-matnr = ls_010-matnr.
+      ls_mard-werks = ls_010-werks.
+      ls_mard-lgort = ls_010-lgort.
+
+
+      IF ls_010-lgort = 'SL04'.
+        ls_mard-speme += ls_010-btqty.
+      ELSE.
+        ls_mard-labst += ls_010-btqty.
+      ENDIF.
+
+    ENDLOOP.
+
+    ls_mard-tstock = ls_mard-labst + ls_mard-speme.
+    ls_mard-topri = ls_mard-topri * ls_mard-tstock / gs_display1-tstock.
+    lv_price = ls_mard-topri.
+    ls_mard-aenam = sy-uname.
+    ls_mard-aedat = sy-datum.
+    ls_mard-aezet = sy-uzeit.
+
+    UPDATE zca_mard SET labst = ls_mard-labst
+                        speme = ls_mard-speme
+                        tstock = ls_mard-tstock
+                        topri = ls_mard-topri
+                        aenam = ls_mard-aenam
+                        aedat = ls_mard-aedat
+                        aezet = ls_mard-aezet
+                        WHERE matnr EQ ls_010-matnr
+                          AND werks EQ ls_010-werks
+                          AND lgort EQ ls_010-lgort.
+
+  ENDIF.
+
+  CLEAR: lt_010,ls_010.
+
+<font color ="#0000FF">* 가용수량 자재문서 생성 - header 먼저</font>
+  CALL FUNCTION 'NUMBER_GET_NEXT'
+    EXPORTING
+      nr_range_nr = '01'               " Number range number
+      object      = 'ZCA_MBLNR'      " Name of number range object
+    IMPORTING
+      number      = ls_mkpf-mblnr.   " free number
+
+  ls_mkpf-mblnr = |MD{ ls_mkpf-mblnr }|.
+  ls_mkpf-mjahr = sy-datum(4).
+  ls_mkpf-werks = zca_marc-werks.
+  ls_mkpf-mdart = 'WL'.
+  ls_mkpf-budat = sy-datum.
+  ls_mkpf-ernam = sy-uname.
+  ls_mkpf-erdat = sy-datum.
+  ls_mkpf-erzet = sy-uzeit.
+  ls_mkpf-matnr = zca_marc-matnr.
+
+  INSERT zca_mkpf FROM ls_mkpf.
+
+  SELECT
+    charg
+    chargfr
+    matnr
+    werks
+    lgort
+    lvorm
+    vfdat
+    mattype
+    btqty
+    unit
+    FROM zca_mmt010
+    INTO CORRESPONDING FIELDS OF TABLE lt_010
+    WHERE matnr = zca_marc-matnr
+      AND lvorm &lt;&gt; 'X'
+      AND lgort = zca_t001l-lgort
+  ORDER BY charg DESCENDING.
+
+  DATA lv_num TYPE zca_btqty.
+  lv_num = zca_mmt010-btqty.
+
+  LOOP AT lt_010 INTO ls_010.
+
+    " 자재문서 아이템
+    ls_mseg-mblnr = ls_mkpf-mblnr.
+    ls_mseg-mjahr = sy-datum(4).
+    ls_mseg-matnr = zca_marc-matnr.
+    ls_mseg-charg = ls_010-charg.
+    ls_mseg-bwart = '301'.            " 이동유형
+    ls_mseg-plantfr = zca_marc-werks.
+    ls_mseg-plantto = ccon_werks.
+    ls_mseg-meinh = ls_010-unit.
+    ls_mseg-ernam = sy-uname.
+    ls_mseg-erdat = sy-datum.
+    ls_mseg-erzet = sy-uzeit.
+
+    IF ls_010-btqty &lt; lv_num.
+      ls_mseg-menge = ls_010-btqty.
+      lv_num -= ls_010-btqty.
+    ELSE.
+      ls_mseg-menge = lv_num.
+      APPEND ls_mseg TO lt_mseg.
+      EXIT.
+
+    ENDIF.
+
+    APPEND ls_mseg TO lt_mseg.
+
+  ENDLOOP.
+
+  INSERT zca_mseg FROM TABLE lt_mseg.
+
+  CLEAR: lt_mseg, ls_mseg, lt_mkpf, ls_mkpf.
+<font color ="#0000FF">* 자재문서 생성 헤더는 하나 아이템은 여러개 (배치마다)</font>
+
+ENDFORM.
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*& Form refresh_screen</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+FORM refresh_screen .
+
+  CALL METHOD go_alv-&gt;refresh_table_display.
+  CALL METHOD go_popup_alv-&gt;refresh_table_display.
+
+  MESSAGE i201. " 입고가 완료됐습니다!
+
+  CLEAR: zca_marc, zca_t001w, popup_date,popup_moving,zca_t001l-lgort,popup_movest,ccon_werks.
+  CLEAR: zca_mmt010-btqty, popup_stock, zca_t001l-lgobe.
+
+  LEAVE TO SCREEN 0.
+
+ENDFORM.
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*& Form check_input</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+FORM check_input .
+
+  DATA ls_mard TYPE zca_mard.
+
+  SELECT SINGLE * FROM zca_mard INTO CORRESPONDING FIELDS OF ls_mard
+    WHERE werks = zca_t001w-werks
+      AND lgort = popup_lgort1.
+
+
+ENDFORM.
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*& Form request_stock_transfer</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+FORM request_stock_transfer .
+
+  DATA: lt_180   TYPE TABLE OF zca_sdt180,  " 출하지시
+        ls_180   LIKE LINE OF  lt_180,
+        lt_090   TYPE TABLE OF zca_sdt090,  " 판매오더
+        ls_090   LIKE LINE OF  lt_090,
+        lv_lgort TYPE zca_lgort.
+
+  DATA: lt_mard   TYPE TABLE OF zca_mard,
+        ls_mard   LIKE LINE OF  lt_mard,
+        lt_marc   TYPE TABLE OF zca_marc,
+        ls_marc   LIKE LINE OF  lt_mard,
+        lt_010    TYPE TABLE OF zca_mmt010,
+        ls_010    LIKE LINE OF  lt_010,
+        lt_mkpf   TYPE TABLE OF zca_mkpf,
+        ls_mkpf   LIKE LINE OF  lt_mkpf,
+        lt_mseg   TYPE TABLE OF zca_mseg,
+        ls_mseg   LIKE LINE OF  lt_mseg,
+        lv_price  TYPE zca_topri,
+        l_mard    LIKE LINE OF lt_mard,
+        lv_price2 TYPE zca_topri,
+        lv_price3 TYPE zca_topri,
+        lv_flag   TYPE abap_bool.
+
+  DATA: BEGIN OF ls_comp,
+          matnr TYPE zca_matnr,
+          btqty TYPE zca_btqty,
+        END OF ls_comp.
+  DATA: lt_comp LIKE TABLE OF ls_comp.
+
+  " 여기는 유효성 검증
+  SELECT * FROM zca_sdt180                      " 출하지시 테이블에서 읽어온다.
+    INTO CORRESPONDING FIELDS OF TABLE lt_180
+    WHERE status11 &lt;&gt; 'X'.
+
+  IF lt_180 IS INITIAL.                          " 출하지시가 없으면 메세지 출력
+    MESSAGE e203 DISPLAY LIKE 'I'.              " 이동요청이 없습니다.
+    LEAVE TO SCREEN 0.
+  ENDIF.
+
+<font color ="#0000FF">*  SELECT * FROM zca_mard  " 최초 수량 비교용</font>
+<font color ="#0000FF">*    INTO CORRESPONDING FIELDS OF TABLE lt_mard</font>
+<font color ="#0000FF">*    WHERE werks = 'P001' AND lgort &lt;&gt; 'SL04'.</font>
+<font color ="#0000FF">*</font>
+<font color ="#0000FF">*</font>
+<font color ="#0000FF">*  FIELD-SYMBOLS: &lt;fs_comp&gt; LIKE ls_comp.</font>
+<font color ="#0000FF">*</font>
+<font color ="#0000FF">*  " 출하지시 테이블에서 조건에 맞는 데이터 조회</font>
+<font color ="#0000FF">*  SELECT * FROM zca_sdt090</font>
+<font color ="#0000FF">*    INTO TABLE lt_090</font>
+<font color ="#0000FF">*    FOR ALL ENTRIES IN lt_180</font>
+<font color ="#0000FF">*    WHERE sales_no = lt_180-sales_no.</font>
+<font color ="#0000FF">*</font>
+<font color ="#0000FF">*  " 재고 누적 집계</font>
+<font color ="#0000FF">*  LOOP AT lt_090 INTO ls_090.</font>
+<font color ="#0000FF">*</font>
+<font color ="#0000FF">*    READ TABLE lt_comp ASSIGNING &lt;fs_comp&gt; WITH KEY matnr = ls_090-matnr.</font>
+<font color ="#0000FF">*</font>
+<font color ="#0000FF">*    IF sy-subrc = 0.</font>
+<font color ="#0000FF">*      &lt;fs_comp&gt;-btqty = &lt;fs_comp&gt;-btqty + ls_090-deliv_qty.</font>
+<font color ="#0000FF">*    ELSE.</font>
+<font color ="#0000FF">*      CLEAR ls_comp.</font>
+<font color ="#0000FF">*      ls_comp-matnr = ls_090-matnr.</font>
+<font color ="#0000FF">*      ls_comp-btqty = ls_090-deliv_qty.</font>
+<font color ="#0000FF">*      APPEND ls_comp TO lt_comp.</font>
+<font color ="#0000FF">*    ENDIF.</font>
+<font color ="#0000FF">*</font>
+<font color ="#0000FF">*  ENDLOOP.</font>
+
+
+
+
+<font color ="#0000FF">*  LOOP AT lt_comp INTO ls_comp.</font>
+<font color ="#0000FF">*</font>
+<font color ="#0000FF">*    READ TABLE lt_MARD INTO ls_mard WITH KEY matnr = ls_comp-matnr.</font>
+<font color ="#0000FF">*</font>
+<font color ="#0000FF">*    IF ls_mard-labst &lt; ls_comp-btqty.</font>
+<font color ="#0000FF">*</font>
+<font color ="#0000FF">*      MESSAGE '재고가 충분하지 않습니다!!' TYPE 'W' DISPLAY LIKE 'I'.</font>
+<font color ="#0000FF">*</font>
+<font color ="#0000FF">*      LEAVE TO SCREEN 0.</font>
+<font color ="#0000FF">*</font>
+<font color ="#0000FF">*    ENDIF.</font>
+<font color ="#0000FF">*</font>
+<font color ="#0000FF">*  ENDLOOP.</font>
+
+  CLEAR: ls_mard, lt_mard.
+
+  LOOP AT lt_180 INTO ls_180.
+
+    SELECT * FROM zca_sdt090                    " 출하지시 테이블에서 오더를 보고 읽어온다.
+      INTO CORRESPONDING FIELDS OF TABLE lt_090
+      WHERE sales_no = ls_180-sales_no.
+
+    LOOP AT lt_090 INTO ls_090.                 " 출하지시에 대한 판매오더를 읽어온다.
+
+      IF ls_090-matnr+3(1) = '4'.               " 완제품일경우 SL01 반제품일경우 SL02에서 출고
+        lv_lgort = 'SL01'.
+      ELSEIF ls_090-matnr+3(1) = '3'.
+        lv_lgort = 'SL02'.
+      ENDIF.
+
+
+      call function <a href ="zca_mm_grant_batch/zca_mm_grant_batch.html">'ZCA_MM_GRANT_BATCH'</a>  " 여기서 배치로 이동
+        EXPORTING
+          iv_matnr     = ls_090-matnr        " 자재코드
+          iv_btqty     = ls_090-deliv_qty    " 이동수량
+          iv_werksfr   = 'P001'              " 출발플랜트
+          iv_lgortfr   = lv_lgort            " 출발창고 (저장 위치)
+          iv_werksto   = ls_180-werks        " 도착플랜트
+          iv_lgortto   = 'SL01'              " 도착창고 (저장 위치)
+        IMPORTING
+          ev_processed = lv_flag.
+
+      IF lV_FLAG = abap_false.
+
+        MESSAGE '충분한 재고가 없습니다.' TYPE 'W' DISPLAY LIKE 'I'.
+        ROLLBACK WORK.
+        LEAVE TO SCREEN 0.
+
+        EXIT.
+
+      ENDIF.
+
+<font color ="#0000FF">*--------------------------------------------------------------------*</font>
+      SELECT charg    " 창고 플랜트 자재코드 기반으로 배치선택
+             chargfr
+             matnr
+             werks
+             lgort
+             lvorm
+             vfdat
+             mattype
+             btqty
+             unit
+        FROM zca_mmt010
+        INTO CORRESPONDING FIELDS OF TABLE lt_010
+        WHERE matnr = ls_090-matnr
+          AND lgort = lv_lgort
+          AND werks = 'P001'
+          AND lvorm &lt;&gt; 'X'.
+
+      CLEAR ls_mard.
+
+      SELECT SINGLE * FROM zca_mard         " 출발 플랜트에서 배치를 읽어온다.
+INTO CORRESPONDING FIELDS OF ls_mard
+WHERE matnr = ls_090-matnr
+AND werks = 'P001'
+AND lgort = lv_lgort.
+
+      CLEAR lV_price2.
+      gs_display1-tstock = ls_mard-tstock.    " 출발플랜트의 가격을 저장한다.
+      lv_price2 = ls_mard-topri.
+      CLEAR ls_mard.
+
+      LOOP AT lt_010 INTO ls_010.   " 해당 플랜트의 배치 테이블을 더한다.
+
+        CLEAR ls_mseg.
+
+        ls_mard-matnr = ls_010-matnr.
+        ls_mard-werks = ls_010-werks.
+        ls_mard-lgort = ls_010-lgort.
+
+        ls_mard-labst += ls_010-btqty.
+
+      ENDLOOP.
+
+      CLEAR lv_price.
+      ls_mard-tstock = ls_mard-labst + ls_mard-speme.    " 배치의 수량을 모두 더함
+      ls_mard-topri = lv_price2 * ls_mard-tstock / gs_display1-tstock. " 가격 = 기존가격 * 총재고 / 원래 재고
+      lv_price = lv_price2 - ls_mard-topri.              " 빠진가격을 저장 (입고플랜트에 더할 용도)
+      ls_mard-aenam = sy-uname.
+      ls_mard-aedat = sy-datum.
+      ls_mard-aezet = sy-uzeit.
+
+      UPDATE zca_mard SET labst = ls_mard-labst
+                          speme = ls_mard-speme
+                          tstock = ls_mard-tstock
+                          topri = ls_mard-topri
+                          aenam = ls_mard-aenam
+                          aedat = ls_mard-aedat
+                          aezet = ls_mard-aezet
+                          WHERE matnr EQ ls_010-matnr
+                            AND werks EQ ls_010-werks
+                            AND lgort EQ ls_010-lgort.
+
+
+<font color ="#0000FF">* mard에 더하는 로직</font>
+      REFRESH lt_010.
+
+      SELECT charg
+       chargfr
+       matnr
+       werks
+       lgort
+       lvorm
+       vfdat
+       mattype
+       btqty
+       unit
+  FROM zca_mmt010
+  INTO CORRESPONDING FIELDS OF TABLE lt_010     " SL01창고로만 입고가 가능하다.
+  WHERE matnr = ls_090-matnr
+    AND lgort = 'SL01'
+    AND werks = ls_180-werks
+    AND lvorm &lt;&gt; 'X'.
+
+      CLEAR ls_mard.
+      SELECT SINGLE * FROM zca_mard             " 배치를 선택한다.
+        INTO ls_mard
+        WHERE matnr = ls_090-matnr
+    AND lgort = 'SL01'
+    AND werks = ls_180-werks.
+      lv_price3 = ls_mard-topri.
+      CLEAR ls_mard.
+
+      ls_mard-matnr = ls_090-matnr.
+      ls_mard-werks = ls_180-werks.
+      ls_mard-lgort = 'SL01'.
+
+      LOOP AT lt_010 INTO ls_010.                 " 선택된 배치의 수량을 더한다.
+
+        ls_mard-labst += ls_010-btqty.
+        ls_mard-tstock += ls_010-btqty.
+        ls_mard-meins = ls_010-unit.
+
+      ENDLOOP.
+
+      lv_price3 += lv_price.                      " 위에서 빼 준 가격을 더한다.
+      ls_mard-topri = lv_price3.
+      ls_mard-aenam = sy-uname.
+      ls_mard-aedat = sy-datum.
+      ls_mard-aezet = sy-uzeit.
+
+      UPDATE zca_mard SET labst = ls_mard-labst
+                          speme = ls_mard-speme
+                          tstock = ls_mard-tstock
+                          topri = ls_mard-topri
+                          aenam = ls_mard-aenam
+                          aedat = ls_mard-aedat
+                          aezet = ls_mard-aezet
+                          WHERE matnr EQ ls_090-matnr
+                            AND werks EQ ls_180-werks
+                            AND lgort EQ 'SL01'.
+
+      IF sy-subrc &lt;&gt; 0.
+        ls_mard-ernam = sy-uname.
+        ls_mard-erdat = sy-datum.
+        ls_mard-erzet = sy-uzeit.
+
+        INSERT zca_mard FROM ls_mard.
+      ENDIF.
+
+      CLEAR: lt_010,ls_010.
+
+<font color ="#0000FF">* 가용수량 자재문서 생성 - header 먼저</font>
+      CALL FUNCTION 'NUMBER_GET_NEXT'        " 자재문서는 넘버레인지로 관리
+        EXPORTING
+          nr_range_nr = '01'               " Number range number
+          object      = 'ZCA_MBLNR'      " Name of number range object
+        IMPORTING
+          number      = ls_mkpf-mblnr.   " free number
+
+      ls_mkpf-mblnr = |MD{ ls_mkpf-mblnr }|.
+      ls_mkpf-mjahr = sy-datum(4).
+      ls_mkpf-werks = 'P001'.
+      ls_mkpf-mdart = 'WL'.
+      ls_mkpf-budat = sy-datum.
+      ls_mkpf-ernam = sy-uname.
+      ls_mkpf-erdat = sy-datum.
+      ls_mkpf-erzet = sy-uzeit.
+
+      INSERT zca_mkpf FROM ls_mkpf.
+
+      SELECT
+        charg
+        chargfr
+        matnr
+        werks
+        lgort
+        lvorm
+        vfdat
+        mattype
+        btqty
+        unit
+        FROM zca_mmt010
+        INTO CORRESPONDING FIELDS OF TABLE lt_010
+        WHERE matnr = ls_090-matnr
+      AND lvorm &lt;&gt; 'X'
+      AND lgort = 'SL01'
+  ORDER BY charg DESCENDING.
+
+      DATA lv_num TYPE zca_btqty.
+      lv_num = ls_090-deliv_qty.          " 요청받은 수량만큼 빼 준다.
+
+      LOOP AT lt_010 INTO ls_010.
+
+        " 자재문서 아이템
+        ls_mseg-mblnr = ls_mkpf-mblnr.
+        ls_mseg-mjahr = sy-datum(4).
+        ls_mseg-matnr = ls_090-matnr.
+        ls_mseg-charg = ls_010-charg.
+        ls_mseg-bwart = '301'.            " 이동유형
+        ls_mseg-plantfr = 'P001'.
+        ls_mseg-plantto = ls_180-werks.
+        ls_mseg-meinh = ls_010-unit.
+        ls_mseg-ernam = sy-uname.
+        ls_mseg-erdat = sy-datum.
+        ls_mseg-erzet = sy-uzeit.
+
+        IF ls_010-btqty &lt; lv_num.        " 요청받은 수량만큼 배치를 돌면서 자재문서 생성
+          ls_mseg-menge = ls_010-btqty.
+          lv_num -= ls_010-btqty.
+        ELSE.
+          ls_mseg-menge = lv_num.
+          APPEND ls_mseg TO lt_mseg.      " 배치만큼 자재문서 생성
+          EXIT.
+
+        ENDIF.
+
+        APPEND ls_mseg TO lt_mseg.
+
+      ENDLOOP.
+
+      INSERT zca_mseg FROM TABLE lt_mseg.
+
+      CLEAR: lt_mseg, ls_mseg, lt_mkpf, ls_mkpf.
+<font color ="#0000FF">* 자재문서 생성 헤더는 하나 아이템은 여러개 (배치마다)</font>
+
+    ENDLOOP.
+
+    ls_180-status11 = 'X'.                " 이동완료 플래그
+    UPDATE zca_sdt180 FROM ls_180.
+
+  ENDLOOP.
+
+  MESSAGE i202. " 재고이전이 완료됐습니다.
+  COMMIT WORK.
+
+  CLEAR: gt_sd090.
+  LEAVE TO SCREEN 0.
+
+ENDFORM.
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*& Module INIT_SD OUTPUT</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+MODULE init_sd OUTPUT.
+
+  IF go_con_sd IS INITIAL. " CUSTOM CONTAINER가 없는경우에만 로직을 수행한다.
+
+    PERFORM select_data3.   " 앞서 선언한 인터널 테이블에 정보를 모두 삽입하는 서브루틴
+    PERFORM create_ccon3.       " alv와 ccon을 생성한다.
+    PERFORM set_layout3.
+    PERFORM make_fieldcat3.     " field cat를 생성한다.
+
+    PERFORM display_data3.
+
+  ELSE.
+    CALL METHOD go_alv_sd-&gt;refresh_table_display.
+
+  ENDIF.
+
+
+ENDMODULE.
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*& Form select_data3</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+FORM select_data3 .
+
+  SELECT 180~sales_no
+         180~werks
+         180~lgort
+         090~matnr
+         090~deliv_qty
+         090~meins
+    INTO CORRESPONDING FIELDS OF TABLE gt_sd090
+    FROM zca_sdt090 AS 090
+    INNER JOIN zca_sdt180 AS 180
+    ON 180~sales_no = 090~sales_no
+    WHERE 180~status11 &lt;&gt; 'X'.
+
+ENDFORM.
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*& Form create_ccon3</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+FORM create_ccon3 .
+
+  CREATE OBJECT go_con_sd     " CONTANIER생성
+    EXPORTING
+      container_name = 'CCON_SD'.
+
+  CREATE OBJECT go_alv_sd            " CONTAINER위에 ALV생성
+    EXPORTING
+      i_parent = go_con_sd.   " Parent Container
+
+ENDFORM.
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*& Form set_layout3</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+FORM set_layout3 .
+
+  gs_layo_3-grid_title = '재고이동 요청현황'.
+  gs_layo_3-sel_mode = 'A'.    " 멀티 선택 가능
+  gs_layo_3-cwidth_opt = 'X'.  " 열최적화
+  gs_layo_3-zebra = 'X'.       " 가독성 ZEBRA
+  gs_save_3 = 'A'.
+  gs_variant_3-report = sy-cprog.
+
+
+ENDFORM.
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*& Form display_data3</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+FORM display_data3 .
+
+  CALL METHOD go_alv_sd-&gt;set_table_for_first_display
+    EXPORTING
+      is_layout       = gs_layo_3
+      i_save          = gs_save_3
+      is_variant      = gs_variant_3
+    CHANGING
+      it_outtab       = gt_sd090                 " 인터널 테이블의 정보를 보여준다.
+      it_fieldcatalog = gt_fieldcat_3.
+
+
+ENDFORM.
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*& Form make_fieldcat3</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+FORM make_fieldcat3 .
+
+  " 판매오더
+  gs_fieldcat_3-fieldname = 'SALES_NO'.
+  gs_fieldcat_3-key = 'X'.
+  gs_fieldcat_3-coltext = '판매오더'.
+  APPEND gs_fieldcat_3 TO gt_fieldcat_3. CLEAR gs_fieldcat_3.
+
+  " 사업장
+  gs_fieldcat_3-fieldname = 'WERKS'.
+  gs_fieldcat_3-coltext = '사업장'.
+  APPEND gs_fieldcat_3 TO gt_fieldcat_3. CLEAR gs_fieldcat_3.
+
+  " 창고
+  gs_fieldcat_3-fieldname = 'LGORT'.
+  gs_fieldcat_3-coltext = '창고'.
+  APPEND gs_fieldcat_3 TO gt_fieldcat_3. CLEAR gs_fieldcat_3.
+
+  " 자재코드
+  gs_fieldcat_3-fieldname = 'MATNR'.
+  gs_fieldcat_3-coltext = '자재'.
+  APPEND gs_fieldcat_3 TO gt_fieldcat_3. CLEAR gs_fieldcat_3.
+
+  " 수량
+  gs_fieldcat_3-fieldname = 'DELIV_QTY'.
+  gs_fieldcat_3-coltext = '수량'.
+  gs_fieldcat_3-quantity = 'MEINS'.
+  APPEND gs_fieldcat_3 TO gt_fieldcat_3. CLEAR gs_fieldcat_3.
+
+  " 단위
+  gs_fieldcat_3-fieldname = 'MEINS'.
+  gs_fieldcat_3-coltext = '단위'.
+  APPEND gs_fieldcat_3 TO gt_fieldcat_3. CLEAR gs_fieldcat_3.
+
+
+ENDFORM.
+</pre>
+<hr>
+<font size="2" face = "Sans Serif">Extracted by Direct Download Enterprise version 1.3.1 - E.G.Mellodew. 1998-2005 UK. Sap Release 758
+</font>
+</body>
+</html>

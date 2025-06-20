@@ -1,0 +1,141 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2//EN">
+<html>
+<head>
+<title>MZCA_MM100CLS</title>
+</head>
+<body bgcolor="#FFFFE0">
+<font size="3" face = "Arial" color="#000000"><b>Code listing for: MZCA_MM100CLS</b></font>
+<br>
+<font size="3" face = "Arial" color="#000000"><b>Description:  CLS</b></font>
+<hr>
+<pre width="100">
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*& Include          MZCA_MM100CLS</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+
+CLASS LCL_EVENT_HANDLER DEFINITION.
+  PUBLIC SECTION.
+
+    CLASS-METHODS ON_TOOLBAR FOR EVENT TOOLBAR OF CL_GUI_ALV_GRID IMPORTING E_OBJECT.
+
+
+    CLASS-METHODS ON_USER_COMMAND  FOR EVENT USER_COMMAND OF CL_GUI_ALV_GRID IMPORTING E_UCOMM.
+
+    CLASS-METHODS ON_DOUBLE_CLICK FOR EVENT DOUBLE_CLICK OF CL_GUI_ALV_GRID IMPORTING E_COLUMN E_ROW.
+
+
+
+ENDCLASS.
+
+CLASS LCL_EVENT_HANDLER IMPLEMENTATION.
+
+  METHOD ON_TOOLBAR.
+
+    DATA LS_BUTTON LIKE LINE OF E_OBJECT-&gt;MT_TOOLBAR.
+
+    CLEAR LS_BUTTON.
+    LS_BUTTON-FUNCTION  = 'GREEN'.
+    LS_BUTTON-ICON = ICON_LED_GREEN.
+    LS_BUTTON-TEXT      = '승인'.
+    LS_BUTTON-QUICKINFO = '승인 A'.
+    LS_BUTTON-BUTN_TYPE = 0.
+    APPEND LS_BUTTON TO E_OBJECT-&gt;MT_TOOLBAR.
+
+    CLEAR LS_BUTTON.
+    LS_BUTTON-FUNCTION  = 'YELLOW'.
+    LS_BUTTON-ICON = ICON_LED_YELLOW.
+    LS_BUTTON-TEXT      = '보류'.
+    LS_BUTTON-QUICKINFO = '보류  W'.
+    LS_BUTTON-BUTN_TYPE = 0.
+    APPEND LS_BUTTON TO E_OBJECT-&gt;MT_TOOLBAR.
+
+    CLEAR LS_BUTTON.
+    LS_BUTTON-FUNCTION  = 'RED'.
+    LS_BUTTON-ICON = ICON_LED_RED.
+    LS_BUTTON-TEXT      = ' 거절'.
+    LS_BUTTON-QUICKINFO = '거절 D'.
+    LS_BUTTON-BUTN_TYPE = 0.
+    APPEND LS_BUTTON TO E_OBJECT-&gt;MT_TOOLBAR.
+
+    CLEAR LS_BUTTON.
+    LS_BUTTON-FUNCTION  = 'ALL'.
+    LS_BUTTON-ICON = ICON_REFRESH.
+    LS_BUTTON-TEXT      = '전체'.
+    LS_BUTTON-QUICKINFO = '전체'.
+
+    LS_BUTTON-BUTN_TYPE = 0.
+    APPEND LS_BUTTON TO E_OBJECT-&gt;MT_TOOLBAR.
+
+  ENDMETHOD.
+
+
+  METHOD ON_USER_COMMAND.
+
+    CLEAR GS_DISPLAY.
+    CASE E_UCOMM.
+
+      WHEN 'GREEN'.
+        PERFORM FILTER USING 'A'.
+
+      WHEN 'YELLOW'.
+
+        PERFORM FILTER USING 'W'.
+
+
+      WHEN 'RED'.
+
+        PERFORM FILTER USING 'D'.
+
+      WHEN 'ALL'.
+        PERFORM DATA_SELECT.
+
+    ENDCASE.
+    GO_ALV_GRID-&gt;REFRESH_TABLE_DISPLAY( ).
+
+
+  ENDMETHOD.
+
+  METHOD ON_DOUBLE_CLICK.
+
+    READ TABLE GT_DISPLAY INDEX E_ROW-INDEX INTO GS_DISPLAY.
+    IF SY-SUBRC EQ 0.
+      CASE E_COLUMN-FIELDNAME.
+        WHEN 'MATNR'.
+          PERFORM SELECT_MARA.
+          PERFORM SELECT_MATX.
+          CALL SCREEN 120 STARTING AT 10 10.
+        WHEN 'MAKTX'.
+          PERFORM SELECT_MARA.
+          PERFORM SELECT_MATX.
+          CALL SCREEN 120 STARTING AT 10 10.
+        WHEN 'MRPID'.
+          PERFORM SELECT_PPT030.
+          PERFORM SELECT_MATX.
+          CALL SCREEN 130 STARTING AT 10 10.
+        WHEN 'BANFN'.
+          PERFORM SELECT_PPT030_WHO.
+          CALL SCREEN 140 STARTING AT 10 10.
+        WHEN 'PNAME'.
+          PERFORM SELECT_T001W.
+          CALL SCREEN 150 STARTING AT 10 10.
+        WHEN 'WERKS'.
+          PERFORM SELECT_T001W.
+          CALL SCREEN 150 STARTING AT 10 10.
+        WHEN OTHERS.
+      ENDCASE.
+
+    ENDIF.
+
+
+  ENDMETHOD.
+
+
+
+
+ENDCLASS.
+</pre>
+<hr>
+<font size="2" face = "Sans Serif">Extracted by Direct Download Enterprise version 1.3.1 - E.G.Mellodew. 1998-2005 UK. Sap Release 758
+</font>
+</body>
+</html>

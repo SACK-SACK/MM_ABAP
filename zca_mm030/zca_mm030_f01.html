@@ -1,0 +1,242 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2//EN">
+<html>
+<head>
+<title>ZCA_MM030_F01</title>
+</head>
+<body bgcolor="#FFFFE0">
+<font size="3" face = "Arial" color="#000000"><b>Code listing for: ZCA_MM030_F01</b></font>
+<br>
+<font size="3" face = "Arial" color="#000000"><b>Description:  Include ZCA_MM030_F01</b></font>
+<hr>
+<pre width="100">
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*& Include          ZCA_MM030_F01</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*& Form select_data</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+FORM select_data .
+
+  SELECT * FROM zca_mard
+    INTO CORRESPONDING FIELDS OF TABLE gt_MARD
+    WHERE werks = 'P001'
+      AND lgort = 'SL04'.
+
+
+ENDFORM.
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*& Form create_data</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+FORM create_data .
+
+  CREATE OBJECT g_custom_con     " CONTANIER생성
+    EXPORTING
+      container_name = 'CCON'.
+
+  CREATE OBJECT g_alv            " CONTAINER위에 ALV생성
+    EXPORTING
+      i_parent = g_custom_con.   " Parent Container
+
+
+ENDFORM.
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*& Form make_fieldcat</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+FORM make_fieldcat .
+
+  gs_fieldcat-fieldname = 'GJAHR'.
+  gs_fieldcat-coltext = '회계년도'.
+  gs_fieldcat-col_opt = 1.
+  APPEND gs_fieldcat TO gt_fieldcat. CLEAR gs_fieldcat.
+
+  gs_fieldcat-fieldname = 'MATNR'.
+  gs_fieldcat-coltext = '자재코드'.
+  APPEND gs_fieldcat TO gt_fieldcat. CLEAR gs_fieldcat.
+
+  gs_fieldcat-fieldname = 'MAKTX'.
+  gs_fieldcat-coltext = '자재코드'.
+  gs_fieldcat-col_opt = 3.
+  APPEND gs_fieldcat TO gt_fieldcat. CLEAR gs_fieldcat.
+
+  gs_fieldcat-fieldname = 'BLDAT'.
+  gs_fieldcat-coltext = '자재명'.
+  APPEND gs_fieldcat TO gt_fieldcat. CLEAR gs_fieldcat.
+
+  gs_fieldcat-fieldname = 'BELNR'.
+  gs_fieldcat-coltext = '전표번호'.
+  APPEND gs_fieldcat TO gt_fieldcat. CLEAR gs_fieldcat.
+
+  gs_fieldcat-fieldname = 'BLDAT'.
+  gs_fieldcat-coltext = '증빙일자'.
+  APPEND gs_fieldcat TO gt_fieldcat. CLEAR gs_fieldcat.
+
+  gs_fieldcat-fieldname = 'NTGEW'.
+  gs_fieldcat-coltext = '무게'.
+  APPEND gs_fieldcat TO gt_fieldcat. CLEAR gs_fieldcat.
+
+  gs_fieldcat-fieldname = 'GEWEI'.
+  gs_fieldcat-coltext = '무게단위'.
+  APPEND gs_fieldcat TO gt_fieldcat. CLEAR gs_fieldcat.
+
+  gs_fieldcat-fieldname = 'PRICE'.
+  gs_fieldcat-coltext = '금액'.
+  gs_fieldcat-currency = 'X'.
+  APPEND gs_fieldcat TO gt_fieldcat. CLEAR gs_fieldcat.
+
+  gs_fieldcat-fieldname = 'PEINH'.
+  gs_fieldcat-coltext = '통화코드'.
+  APPEND gs_fieldcat TO gt_fieldcat. CLEAR gs_fieldcat.
+
+  gs_fieldcat-fieldname = 'PROCESS'.
+  gs_fieldcat-coltext = '처리여부'.
+  APPEND gs_fieldcat TO gt_fieldcat. CLEAR gs_fieldcat.
+
+
+
+ENDFORM.
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*& Form display_data</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+FORM display_data .
+
+  CALL METHOD g_alv-&gt;set_table_for_first_display
+    EXPORTING
+      is_layout       = gs_layo                 " Layout 나중에 디자인할 예정
+    CHANGING
+      it_outtab       = gt_display                 " 인터널 테이블의 정보를 보여준다.
+      it_fieldcatalog = gt_fieldcat.
+
+
+ENDFORM.
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*& Form handler_event</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+FORM handler_event .
+
+ENDFORM.
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*& Form REFRESH_ALV</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+FORM refresh_alv .
+
+  CALL METHOD g_alv-&gt;check_changed_data
+<font color ="#0000FF">*    IMPORTING</font>
+<font color ="#0000FF">*      e_valid   =                  " Entries are Consistent</font>
+<font color ="#0000FF">*    CHANGING</font>
+<font color ="#0000FF">*      c_refresh = 'X'              " Character Field of Length 1</font>
+    .
+  CALL METHOD g_alv-&gt;refresh_table_display( ).
+
+
+ENDFORM.
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*& Form filter_data</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+FORM filter_data .
+
+  CLEAR zca_mmt030.
+
+
+ENDFORM.
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*& Form SEARCH_DATA</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+FORM search_data .
+
+  SELECT
+         030~gjahr
+         030~matnr
+         030~bdlat
+         030~belnr
+         030~bldat
+         030~ntgew
+         030~gewei
+         030~price
+         030~peinh
+         030~process
+         makt~maktx
+    INTO CORRESPONDING FIELDS OF TABLE gt_display
+     FROM zca_mmt030 AS 030
+    INNER JOIN zca_makt AS makt
+    ON 030~matnr = makt~matnr
+    WHERE 030~matnr IN so_matnr
+      AND makt~spras = sy-langu
+      AND 030~process &lt;&gt; 'X'.
+
+
+  CLEAR: gs_mmt030,zca_mmt030,count.
+  LOOP AT gt_display INTO gs_display.
+
+    zca_mmt030-price += gs_display-price.
+    zca_mmt030-peinh = 'KRW'.
+    count += 1.
+
+  ENDLOOP.
+
+  CALL METHOD g_alv-&gt;get_frontend_layout
+    IMPORTING
+      es_layout = gs_layo.  " Layout
+  gs_layo-cwidth_opt = 'X'.
+  CALL METHOD g_alv-&gt;set_frontend_layout
+    EXPORTING
+      is_layout = gs_layo.                 " Layout
+
+  " ALV 갱신
+  CALL METHOD g_alv-&gt;refresh_table_display.
+
+
+ENDFORM.
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*& Form set_layout</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+FORM set_layout .
+
+  gs_layo-cwidth_opt = 'X'.  " 열최적화
+  gs_layo-zebra = 'X'.       " 가독성 ZEBRA
+
+ENDFORM.
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*& Form Document_Creation</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+FORM Document_Creation .
+
+  DATA: ls_mm030 TYPE zca_mmt030.
+
+  LOOP AT gt_mard INTO gs_mard WHERE tstock &lt;&gt; 0.
+    ls_mm030-gjahr = sy-datum(4).
+    ls_mm030-matnr = gs_mard-matnr.
+    ls_mm030-bdlat = sy-datum.
+    ls_mm030-bldat = sy-datum.
+    ls_mm030-ntgew = gs_mard-tstock.
+    gs_mard-tstock = 0.
+    gs_mard-speme = 0.
+    ls_mm030-gewei = gs_mard-meins.
+    ls_mm030-price = gs_mard-topri.
+    gs_mard-topri = 0.
+    ls_mm030-peinh = gs_mard-waers.
+    ls_mm030-ernam = sy-uname.
+    ls_mm030-erdat = sy-datum.
+    ls_mm030-erzet = sy-uzeit.
+
+    INSERT zca_mmt030 FROM ls_mm030.
+
+    gs_mard-aenam = sy-uname.
+    gs_mard-aedat = sy-datum.
+    gs_mard-aezet = sy-uzeit.
+
+    UPDATE zca_mard FROM gs_mard.
+
+    IF sy-subrc = 0.
+      MESSAGE '폐기문서가 생성되었습니다.' TYPE 'I'.
+    ENDIF.
+  ENDLOOP.
+
+
+
+ENDFORM.
+</pre>
+<hr>
+<font size="2" face = "Sans Serif">Extracted by Direct Download Enterprise version 1.3.1 - E.G.Mellodew. 1998-2005 UK. Sap Release 758
+</font>
+</body>
+</html>

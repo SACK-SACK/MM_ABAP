@@ -1,0 +1,105 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2//EN">
+<html>
+<head>
+<title>MZCA_MM100TOP</title>
+</head>
+<body bgcolor="#FFFFE0">
+<font size="3" face = "Arial" color="#000000"><b>Code listing for: MZCA_MM100TOP</b></font>
+<br>
+<font size="3" face = "Arial" color="#000000"><b>Description:  Include MZCA_MM100TOP</b></font>
+<hr>
+<pre width="100">
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*& Include MZCA_MM100TOP                            - Module Pool      SAPMZCA_MM100</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+PROGRAM SAPMZCA_MM100 MESSAGE-ID ZCA_MSG.
+
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">* ALV 관련 변수</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+TABLES: ZCA_EBAN, ZCA_MAKT, ZCA_MARA, ZCA_MARD, ZCA_PPT030, ZCA_T001W.
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">* ALV 전체를 위한 변수</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+
+DATA OK_CODE TYPE SY-UCOMM.
+
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">* ALV1 관련 변수</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+
+DATA: GO_CONTAINER TYPE REF TO CL_GUI_CUSTOM_CONTAINER,
+      GO_ALV_GRID  TYPE REF TO CL_GUI_ALV_GRID,
+      GS_LAYOUT    TYPE LVC_S_LAYO,
+      GT_FIELDCAT  TYPE LVC_T_FCAT,
+      GS_FIELDCAT  TYPE LVC_S_FCAT,
+      GS_VARIANT   TYPE DISVARIANT.
+
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">* ALV1 관련 변수</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+
+
+DATA:BEGIN OF GS_DISPLAY.
+       include structure <a href ="zca_eban/dictionary-zca_eban.html">ZCA_EBAN</a>.
+DATA:  MAKTX TYPE ZCA_MAKT-MAKTX,
+       ICON  TYPE ICON_D,
+       PNAME TYPE ZCA_T001W-PNAME,
+       NADAT TYPE SY-DATUM,
+     END OF GS_DISPLAY.
+DATA GS_DISPLAY2 LIKE GS_DISPLAY.
+DATA GT_DISPLAY LIKE TABLE OF GS_DISPLAY.
+DATA GT_DISPLAY2 LIKE TABLE OF GS_DISPLAY.
+
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">* ALV2 관련 변수</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+
+DATA: GO_CONTAINER2 TYPE REF TO CL_GUI_CUSTOM_CONTAINER,
+      GO_ALV_GRID2  TYPE REF TO CL_GUI_ALV_GRID,
+      GS_LAYOUT2    TYPE LVC_S_LAYO,
+      GT_FIELDCAT2  TYPE LVC_T_FCAT,
+      GS_FIELDCAT2  TYPE LVC_S_FCAT.
+
+
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">* 스크린 인풋 필드를 위한 변수</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+DATA INPUT_GREEN TYPE INT4.
+DATA INPUT_YELLOW TYPE INT4.
+DATA INPUT_RED TYPE INT4.
+DATA INPUT_CLOSE TYPE INT4.
+DATA GV_DATUM TYPE SY-DATUM.
+
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">* 팝업 답을 위한 변수</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+DATA GV_ANSWER TYPE TEXT40.
+
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">* 제목을 위한 변수</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+
+DATA GV_UZEIT TYPE INT2.
+
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">* MODULE 한번 사용을 위한 변수</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+
+DATA GV_ONCE TYPE CHAR1.
+DATA GV_SEND TYPE CHAR1.
+
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">* Mail 용도 변수</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+DATA: BEGIN OF GS_MAIL.
+DATA: MATNR TYPE ZCA_EBAN-MATNR,
+      BANFN TYPE ZCA_EBAN-BANFN,
+      END OF GS_MAIL.
+DATA GT_MAIL LIKE TABLE OF GS_MAIL.
+</pre>
+<hr>
+<font size="2" face = "Sans Serif">Extracted by Direct Download Enterprise version 1.3.1 - E.G.Mellodew. 1998-2005 UK. Sap Release 758
+</font>
+</body>
+</html>

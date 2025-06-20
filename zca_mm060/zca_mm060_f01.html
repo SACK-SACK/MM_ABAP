@@ -1,0 +1,676 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2//EN">
+<html>
+<head>
+<title>ZCA_MM060_F01</title>
+</head>
+<body bgcolor="#FFFFE0">
+<font size="3" face = "Arial" color="#000000"><b>Code listing for: ZCA_MM060_F01</b></font>
+<br>
+<font size="3" face = "Arial" color="#000000"><b>Description:  F01</b></font>
+<hr>
+<pre width="100">
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*& Include          ZCA_MM060_F01</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*& Form CREATE</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*& text</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*& --&gt;  p1        text</font>
+<font color ="#0000FF">*& &lt;--  p2        text</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+FORM CREATE1 .
+
+  CREATE OBJECT GO_CONTAINER
+    EXPORTING
+      CONTAINER_NAME = 'CCON1'.              " Name of the Screen CustCtrl Name to Link Container To
+
+  CREATE OBJECT GO_ALV_GRID
+    EXPORTING
+      I_PARENT = GO_CONTAINER.             " Parent Container
+
+
+ENDFORM.
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*& Form ALV_LAO</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+FORM ALV_LAO .
+
+<font color ="#0000FF">*  GS_LAYOUT-CWIDTH_OPT = 'X'.  " 컬럼 너비 최적화</font>
+  GS_LAYOUT-ZEBRA = 'X'.       " 줄무늬 패턴
+<font color ="#0000FF">*  ------------------------------------------------------------</font>
+<font color ="#0000FF">* 저장 옵션</font>
+<font color ="#0000FF">*  ------------------------------------------------------------</font>
+  GS_VARIANT-REPORT = SY-REPID.
+  GS_VARIANT-VARIANT = ' '. " 또는 'ZDEFAULT' 같은 레이아웃 명
+
+ENDFORM.
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*& Form ALV_FCAT</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+FORM ALV_FCAT .
+
+  CLEAR GS_FIELDCAT.
+  GS_FIELDCAT-FIELDNAME = 'BANFN'.
+  GS_FIELDCAT-HOTSPOT = ABAP_ON.
+  APPEND GS_FIELDCAT TO GT_FIELDCAT.
+
+  CLEAR GS_FIELDCAT.
+  GS_FIELDCAT-FIELDNAME = 'MATNR'.
+  GS_FIELDCAT-NO_OUT    = ABAP_ON.
+  APPEND GS_FIELDCAT TO GT_FIELDCAT.
+
+  CLEAR GS_FIELDCAT.
+  GS_FIELDCAT-FIELDNAME = 'MRPID'.
+  APPEND GS_FIELDCAT TO GT_FIELDCAT.
+
+  CLEAR GS_FIELDCAT.
+  GS_FIELDCAT-FIELDNAME = 'WERKS'.
+  GS_FIELDCAT-NO_OUT    = ABAP_ON.
+  APPEND GS_FIELDCAT TO GT_FIELDCAT.
+
+  CLEAR GS_FIELDCAT.
+  GS_FIELDCAT-FIELDNAME = 'PRAMT'.
+  GS_FIELDCAT-NO_OUT    = ABAP_ON.
+  APPEND GS_FIELDCAT TO GT_FIELDCAT.
+
+  CLEAR GS_FIELDCAT.
+  GS_FIELDCAT-FIELDNAME = 'MEINS'.
+  GS_FIELDCAT-NO_OUT    = ABAP_ON.
+  APPEND GS_FIELDCAT TO GT_FIELDCAT.
+
+  CLEAR GS_FIELDCAT.
+  GS_FIELDCAT-FIELDNAME = 'MEINH'.
+  GS_FIELDCAT-NO_OUT    = ABAP_ON.
+  APPEND GS_FIELDCAT TO GT_FIELDCAT.
+
+  CLEAR GS_FIELDCAT.
+  GS_FIELDCAT-FIELDNAME = 'BADAT'.
+  APPEND GS_FIELDCAT TO GT_FIELDCAT.
+
+  CLEAR GS_FIELDCAT.
+  GS_FIELDCAT-FIELDNAME = 'LVORM'.
+  GS_FIELDCAT-NO_OUT    = ABAP_ON.
+  APPEND GS_FIELDCAT TO GT_FIELDCAT.
+
+  CLEAR GS_FIELDCAT.
+  GS_FIELDCAT-FIELDNAME = 'BANPR'.
+  GS_FIELDCAT-NO_OUT    = ABAP_ON.
+  APPEND GS_FIELDCAT TO GT_FIELDCAT.
+
+  CLEAR GS_FIELDCAT.
+  GS_FIELDCAT-FIELDNAME = 'ERNAM'.
+  GS_FIELDCAT-COLTEXT = '생성자'.
+  APPEND GS_FIELDCAT TO GT_FIELDCAT.
+
+  CLEAR GS_FIELDCAT.
+  GS_FIELDCAT-FIELDNAME = 'ERDAT'.
+  GS_FIELDCAT-NO_OUT    = ABAP_ON.
+  APPEND GS_FIELDCAT TO GT_FIELDCAT.
+
+  CLEAR GS_FIELDCAT.
+  GS_FIELDCAT-FIELDNAME = 'ERZET'.
+  GS_FIELDCAT-NO_OUT    = ABAP_ON.
+  APPEND GS_FIELDCAT TO GT_FIELDCAT.
+
+  CLEAR GS_FIELDCAT.
+  GS_FIELDCAT-FIELDNAME = 'AENAM'.
+  GS_FIELDCAT-NO_OUT    = ABAP_ON.
+  APPEND GS_FIELDCAT TO GT_FIELDCAT.
+
+  CLEAR GS_FIELDCAT.
+  GS_FIELDCAT-FIELDNAME = 'AEDAT'.
+  GS_FIELDCAT-NO_OUT    = ABAP_ON.
+  APPEND GS_FIELDCAT TO GT_FIELDCAT.
+
+  CLEAR GS_FIELDCAT.
+  GS_FIELDCAT-FIELDNAME = 'AEZET'.
+  GS_FIELDCAT-NO_OUT    = ABAP_ON.
+  APPEND GS_FIELDCAT TO GT_FIELDCAT.
+
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*& 생성한 필드</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+
+  CLEAR GS_FIELDCAT.
+  GS_FIELDCAT-FIELDNAME = 'ICON'.
+  GS_FIELDCAT-COLTEXT = '승인 여부'.
+  GS_FIELDCAT-COL_OPT = 1.
+  GS_FIELDCAT-OUTPUTLEN = 5.
+  GS_FIELDCAT-JUST = 'C'.
+  APPEND GS_FIELDCAT TO GT_FIELDCAT.
+
+
+ENDFORM.
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*& Form DISPLAY</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+FORM DISPLAY .
+
+
+
+  GO_ALV_GRID-&gt;SET_TABLE_FOR_FIRST_DISPLAY(
+    EXPORTING
+<font color ="#0000FF">*    I_BUFFER_ACTIVE               =                  " Buffering Active</font>
+<font color ="#0000FF">*    I_BYPASSING_BUFFER            =                  " Switch Off Buffer</font>
+<font color ="#0000FF">*    I_CONSISTENCY_CHECK           =                  " Starting Consistency Check for Interface Error Recognition</font>
+     I_STRUCTURE_NAME              =    'ZCA_EBAN'              " Internal Output Table Structure Name
+<font color ="#0000FF">*     IS_VARIANT                    =      GS_VARIANT            " Layout</font>
+<font color ="#0000FF">*     I_SAVE                        =    'A'              " Save Layout</font>
+<font color ="#0000FF">*    I_DEFAULT                     = 'X'              " Default Display Variant</font>
+      IS_LAYOUT                     =   GS_LAYOUT               " Layout
+<font color ="#0000FF">*    IS_PRINT                      =                  " Print Control</font>
+<font color ="#0000FF">*    IT_SPECIAL_GROUPS             =                  " Field Groups</font>
+<font color ="#0000FF">*    IT_TOOLBAR_EXCLUDING          =                  " Excluded Toolbar Standard Functions</font>
+<font color ="#0000FF">*    IT_HYPERLINK                  =                  " Hyperlinks</font>
+<font color ="#0000FF">*    IT_ALV_GRAPHICS               =                  " Table of Structure DTC_S_TC</font>
+<font color ="#0000FF">*    IT_EXCEPT_QINFO               =                  " Table for Exception Quickinfo</font>
+<font color ="#0000FF">*    IR_SALV_ADAPTER               =                  " Internal Usage only !!! - obsolete</font>
+    CHANGING
+      IT_OUTTAB                     =    GT_DISPLAY           " Output Table
+      IT_FIELDCATALOG               =  GT_FIELDCAT                " Field Catalog
+<font color ="#0000FF">*    IT_SORT                       =                  " Sort Criteria</font>
+<font color ="#0000FF">*    IT_FILTER                     =                  " Filter Criteria</font>
+).
+
+
+
+ENDFORM.
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*& Form DISPLAY_EBAN_HEADER</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+FORM DISPLAY1_SELECT .
+
+  CLEAR GT_DISPLAY.
+
+  IF GR_BANFN_RANGE IS INITIAL AND GR_BADAT_RANGE IS INITIAL.
+    " 둘 다 없으면 전체조회
+    SELECT *
+      FROM ZCA_EBAN
+            INNER JOIN ZCA_MAKT
+      ON ZCA_EBAN~MATNR EQ ZCA_MAKT~MATNR
+      INNER JOIN ZCA_T001W
+      ON ZCA_EBAN~WERKS EQ ZCA_T001W~WERKS
+      INTO CORRESPONDING FIELDS OF TABLE @GT_DISPLAY
+      WHERE ZCA_MAKT~SPRAS EQ @GV_SPRAS.
+
+
+  ELSEIF GR_BADAT_RANGE IS INITIAL.
+    " BANFN만 있을 때
+    SELECT *
+      FROM ZCA_EBAN
+            INNER JOIN ZCA_MAKT
+      ON ZCA_EBAN~MATNR EQ ZCA_MAKT~MATNR
+            INNER JOIN ZCA_T001W
+      ON ZCA_EBAN~WERKS EQ ZCA_T001W~WERKS
+      INTO CORRESPONDING FIELDS OF TABLE @GT_DISPLAY
+      WHERE BANFN IN @GR_BANFN_RANGE
+      AND ZCA_MAKT~SPRAS EQ @GV_SPRAS.
+
+
+  ELSEIF GR_BANFN_RANGE IS INITIAL.
+    " BADAT만 있을 때  "
+    SELECT *
+      FROM ZCA_EBAN
+            INNER JOIN ZCA_MAKT
+      ON ZCA_EBAN~MATNR EQ ZCA_MAKT~MATNR
+            INNER JOIN ZCA_T001W
+      ON ZCA_EBAN~WERKS EQ ZCA_T001W~WERKS
+      INTO CORRESPONDING FIELDS OF TABLE @GT_DISPLAY
+      WHERE BADAT IN @GR_BADAT_RANGE
+            AND ZCA_MAKT~SPRAS EQ @GV_SPRAS.
+
+  ELSE.
+    " 둘 다 있을 때
+    SELECT *
+      FROM ZCA_EBAN
+            INNER JOIN ZCA_MAKT
+      ON ZCA_EBAN~MATNR EQ ZCA_MAKT~MATNR
+            INNER JOIN ZCA_T001W
+      ON ZCA_EBAN~WERKS EQ ZCA_T001W~WERKS
+      INTO CORRESPONDING FIELDS OF TABLE @GT_DISPLAY
+      WHERE BANFN IN @GR_BANFN_RANGE
+        AND BADAT IN @GR_BADAT_RANGE
+            AND ZCA_MAKT~SPRAS EQ @GV_SPRAS.
+
+  ENDIF.
+
+
+  CLEAR GS_DISPLAY.
+
+  LOOP AT GT_DISPLAY INTO GS_DISPLAY.
+
+    CASE GS_DISPLAY-BANPR.
+      WHEN 'A'.
+        GS_DISPLAY-ICON = ICON_LED_GREEN.
+      WHEN 'W'.
+        GS_DISPLAY-ICON = ICON_LED_YELLOW.
+      WHEN 'D'.
+        GS_DISPLAY-ICON = ICON_LED_RED.
+    ENDCASE.
+    MODIFY GT_DISPLAY FROM GS_DISPLAY TRANSPORTING ICON.
+  ENDLOOP.
+
+
+ENDFORM.
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*& Form FILTER</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+FORM FILTER  USING    LV_COL TYPE C.
+
+  IF GR_BANFN_RANGE IS INITIAL AND GR_BADAT_RANGE IS INITIAL.
+    " 둘 다 없으면 전체조회
+    SELECT *
+      FROM ZCA_EBAN
+      INNER JOIN ZCA_MAKT
+      ON ZCA_EBAN~MATNR EQ ZCA_MAKT~MATNR
+            INNER JOIN ZCA_T001W
+      ON ZCA_EBAN~WERKS EQ ZCA_T001W~WERKS
+      WHERE BANPR EQ @LV_COL
+      AND  ZCA_MAKT~SPRAS EQ @GV_SPRAS
+      INTO CORRESPONDING FIELDS OF TABLE @GT_DISPLAY.
+
+  ELSEIF GR_BADAT_RANGE IS INITIAL.
+    " BANFN만 있을 때
+    SELECT *
+      FROM ZCA_EBAN
+            INNER JOIN ZCA_MAKT
+      ON ZCA_EBAN~MATNR EQ ZCA_MAKT~MATNR
+            AND  ZCA_MAKT~SPRAS EQ @GV_SPRAS
+            INNER JOIN ZCA_T001W
+      ON ZCA_EBAN~WERKS EQ ZCA_T001W~WERKS
+      INTO CORRESPONDING FIELDS OF TABLE @GT_DISPLAY
+      WHERE BANFN IN @GR_BANFN_RANGE
+      AND   BANPR EQ @LV_COL
+      AND   ZCA_MAKT~SPRAS = @GV_SPRAS.
+
+  ELSEIF GR_BANFN_RANGE IS INITIAL.
+    " BADAT만 있을 때  " ERDAT → BADAT
+    SELECT *
+      FROM ZCA_EBAN
+            INNER JOIN ZCA_MAKT
+      ON ZCA_EBAN~MATNR EQ ZCA_MAKT~MATNR
+            INNER JOIN ZCA_T001W
+      ON ZCA_EBAN~WERKS EQ ZCA_T001W~WERKS
+      INTO CORRESPONDING FIELDS OF TABLE @GT_DISPLAY
+      WHERE BADAT IN @GR_BADAT_RANGE
+                  AND   BANPR EQ @LV_COL
+            AND  ZCA_MAKT~SPRAS EQ @GV_SPRAS.
+
+  ELSE.
+    " 둘 다 있을 때
+    SELECT *
+      FROM ZCA_EBAN
+            INNER JOIN ZCA_MAKT
+      ON ZCA_EBAN~MATNR EQ ZCA_MAKT~MATNR
+            INNER JOIN ZCA_T001W
+      ON ZCA_EBAN~WERKS EQ ZCA_T001W~WERKS
+      INTO CORRESPONDING FIELDS OF TABLE @GT_DISPLAY
+      WHERE BANFN IN @GR_BANFN_RANGE
+        AND BADAT IN @GR_BADAT_RANGE
+                  AND   BANPR EQ @LV_COL
+            AND  ZCA_MAKT~SPRAS EQ @GV_SPRAS.
+
+  ENDIF.
+
+  CLEAR GS_DISPLAY.
+
+  LOOP AT GT_DISPLAY INTO GS_DISPLAY.
+
+    CASE GS_DISPLAY-BANPR.
+      WHEN 'A'.
+        GS_DISPLAY-ICON = ICON_LED_GREEN.
+      WHEN 'W'.
+        GS_DISPLAY-ICON = ICON_LED_YELLOW.
+      WHEN 'D'.
+        GS_DISPLAY-ICON = ICON_LED_RED.
+    ENDCASE.
+    MODIFY GT_DISPLAY FROM GS_DISPLAY TRANSPORTING ICON.
+  ENDLOOP.
+
+ENDFORM.
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*& Form REFRESH</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+FORM REFRESH .
+
+  CLEAR GV_OR_LOW.
+  CLEAR GV_OR_HIGH.
+  CLEAR GV_DATE_HIGH.
+  CLEAR GV_DATE_LOW.
+  CLEAR GR_BADAT_RANGE.
+  CLEAR GT_DISPLAY2.
+  CLEAR ZCA_MARA.
+  CLEAR ZCA_MARD.
+
+  CLEAR GT_DISPLAY.
+
+  GO_ALV_GRID-&gt;REFRESH_TABLE_DISPLAY( ).
+
+
+
+ENDFORM.
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*& Form CCON1</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+FORM CCON1 .
+
+  PERFORM CREATE1.
+
+  PERFORM ALV_LAO.
+
+  PERFORM ALV_FCAT.
+
+  SET HANDLER LCL_EVENT_HANDLER=&gt;ON_TOOLBAR FOR GO_ALV_GRID.
+  SET HANDLER LCL_EVENT_HANDLER=&gt;ON_USER_COMMAND FOR GO_ALV_GRID.
+  SET HANDLER LCL_EVENT_HANDLER=&gt;ON_HOTSPOT_CLICK FOR GO_ALV_GRID.
+
+
+  PERFORM DISPLAY.
+
+ENDFORM.
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*& Form CCON2</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+FORM CCON2 .
+
+  PERFORM CREATE2.
+
+  PERFORM ALV_LAO2.
+
+  PERFORM ALV_FCAT2.
+
+  SET HANDLER LCL_EVENT_HANDLER=&gt;ON_HOTSPOT_CLICK FOR GO_ALV_GRID2.
+
+  PERFORM DISPLAY2.
+
+ENDFORM.
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*& Form DISPLAY2</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+FORM DISPLAY2 .
+
+  GO_ALV_GRID2-&gt;SET_TABLE_FOR_FIRST_DISPLAY(
+  EXPORTING
+<font color ="#0000FF">*      I_BUFFER_ACTIVE               =                  " Buffering Active</font>
+<font color ="#0000FF">*      I_BYPASSING_BUFFER            =                  " Switch Off Buffer</font>
+<font color ="#0000FF">*      I_CONSISTENCY_CHECK           =                  " Starting Consistency Check for Interface Error Recognition</font>
+    I_STRUCTURE_NAME              =      'ZCA_EBAN'            " Internal Output Table Structure Name
+<font color ="#0000FF">*      IS_VARIANT                    =                  " Layout</font>
+<font color ="#0000FF">*      I_SAVE                        =                  " Save Layout</font>
+<font color ="#0000FF">*      I_DEFAULT                     = 'X'              " Default Display Variant</font>
+    IS_LAYOUT                     =    GS_LAYOUT2              " Layout
+<font color ="#0000FF">*      IS_PRINT                      =                  " Print Control</font>
+<font color ="#0000FF">*      IT_SPECIAL_GROUPS             =                  " Field Groups</font>
+<font color ="#0000FF">*      IT_TOOLBAR_EXCLUDING          =                  " Excluded Toolbar Standard Functions</font>
+<font color ="#0000FF">*      IT_HYPERLINK                  =                  " Hyperlinks</font>
+<font color ="#0000FF">*      IT_ALV_GRAPHICS               =                  " Table of Structure DTC_S_TC</font>
+<font color ="#0000FF">*      IT_EXCEPT_QINFO               =                  " Table for Exception Quickinfo</font>
+<font color ="#0000FF">*      IR_SALV_ADAPTER               =                  " Internal Usage only !!! - obsolete</font>
+  CHANGING
+    IT_OUTTAB                     =     GT_DISPLAY2               " Output Table
+    IT_FIELDCATALOG               =   GT_FIELDCAT2               " Field Catalog
+<font color ="#0000FF">*      IT_SORT                       =                  " Sort Criteria</font>
+<font color ="#0000FF">*      IT_FILTER                     =                  " Filter Criteria</font>
+).
+
+
+ENDFORM.
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*& Form CREATE2</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+FORM CREATE2 .
+
+  CREATE OBJECT GO_CONTAINER2
+    EXPORTING
+      CONTAINER_NAME = 'CCON2'.
+
+  CREATE OBJECT GO_ALV_GRID2
+    EXPORTING
+      I_PARENT = GO_CONTAINER2.               " Parent Container
+
+ENDFORM.
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*& Form ALV_LAO2</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+FORM ALV_LAO2 .
+
+<font color ="#0000FF">*  GS_LAYOUT2-CWIDTH_OPT = 'X'.  " 컬럼 너비 최적화</font>
+  GS_LAYOUT2-ZEBRA = 'X'.       " 줄무늬 패턴
+  GS_LAYOUT2-NO_TOOLBAR = ABAP_ON.
+
+ENDFORM.
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*& Form ALV_FCAT2</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+FORM ALV_FCAT2 .
+
+<font color ="#0000FF">**-----------------------------------</font>
+<font color ="#0000FF">** 기존 존재 필드</font>
+<font color ="#0000FF">**-----------------------------------</font>
+
+  CLEAR GS_FIELDCAT2.
+  GS_FIELDCAT2-FIELDNAME = 'BANFN'.
+  GS_FIELDCAT2-OUTPUTLEN = 10.
+  APPEND GS_FIELDCAT2 TO GT_FIELDCAT2.
+
+  CLEAR GS_FIELDCAT2.
+  GS_FIELDCAT2-FIELDNAME = 'MATNR'.
+  GS_FIELDCAT2-OUTPUTLEN = 10.
+  GS_FIELDCAT2-HOTSPOT = ABAP_ON.
+  APPEND GS_FIELDCAT2 TO GT_FIELDCAT2.
+
+  CLEAR GS_FIELDCAT2.
+  GS_FIELDCAT2-FIELDNAME = 'MRPID'.
+  GS_FIELDCAT2-OUTPUTLEN = 7.
+  APPEND GS_FIELDCAT2 TO GT_FIELDCAT2.
+
+  CLEAR GS_FIELDCAT2.
+  GS_FIELDCAT2-FIELDNAME = 'WERKS'.
+  GS_FIELDCAT2-OUTPUTLEN = 7.
+  APPEND GS_FIELDCAT2 TO GT_FIELDCAT2.
+
+  CLEAR GS_FIELDCAT2.
+  GS_FIELDCAT2-FIELDNAME = 'PRAMT'.
+  GS_FIELDCAT2-OUTPUTLEN = 9.
+  GS_FIELDCAT2-QFIELDNAME = 'MEINS'.
+  APPEND GS_FIELDCAT2 TO GT_FIELDCAT2.
+
+  CLEAR GS_FIELDCAT2.
+  GS_FIELDCAT2-FIELDNAME = 'MEINS'.
+  GS_FIELDCAT2-OUTPUTLEN = 6.
+  GS_FIELDCAT2-COLTEXT = '적재 단위'.
+  APPEND GS_FIELDCAT2 TO GT_FIELDCAT2.
+
+  CLEAR GS_FIELDCAT2.
+  GS_FIELDCAT2-FIELDNAME = 'MEINH'.
+  GS_FIELDCAT2-COLTEXT = '구매 단위'.
+  GS_FIELDCAT2-OUTPUTLEN = 6.
+  APPEND GS_FIELDCAT2 TO GT_FIELDCAT2.
+
+  CLEAR GS_FIELDCAT2.
+  GS_FIELDCAT2-FIELDNAME = 'BADAT'.
+  APPEND GS_FIELDCAT2 TO GT_FIELDCAT2.
+
+
+<font color ="#0000FF">**-----------------------------------</font>
+<font color ="#0000FF">** 추가 필드</font>
+<font color ="#0000FF">**-----------------------------------</font>
+<font color ="#0000FF">*</font>
+  CLEAR GS_FIELDCAT2.
+  GS_FIELDCAT2-FIELDNAME = 'MAKTX'.
+  GS_FIELDCAT2-REF_TABLE = 'ZCA_MAKT'.
+  GS_FIELDCAT2-REF_FIELD = 'MAKTX'.
+  GS_FIELDCAT2-COL_POS = 4.
+  GS_FIELDCAT2-OUTPUTLEN = 16.
+  APPEND GS_FIELDCAT2 TO GT_FIELDCAT2.
+
+  CLEAR GS_FIELDCAT2.
+  GS_FIELDCAT2-FIELDNAME = 'PNAME'.
+  GS_FIELDCAT2-REF_TABLE = 'ZCA_T001W'.
+  GS_FIELDCAT2-REF_FIELD = 'PNAME'.
+  GS_FIELDCAT2-OUTPUTLEN = 8.
+  GS_FIELDCAT2-COL_POS = 7.
+
+  APPEND GS_FIELDCAT2 TO GT_FIELDCAT2.
+<font color ="#0000FF">*</font>
+<font color ="#0000FF">**-----------------------------------</font>
+<font color ="#0000FF">** NDAT - 입고 예정일 (런타임 1일)</font>
+<font color ="#0000FF">**-----------------------------------</font>
+  CLEAR GS_FIELDCAT2.
+  GS_FIELDCAT2-FIELDNAME = 'NADAT'.
+  GS_FIELDCAT2-COLTEXT   = '입고예정일'.
+  GS_FIELDCAT2-COL_POS = 19.
+  GS_FIELDCAT-OUTPUTLEN = 14.
+  APPEND GS_FIELDCAT2 TO GT_FIELDCAT2.
+
+<font color ="#0000FF">*--------------------------------------------------------------- 삭제 친구들</font>
+
+  CLEAR GS_FIELDCAT2.
+  GS_FIELDCAT2-FIELDNAME = 'BANPR'.
+  GS_FIELDCAT2-NO_OUT = ABAP_ON.
+  APPEND GS_FIELDCAT2 TO GT_FIELDCAT2.
+
+  CLEAR GS_FIELDCAT2.
+  GS_FIELDCAT2-FIELDNAME = 'LVORM'.
+  GS_FIELDCAT2-NO_OUT = ABAP_ON.
+  APPEND GS_FIELDCAT2 TO GT_FIELDCAT2.
+
+  CLEAR GS_FIELDCAT2.
+  GS_FIELDCAT2-FIELDNAME = 'ERNAM'.
+  GS_FIELDCAT2-NO_OUT    = ABAP_ON.
+  APPEND GS_FIELDCAT2 TO GT_FIELDCAT2.
+
+  CLEAR GS_FIELDCAT2.
+  GS_FIELDCAT2-FIELDNAME = 'ERDAT'.
+  GS_FIELDCAT2-NO_OUT    = ABAP_ON.
+  APPEND GS_FIELDCAT2 TO GT_FIELDCAT2.
+
+  CLEAR GS_FIELDCAT2.
+  GS_FIELDCAT2-FIELDNAME = 'ERZET'.
+  GS_FIELDCAT2-NO_OUT    = ABAP_ON.
+  APPEND GS_FIELDCAT2 TO GT_FIELDCAT2.
+
+  CLEAR GS_FIELDCAT2.
+  GS_FIELDCAT2-FIELDNAME = 'AENAM'.
+  GS_FIELDCAT2-NO_OUT    = ABAP_ON.
+  APPEND GS_FIELDCAT2 TO GT_FIELDCAT2.
+
+  CLEAR GS_FIELDCAT2.
+  GS_FIELDCAT2-FIELDNAME = 'AEDAT'.
+  GS_FIELDCAT2-NO_OUT    = ABAP_ON.
+  APPEND GS_FIELDCAT2 TO GT_FIELDCAT2.
+
+  CLEAR GS_FIELDCAT2.
+  GS_FIELDCAT2-FIELDNAME = 'AEZET'.
+  GS_FIELDCAT2-NO_OUT    = ABAP_ON.
+  APPEND GS_FIELDCAT2 TO GT_FIELDCAT2.
+
+
+
+
+
+ENDFORM.
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*& Form DUPL</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+FORM DUPL .
+
+  SORT GT_DISPLAY BY BANFN.
+  DELETE ADJACENT DUPLICATES FROM GT_DISPLAY COMPARING BANFN.
+
+ENDFORM.
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*& Form LANGUAGE_CHANGE</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+FORM LANGUAGE_CHANGE .
+  GV_SPRAS = SY-LANGU.
+
+ENDFORM.
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*& Form DISPLAY_RANGE</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+FORM DISPLAY_RANGE .
+  CLEAR GR_BANFN_RANGE.
+  CLEAR GR_BADAT_RANGE.  " GR_ERDAT_RANGE → GR_BADAT_RANGE로 변경
+
+  " BANFN RANGE : LOW 값만 있을 때
+  IF GV_OR_LOW IS NOT INITIAL AND GV_OR_HIGH IS INITIAL.
+    APPEND VALUE #( SIGN = 'I' OPTION = 'EQ' LOW = GV_OR_LOW ) TO GR_BANFN_RANGE.
+  ENDIF.
+
+  " BANFN RANGE : HIGH 값만 있을 때
+  IF GV_OR_LOW IS INITIAL AND GV_OR_HIGH IS NOT INITIAL.
+    APPEND VALUE #( SIGN = 'I' OPTION = 'LE' LOW = GV_OR_HIGH ) TO GR_BANFN_RANGE.
+  ENDIF.
+
+  " BANFN RANGE : LOW 랑 HIGH 있을 때
+  IF GV_OR_HIGH IS NOT INITIAL AND GV_OR_LOW IS NOT INITIAL.
+    CLEAR GR_BANFN_RANGE.
+    APPEND VALUE #( SIGN = 'I' OPTION = 'BT' LOW = GV_OR_LOW HIGH = GV_OR_HIGH ) TO GR_BANFN_RANGE.
+  ENDIF.
+
+  " BADAT RANGE : LOW 값만 있을 때  "  BADAT로 변경
+  IF GV_DATE_LOW IS NOT INITIAL AND GV_DATE_HIGH IS INITIAL.
+    APPEND VALUE #( SIGN = 'I' OPTION = 'EQ' LOW = GV_DATE_LOW ) TO GR_BADAT_RANGE.
+  ENDIF.
+
+  " BADAT RANGE : HIGH 값만 있을 때  " BADAT로 변경
+  IF GV_DATE_LOW IS INITIAL AND GV_DATE_HIGH IS NOT INITIAL.
+    APPEND VALUE #( SIGN = 'I' OPTION = 'LE' LOW = GV_DATE_HIGH ) TO GR_BADAT_RANGE.
+  ENDIF.
+
+  " BADAT RANGE : LOW 랑 HIGH 있을 때  "  BADAT로 변경
+  IF GV_DATE_LOW IS NOT INITIAL AND GV_DATE_HIGH IS NOT INITIAL.
+    CLEAR GR_BADAT_RANGE.
+    APPEND VALUE #( SIGN = 'I' OPTION = 'BT' LOW = GV_DATE_LOW HIGH = GV_DATE_HIGH ) TO GR_BADAT_RANGE.
+  ENDIF.
+
+  PERFORM DISPLAY1_SELECT.
+
+  PERFORM DELETE_ADJACENT_DUPLICATES.
+
+
+
+ENDFORM.
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*& Form DELETE_ADJACENT_DUPLICATES</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+FORM DELETE_ADJACENT_DUPLICATES .
+
+  SORT GT_DISPLAY BY BANFN .
+  DELETE ADJACENT DUPLICATES FROM GT_DISPLAY COMPARING BANFN.
+
+ENDFORM.
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*& Form NADAT</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+FORM NADAT .
+
+
+
+ENDFORM.
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*& Form NADAT_DATA</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+FORM NADAT_DATA .
+
+
+  CLEAR GS_DISPLAY2.
+
+  LOOP AT GT_DISPLAY2 INTO GS_DISPLAY2.
+    GS_DISPLAY2-NADAT = GS_DISPLAY2-BADAT + 1.
+
+    MODIFY GT_DISPLAY2 FROM GS_DISPLAY2.
+
+
+  ENDLOOP.
+
+ENDFORM.
+</pre>
+<hr>
+<font size="2" face = "Sans Serif">Extracted by Direct Download Enterprise version 1.3.1 - E.G.Mellodew. 1998-2005 UK. Sap Release 758
+</font>
+</body>
+</html>

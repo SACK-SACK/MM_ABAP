@@ -1,0 +1,519 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2//EN">
+<html>
+<head>
+<title>ZCA_MM140CLS</title>
+</head>
+<body bgcolor="#FFFFE0">
+<font size="3" face = "Arial" color="#000000"><b>Code listing for: ZCA_MM140CLS</b></font>
+<br>
+<font size="3" face = "Arial" color="#000000"><b>Description:  cls</b></font>
+<hr>
+<pre width="100">
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*& Include          SAPMZCA_MM140CLS</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+CLASS LCL_EVENT_HANDLER DEFINITION.
+  PUBLIC SECTION.
+
+    CLASS-METHODS ON_TOOLBAR_DISPLAY1
+      FOR EVENT TOOLBAR
+      OF        CL_GUI_ALV_GRID
+      IMPORTING E_OBJECT SENDER.
+
+    CLASS-METHODS: ON_DOUBLE_CLICK_DISPLAY1
+      FOR EVENT DOUBLE_CLICK
+      OF CL_GUI_ALV_GRID
+      IMPORTING E_COLUMN E_ROW SENDER.
+
+    CLASS-METHODS ON_USER_COMMAND_DISPLAY1
+      FOR EVENT USER_COMMAND
+      OF CL_GUI_ALV_GRID
+      IMPORTING E_UCOMM SENDER.
+
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*& DISPLAY2 핸들러</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+
+
+    CLASS-METHODS ON_TOOLBAR_DISPLAY2
+      FOR EVENT TOOLBAR
+      OF        CL_GUI_ALV_GRID
+      IMPORTING E_OBJECT SENDER.
+
+
+    CLASS-METHODS: ON_DOUBLE_CLICK_DISPLAY2
+      FOR EVENT DOUBLE_CLICK
+      OF CL_GUI_ALV_GRID
+      IMPORTING E_COLUMN E_ROW SENDER.
+
+    CLASS-METHODS: ON_HOTSPOT_CLICK_DISPLAY2
+      FOR EVENT  HOTSPOT_CLICK
+      OF         CL_GUI_ALV_GRID
+      IMPORTING E_ROW_ID E_COLUMN_ID SENDER.
+
+    CLASS-METHODS ON_USER_COMMAND_DISPLAY2
+      FOR EVENT USER_COMMAND
+      OF CL_GUI_ALV_GRID
+      IMPORTING E_UCOMM SENDER.
+
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*& DISPLAY3 핸들러</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+
+
+    CLASS-METHODS ON_TOOLBAR_DISPLAY3
+      FOR EVENT TOOLBAR
+      OF        CL_GUI_ALV_GRID
+      IMPORTING E_OBJECT SENDER.
+
+    CLASS-METHODS: ON_HOTSPOT_CLICK_DISPLAY3
+      FOR EVENT  HOTSPOT_CLICK
+      OF         CL_GUI_ALV_GRID
+      IMPORTING E_ROW_ID E_COLUMN_ID SENDER.
+
+    CLASS-METHODS ON_USER_COMMAND_DISPLAY3
+      FOR EVENT USER_COMMAND
+      OF CL_GUI_ALV_GRID
+      IMPORTING E_UCOMM SENDER.
+
+
+
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*& DISPLAY4 핸들러</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+
+
+    CLASS-METHODS ON_TOOLBAR_DISPLAY4
+      FOR EVENT TOOLBAR
+      OF        CL_GUI_ALV_GRID
+      IMPORTING E_OBJECT SENDER.
+
+    CLASS-METHODS ON_USER_COMMAND_DISPLAY4
+      FOR EVENT USER_COMMAND
+      OF CL_GUI_ALV_GRID
+      IMPORTING E_UCOMM SENDER.
+
+
+
+
+
+ENDCLASS.
+CLASS LCL_EVENT_HANDLER IMPLEMENTATION.
+
+  METHOD ON_TOOLBAR_DISPLAY1.
+
+    IF SENDER EQ GO_ALV_GRID1.
+
+      DATA LS_BUTTON LIKE LINE OF E_OBJECT-&gt;MT_TOOLBAR.
+
+      CLEAR LS_BUTTON.
+      LS_BUTTON-FUNCTION  = 'TODAY'.
+      LS_BUTTON-ICON = ICON_DATE.
+      LS_BUTTON-TEXT      = '오늘 요청'.
+      LS_BUTTON-QUICKINFO = '오늘'.
+      LS_BUTTON-BUTN_TYPE = 0.
+
+      APPEND LS_BUTTON TO E_OBJECT-&gt;MT_TOOLBAR.
+
+      CLEAR LS_BUTTON.
+      LS_BUTTON-FUNCTION  = '3M'.
+      LS_BUTTON-ICON = ICON_HISTORY.
+      LS_BUTTON-TEXT      = '3개월 조회'.
+      LS_BUTTON-QUICKINFO = '3개월'.
+      LS_BUTTON-BUTN_TYPE = 0.
+
+      APPEND LS_BUTTON TO E_OBJECT-&gt;MT_TOOLBAR.
+
+      CLEAR LS_BUTTON.
+      LS_BUTTON-BUTN_TYPE = 3.
+      APPEND LS_BUTTON TO E_OBJECT-&gt;MT_TOOLBAR.
+
+      CLEAR LS_BUTTON.
+      LS_BUTTON-FUNCTION  = 'PO_OK'.
+      LS_BUTTON-ICON = ICON_LED_GREEN.
+      LS_BUTTON-TEXT      = '오더 완료'.
+      LS_BUTTON-QUICKINFO = '오더전환 완료'.
+      LS_BUTTON-BUTN_TYPE = 0.
+
+      APPEND LS_BUTTON TO E_OBJECT-&gt;MT_TOOLBAR.
+
+
+      CLEAR LS_BUTTON.
+      LS_BUTTON-FUNCTION  = 'PO_NO'.
+      LS_BUTTON-ICON = ICON_LED_RED.
+      LS_BUTTON-TEXT      = '오더 반려'.
+      LS_BUTTON-QUICKINFO = '오더 전환 반려'.
+      LS_BUTTON-BUTN_TYPE = 0.
+
+      APPEND LS_BUTTON TO E_OBJECT-&gt;MT_TOOLBAR.
+
+      CLEAR LS_BUTTON.
+      LS_BUTTON-FUNCTION  = 'PO_WAIT'.
+      LS_BUTTON-ICON = ICON_LED_YELLOW.
+      LS_BUTTON-TEXT      = '오더 대기'.
+      LS_BUTTON-QUICKINFO = '오더 전환 대기'.
+      LS_BUTTON-BUTN_TYPE = 0.
+
+      APPEND LS_BUTTON TO E_OBJECT-&gt;MT_TOOLBAR.
+
+
+    ENDIF.
+
+
+  ENDMETHOD.
+  METHOD ON_DOUBLE_CLICK_DISPLAY1.
+    IF SENDER EQ GO_ALV_GRID1.
+      READ TABLE GT_DISPLAY1 INDEX E_ROW-INDEX INTO GS_DISPLAY1.
+      IF SY-SUBRC = 0.
+        GV_BANFN = GS_DISPLAY1-BANFN.
+        TEXT_BANFN = GS_DISPLAY1-BANFN.
+
+        IF GS_DISPLAY1-ICON = ICON_LED_GREEN.
+          GV_TEXT = '구매 오더 정보'.
+          "          오더가 있으면 오더 페이지로 바로 전환
+          PERFORM ICON_LED_GREEN.
+
+
+        ELSEIF GS_DISPLAY1-ICON = ICON_LED_YELLOW.
+          GV_TEXT = '구매 오더 전환'.
+          REFRESH GT_EKKO.
+          REFRESH GT_EKPO.
+
+
+          IF GS_LAYOUT2 IS NOT INITIAL.
+            PERFORM CHANGE_TITLE_2.
+
+          ENDIF.
+
+          PERFORM SELECT_DISPLAY2 USING GS_DISPLAY1-BANFN.
+          LEAVE TO SCREEN 110.
+
+        ELSEIF GS_DISPLAY1-ICON = ICON_LED_RED.
+          MESSAGE S264 DISPLAY LIKE 'E'.
+
+        ENDIF.
+
+
+
+      ENDIF.
+
+    ENDIF.
+
+
+
+  ENDMETHOD.
+  METHOD ON_USER_COMMAND_DISPLAY1.
+    IF SENDER EQ GO_ALV_GRID1.
+
+
+      PERFORM BKK_ADD_MONTH_TO_DATE USING -3.
+
+      REFRESH GT_FILTER1.
+
+<font color ="#0000FF">*      PERFORM GET_FILTER_CRITERIA.</font>
+
+
+      CASE E_UCOMM.
+
+        WHEN 'TODAY'.
+          PERFORM FITER USING SY-DATUM
+                               ' '
+                               'EQ'
+                              'BADAT'
+                              GT_FILTER1
+                              GS_FILTER1.
+        WHEN '3M'.
+          PERFORM FITER USING     GV_NEW_DATE
+                                  SY-DATUM
+                                  'BT'
+                                  'BADAT'
+                                  GT_FILTER1
+                                  GS_FILTER1.
+        WHEN 'PO_OK'.
+          PERFORM FITER USING ICON_LED_GREEN
+                              ' '
+                              'EQ'
+                              'ICON'
+                              GT_FILTER1
+                              GS_FILTER1.
+
+        WHEN 'PO_NO'.
+          PERFORM FITER USING ICON_LED_RED
+                                 ' '
+                                 'EQ'
+                                 'ICON'
+                                 GT_FILTER1
+                                 GS_FILTER1.
+        WHEN 'PO_WAIT'.
+          PERFORM FITER USING ICON_LED_YELLOW
+                                     ' '
+                                     'EQ'
+                                     'ICON'
+                                     GT_FILTER1
+                                     GS_FILTER1    .
+      ENDCASE.
+
+
+      PERFORM SET_FILTER_CRITERIA USING GO_ALV_GRID1
+                                  CHANGING GT_FILTER1.
+
+      GO_ALV_GRID1-&gt;REFRESH_TABLE_DISPLAY( ).
+
+
+    ENDIF.
+
+
+
+  ENDMETHOD.
+
+
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*& DISPLAY2 핸들러</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+
+  METHOD ON_DOUBLE_CLICK_DISPLAY2.
+    IF SENDER EQ GO_ALV_GRID2.
+      READ TABLE GT_DISPLAY2 INTO GS_DISPLAY2 INDEX E_ROW-INDEX.
+      IF SY-SUBRC = 0.
+        CASE E_COLUMN-FIELDNAME.
+          WHEN 'MATNR' OR 'MAKTX'.
+            PERFORM SELECT_MARA.
+            PERFORM SELECT_MATX.
+            CALL SCREEN 200 STARTING AT 10 10.
+          WHEN 'MRPID'.
+            PERFORM SELECT_PPT030.
+            PERFORM SELECT_MATX.
+            CALL SCREEN 210 STARTING AT 10 10.
+          WHEN 'PNAME' OR 'WERKS'.
+            PERFORM SELECT_T001W.
+            CALL SCREEN 220 STARTING AT 10 10.
+          WHEN 'BANFN'.
+            PERFORM SELECT_PPT030_WHO.
+            CALL SCREEN 230 STARTING AT 10 10.
+          WHEN OTHERS.
+        ENDCASE.
+
+      ENDIF.
+
+
+    ENDIF.
+  ENDMETHOD.
+
+  METHOD ON_HOTSPOT_CLICK_DISPLAY2.
+
+
+    IF SENDER EQ GO_ALV_GRID2.
+
+
+      READ TABLE GT_DISPLAY2  INTO GS_DISPLAY2 INDEX E_ROW_ID.
+      IF SY-SUBRC = 0.
+        IF GV_SELECT IS INITIAL.
+          REFRESH GT_DISPLAY3.
+          GT_DISPLAY3 = GT_WA3.
+          GV_SELECT = 'X'.
+        ENDIF.
+
+
+        PERFORM FITER USING GS_DISPLAY2-MATNR
+                                  ' '
+                                  'EQ'
+                                 'MATNR'
+                                 GT_FILTER3
+                                 GS_FILTER3.
+
+        PERFORM FITER USING GS_DISPLAY2-MATNR
+                          ' '
+                          'EQ'
+                         'MATNR'
+                         GT_FILTER3
+                         GS_FILTER3.
+
+        PERFORM SET_FILTER_CRITERIA USING GO_ALV_GRID3
+                                   CHANGING GT_FILTER3.
+
+        " 인풋필드(가격정보)
+        PERFORM SELECT_FOR_INPUT USING GS_DISPLAY2-MATNR.
+
+        PERFORM INSERT_DATA.
+
+
+        " DISPLAY2 ZCA_EBAN의 수량 단위 저장 DISPLAY3 HOTSPOT 에서 가공
+        PERFORM SAVE_ZCA_EBAN_GV_MEINH.
+
+
+
+      ENDIF.
+      " alv3의 타이틀을 선택한 자재명으로 변경
+      PERFORM CHANGE_TITLE.
+
+
+      GO_ALV_GRID3-&gt;REFRESH_TABLE_DISPLAY( ).
+      LEAVE SCREEN.
+
+    ENDIF.
+  ENDMETHOD.
+
+
+  METHOD ON_TOOLBAR_DISPLAY2.
+
+    IF SENDER EQ GO_ALV_GRID2.
+      DATA LS_BUTTON LIKE LINE OF E_OBJECT-&gt;MT_TOOLBAR.
+
+<font color ="#0000FF">*      CLEAR LS_BUTTON.</font>
+<font color ="#0000FF">*      LS_BUTTON-FUNCTION  = 'SELECT_ALL'.</font>
+<font color ="#0000FF">*      LS_BUTTON-ICON = ICON_SYSTEM_MARK.</font>
+<font color ="#0000FF">*      LS_BUTTON-TEXT      = '전체 자재별 벤더 자동 선정'.</font>
+<font color ="#0000FF">*      LS_BUTTON-QUICKINFO = '모든 자재별 밴더를 자동 선정합니다.'.</font>
+<font color ="#0000FF">*      LS_BUTTON-BUTN_TYPE = 0.</font>
+<font color ="#0000FF">*      APPEND LS_BUTTON TO E_OBJECT-&gt;MT_TOOLBAR.</font>
+
+    ENDIF.
+  ENDMETHOD.
+
+  METHOD ON_USER_COMMAND_DISPLAY2.
+
+    IF SENDER EQ GO_ALV_GRID2.
+      CASE E_UCOMM.
+<font color ="#0000FF">*        WHEN 'SELECT_ALL'.</font>
+<font color ="#0000FF">*          IF GV_SELECT IS INITIAL.</font>
+<font color ="#0000FF">*            REFRESH GT_DISPLAY3.</font>
+<font color ="#0000FF">*            GT_DISPLAY3 = GT_WA3.</font>
+<font color ="#0000FF">*            GV_SELECT = 'X'.</font>
+<font color ="#0000FF">*          ENDIF.</font>
+<font color ="#0000FF">*</font>
+<font color ="#0000FF">*          PERFORM SELECT_ALL.</font>
+        WHEN OTHERS.
+
+
+<font color ="#0000FF">*          GO_ALV_GRID2-&gt;REFRESH_TABLE_DISPLAY( ).</font>
+<font color ="#0000FF">*          GO_ALV_GRID3-&gt;REFRESH_TABLE_DISPLAY( ).</font>
+<font color ="#0000FF">*          GO_ALV_GRID4-&gt;REFRESH_TABLE_DISPLAY( ).</font>
+      ENDCASE.
+
+    ENDIF.
+  ENDMETHOD.
+
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*& DISPLAY3 핸들러</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+  METHOD ON_TOOLBAR_DISPLAY3.
+    IF SENDER EQ GO_ALV_GRID3.
+      DATA LS_BUTTON LIKE LINE OF E_OBJECT-&gt;MT_TOOLBAR.
+
+      CLEAR LS_BUTTON.
+      LS_BUTTON-FUNCTION  = 'COMPARE'.
+      LS_BUTTON-ICON = ICON_SELECT_DETAIL.
+      LS_BUTTON-TEXT      = '가격 비교'.
+      LS_BUTTON-QUICKINFO = '밴더별 가격을 비교합니다.'.
+      LS_BUTTON-BUTN_TYPE = 0.
+      APPEND LS_BUTTON TO E_OBJECT-&gt;MT_TOOLBAR.
+
+
+      CLEAR LS_BUTTON.
+      LS_BUTTON-FUNCTION  = 'SELECT'.
+      LS_BUTTON-ICON = ICON_SYSTEM_MARK.
+      LS_BUTTON-TEXT      = '자재별 최저가 벤더 자동 선정'.
+      LS_BUTTON-QUICKINFO = '자재별 벤더 자동 선정합니다.'.
+      LS_BUTTON-BUTN_TYPE = 0.
+      APPEND LS_BUTTON TO E_OBJECT-&gt;MT_TOOLBAR.
+
+      CLEAR LS_BUTTON.
+      LS_BUTTON-FUNCTION  = 'SELECT_ALL'.
+      LS_BUTTON-ICON = ICON_SYSTEM_MARK.
+      LS_BUTTON-TEXT      = '모든 자재별 최저가 벤더 자동 선정'.
+      LS_BUTTON-QUICKINFO = '모든 자재별 밴더를 자동 선정합니다.'.
+      LS_BUTTON-BUTN_TYPE = 0.
+      APPEND LS_BUTTON TO E_OBJECT-&gt;MT_TOOLBAR.
+
+    ENDIF.
+  ENDMETHOD.
+
+  METHOD ON_HOTSPOT_CLICK_DISPLAY3.
+
+    IF SENDER EQ GO_ALV_GRID3.
+
+      READ TABLE GT_DISPLAY3  INTO GS_DISPLAY3 INDEX E_ROW_ID.
+      IF SY-SUBRC = 0.
+        GT_SAVE3 = GT_DISPLAY3.
+        GT_SAVE4 = GT_DISPLAY4.
+        GT_SAVE5 = GT_DISPLAY5.
+
+
+        PERFORM SELECT_DISPLAY4 USING E_ROW_ID-INDEX.
+
+
+
+      ENDIF.
+
+      PERFORM DISPLAY_ICON.
+      GO_ALV_GRID2-&gt;REFRESH_TABLE_DISPLAY( ).
+      GO_ALV_GRID3-&gt;REFRESH_TABLE_DISPLAY( ).
+      GO_ALV_GRID4-&gt;REFRESH_TABLE_DISPLAY( ).
+
+
+      CLEAR GS_DISPLAY3.
+    ENDIF.
+
+
+  ENDMETHOD.
+
+  METHOD ON_USER_COMMAND_DISPLAY3.
+
+    IF SENDER EQ GO_ALV_GRID3.
+      IF GT_DISPLAY3 IS NOT INITIAL.
+        CASE E_UCOMM.
+          WHEN 'COMPARE'.
+            PERFORM COMPARE.
+          WHEN 'SELECT'.
+            PERFORM SELECT.
+          WHEN 'SELECT_ALL'.
+            PERFORM SELECT_ALL.
+        ENDCASE.
+        PERFORM DISPLAY_ICON.
+        GO_ALV_GRID2-&gt;REFRESH_TABLE_DISPLAY( ).
+        GO_ALV_GRID3-&gt;REFRESH_TABLE_DISPLAY( ).
+        GO_ALV_GRID4-&gt;REFRESH_TABLE_DISPLAY( ).
+      ENDIF.
+
+    ENDIF.
+  ENDMETHOD.
+
+
+
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*& DISPLAY4 핸들러</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+  METHOD ON_TOOLBAR_DISPLAY4.
+
+    IF SENDER EQ GO_ALV_GRID4.
+      DATA LS_BUTTON LIKE LINE OF E_OBJECT-&gt;MT_TOOLBAR.
+
+      CLEAR LS_BUTTON.
+      LS_BUTTON-FUNCTION  = 'CREATE_PO'.
+      LS_BUTTON-ICON = ICON_CONVERT_ALL.
+      LS_BUTTON-TEXT      = '오더 전환'.
+      LS_BUTTON-QUICKINFO = '구매 요청을 오더로 전환합니다.'.
+      LS_BUTTON-BUTN_TYPE = 0.
+
+      APPEND LS_BUTTON TO E_OBJECT-&gt;MT_TOOLBAR.
+    ENDIF.
+  ENDMETHOD.
+  METHOD ON_USER_COMMAND_DISPLAY4.
+    IF SENDER EQ GO_ALV_GRID4.
+
+      CASE E_UCOMM.
+        WHEN 'CREATE_PO'.
+          PERFORM CREATE_PO.
+      ENDCASE.
+
+
+    ENDIF.
+  ENDMETHOD.
+
+ENDCLASS.
+</pre>
+<hr>
+<font size="2" face = "Sans Serif">Extracted by Direct Download Enterprise version 1.3.1 - E.G.Mellodew. 1998-2005 UK. Sap Release 758
+</font>
+</body>
+</html>

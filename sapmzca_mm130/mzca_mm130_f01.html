@@ -1,0 +1,1720 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2//EN">
+<html>
+<head>
+<title>MZCA_MM130_F01</title>
+</head>
+<body bgcolor="#FFFFE0">
+<font size="3" face = "Arial" color="#000000"><b>Code listing for: MZCA_MM130_F01</b></font>
+<br>
+<font size="3" face = "Arial" color="#000000"><b>Description:  F01</b></font>
+<hr>
+<pre width="100">
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*& Include          MZCA_MM130_F01</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*& Form SET_LANG</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+FORM SET_LANG .
+  GV_LANG = SY-LANGU.
+ENDFORM.
+
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*& Form CREATE</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+FORM CREATE .
+
+  CREATE OBJECT GO_CONTAINER
+    EXPORTING
+      CONTAINER_NAME = 'CCON1'.
+
+  CREATE OBJECT GO_ALV_GRID
+    EXPORTING
+      I_PARENT = GO_CONTAINER.
+
+ENDFORM.
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*& Form LAYO</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+FORM LAYO .
+  GS_LAYOUT-SEL_MODE = 'A'.
+  GS_LAYOUT-STYLEFNAME = 'CELLSTYLE'.  " 셀 스타일 필드명 지정
+<font color ="#0000FF">*  GS_LAYOUT-EDIT = ABAP_ON.</font>
+  GS_LAYOUT-NO_ROWINS = ABAP_ON.
+
+ENDFORM.
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*& Form FCAT</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+FORM FCAT .
+
+
+  CLEAR GS_FIELDCAT.
+  GS_FIELDCAT-FIELDNAME = 'INFNR'.
+  GS_FIELDCAT-KEY = ABAP_ON.
+  GS_FIELDCAT-OUTPUTLEN = 8.
+  GS_FIELDCAT-COLTEXT = '인포 레코드 번호'.
+  APPEND GS_FIELDCAT TO GT_FIELDCAT.
+
+  CLEAR GS_FIELDCAT.
+  GS_FIELDCAT-FIELDNAME = 'LIFNR'.
+  GS_FIELDCAT-KEY = ABAP_ON.
+  GS_FIELDCAT-OUTPUTLEN = 10.
+  APPEND GS_FIELDCAT TO GT_FIELDCAT.
+
+  CLEAR GS_FIELDCAT.
+  GS_FIELDCAT-FIELDNAME = 'MATNR'.
+  GS_FIELDCAT-OUTPUTLEN = 10.
+  APPEND GS_FIELDCAT TO GT_FIELDCAT.
+
+  CLEAR GS_FIELDCAT.
+  GS_FIELDCAT-FIELDNAME = 'NETPR'.
+  GS_FIELDCAT-OUTPUTLEN = 7.
+  GS_FIELDCAT-QFIELDNAME = 'WEARS'.
+  APPEND GS_FIELDCAT TO GT_FIELDCAT.
+
+  CLEAR GS_FIELDCAT.
+  GS_FIELDCAT-FIELDNAME = 'WEARS'.
+  GS_FIELDCAT-COLTEXT = '통화'.
+  APPEND GS_FIELDCAT TO GT_FIELDCAT.
+
+  CLEAR GS_FIELDCAT.
+  GS_FIELDCAT-FIELDNAME = 'DATAB'.
+  GS_FIELDCAT-COLTEXT = '유통기한'.
+  GS_FIELDCAT-OUTPUTLEN = 7.
+  APPEND GS_FIELDCAT TO GT_FIELDCAT.
+
+  CLEAR GS_FIELDCAT.
+  GS_FIELDCAT-FIELDNAME = 'DATBC'.
+  GS_FIELDCAT-OUTPUTLEN = 13.
+  APPEND GS_FIELDCAT TO GT_FIELDCAT.
+
+  CLEAR GS_FIELDCAT.
+  GS_FIELDCAT-FIELDNAME = 'DATBI'.
+  GS_FIELDCAT-COLTEXT = '인포 만료일'.
+  GS_FIELDCAT-OUTPUTLEN = 13.
+  APPEND GS_FIELDCAT TO GT_FIELDCAT.
+
+
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*& 추가 필드</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+
+  CLEAR GS_FIELDCAT.
+  GS_FIELDCAT-FIELDNAME = 'MAKTX'.
+  GS_FIELDCAT-REF_TABLE = 'ZCA_MAKT'.
+  GS_FIELDCAT-REF_FIELD = 'MAKTX'.
+  GS_FIELDCAT-COL_POS = 5.
+  GS_FIELDCAT-OUTPUTLEN = 15.
+  APPEND GS_FIELDCAT TO GT_FIELDCAT.
+
+
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*& NO OUT</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+
+  CLEAR GS_FIELDCAT.
+  GS_FIELDCAT-FIELDNAME = 'SPRAS'.
+  GS_FIELDCAT-NO_OUT = ABAP_ON.
+  APPEND GS_FIELDCAT TO GT_FIELDCAT.
+
+  CLEAR GS_FIELDCAT.
+  GS_FIELDCAT-FIELDNAME = 'LVORM'.
+  GS_FIELDCAT-NO_OUT = ABAP_ON.
+  APPEND GS_FIELDCAT TO GT_FIELDCAT.
+
+  CLEAR GS_FIELDCAT.
+  GS_FIELDCAT-FIELDNAME = 'AENAM'.
+  GS_FIELDCAT-NO_OUT = ABAP_ON.
+  APPEND GS_FIELDCAT TO GT_FIELDCAT.
+
+  CLEAR GS_FIELDCAT.
+  GS_FIELDCAT-FIELDNAME = 'AEDAT'.
+  GS_FIELDCAT-NO_OUT = ABAP_ON.
+  APPEND GS_FIELDCAT TO GT_FIELDCAT.
+
+  CLEAR GS_FIELDCAT.
+  GS_FIELDCAT-FIELDNAME = 'AEZET'.
+  GS_FIELDCAT-NO_OUT = ABAP_ON.
+  APPEND GS_FIELDCAT TO GT_FIELDCAT.
+
+  CLEAR GS_FIELDCAT.
+  GS_FIELDCAT-FIELDNAME = 'ERNAM'.
+  GS_FIELDCAT-NO_OUT = ABAP_ON.
+  APPEND GS_FIELDCAT TO GT_FIELDCAT.
+
+
+  CLEAR GS_FIELDCAT.
+  GS_FIELDCAT-FIELDNAME = 'ERZET'.
+  GS_FIELDCAT-NO_OUT = ABAP_ON.
+  APPEND GS_FIELDCAT TO GT_FIELDCAT.
+
+
+  CLEAR GS_FIELDCAT.
+  GS_FIELDCAT-FIELDNAME = 'ERDAT'.
+  GS_FIELDCAT-NO_OUT = ABAP_ON.
+  APPEND GS_FIELDCAT TO GT_FIELDCAT.
+
+
+
+
+
+
+
+<font color ="#0000FF">*  CLEAR GS_FIELDCAT.</font>
+<font color ="#0000FF">*  GS_FIELDCAT-FIELDNAME = 'NETPR'.</font>
+<font color ="#0000FF">*  APPEND GS_FIELDCAT TO GT_FIELDCAT.</font>
+<font color ="#0000FF">*</font>
+<font color ="#0000FF">*</font>
+<font color ="#0000FF">*  CLEAR GS_FIELDCAT.</font>
+<font color ="#0000FF">*  GS_FIELDCAT-FIELDNAME = 'DATBC'.</font>
+<font color ="#0000FF">*  APPEND GS_FIELDCAT TO GT_FIELDCAT.</font>
+<font color ="#0000FF">*</font>
+<font color ="#0000FF">*  CLEAR GS_FIELDCAT.</font>
+<font color ="#0000FF">*  GS_FIELDCAT-FIELDNAME = 'DATBI'.</font>
+<font color ="#0000FF">*  APPEND GS_FIELDCAT TO GT_FIELDCAT.</font>
+<font color ="#0000FF">*</font>
+<font color ="#0000FF">*</font>
+<font color ="#0000FF">*  CLEAR GS_FIELDCAT.</font>
+<font color ="#0000FF">*  GS_FIELDCAT-FIELDNAME = 'DATAB'.</font>
+<font color ="#0000FF">*  APPEND GS_FIELDCAT TO GT_FIELDCAT.</font>
+<font color ="#0000FF">*</font>
+<font color ="#0000FF">*</font>
+<font color ="#0000FF">*  CLEAR GS_FIELDCAT.</font>
+<font color ="#0000FF">*  GS_FIELDCAT-FIELDNAME = 'WEARS'.</font>
+<font color ="#0000FF">*  APPEND GS_FIELDCAT TO GT_FIELDCAT.</font>
+
+
+ENDFORM.
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*& Form DISPLAY</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+FORM DISPLAY .
+
+  SORT GT_FIELDCAT BY FIELDNAME.
+  GS_VARIANT-REPORT = SY-REPID.
+  GS_VARIANT-HANDLE = '4000'.
+
+
+  GO_ALV_GRID-&gt;SET_TABLE_FOR_FIRST_DISPLAY(
+  EXPORTING
+<font color ="#0000FF">*    I_BUFFER_ACTIVE               =                  " Buffering Active</font>
+<font color ="#0000FF">*    I_BYPASSING_BUFFER            =                  " Switch Off Buffer</font>
+<font color ="#0000FF">*    I_CONSISTENCY_CHECK           =                  " Starting Consistency Check for Interface Error Recognition</font>
+    I_STRUCTURE_NAME              =    'ZCA_EINA'              " Internal Output Table Structure Name
+IS_VARIANT      = GS_VARIANT              " Layout
+I_SAVE          = 'A'                 " Save Layout
+<font color ="#0000FF">*    I_DEFAULT                     = 'X'              " Default Display Variant</font>
+  IS_LAYOUT                     =   GS_LAYOUT               " Layout
+<font color ="#0000FF">*    IS_PRINT                      =                  " Print Control</font>
+<font color ="#0000FF">*    IT_SPECIAL_GROUPS             =                  " Field Groups</font>
+<font color ="#0000FF">*    IT_TOOLBAR_EXCLUDING          =                  " Excluded Toolbar Standard Functions</font>
+<font color ="#0000FF">*    IT_HYPERLINK                  =                  " Hyperlinks</font>
+<font color ="#0000FF">*    IT_ALV_GRAPHICS               =                  " Table of Structure DTC_S_TC</font>
+<font color ="#0000FF">*    IT_EXCEPT_QINFO               =                  " Table for Exception Quickinfo</font>
+<font color ="#0000FF">*    IR_SALV_ADAPTER               =                  " Internal Usage only !!! - obsolete</font>
+  CHANGING
+    IT_OUTTAB                     =    GT_DISPLAY           " Output Table
+  IT_FIELDCATALOG               =  GT_FIELDCAT                " Field Catalog
+    IT_SORT                       =     GT_SORT                " Sort Criteria
+<font color ="#0000FF">*    IT_FILTER                     =               " Filter Criteria</font>
+).
+
+ENDFORM.
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*& Form DATA_SELECT</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+FORM DATA_SELECT_EINA USING PV_LIFNR TYPE ZCA_LFA1-LIFNR.
+
+  DATA: LV_LIFNR TYPE ZCA_EINA-LIFNR,
+        LV_MATNR TYPE ZCA_EINA-MATNR.
+
+  LV_LIFNR = ZCA_EINA-LIFNR.
+  LV_MATNR = ZCA_EINA-MATNR.
+
+  IF PV_LIFNR IS NOT INITIAL.
+
+    SELECT
+   ZCA_EINA~INFNR,
+   ZCA_EINA~LIFNR,
+   ZCA_EINA~MATNR,
+   ZCA_EINA~NETPR,
+   ZCA_EINA~WEARS,
+   ZCA_EINA~LVORM,
+   ZCA_EINA~DATAB,
+   ZCA_EINA~DATBC,
+   ZCA_EINA~DATBI,
+   ZCA_MAKT~MAKTX,
+   ZCA_MAKT~SPRAS
+   FROM ZCA_EINA
+   INNER JOIN ZCA_MAKT
+   ON ZCA_EINA~MATNR EQ ZCA_MAKT~MATNR
+   WHERE ZCA_EINA~LVORM EQ ' '
+   AND   ZCA_MAKT~SPRAS EQ @GV_LANG
+   AND ( ZCA_EINA~LIFNR = @LV_LIFNR OR @LV_LIFNR IS INITIAL )
+   AND ( ZCA_EINA~MATNR = @LV_MATNR OR @LV_MATNR IS INITIAL )
+   AND SUBSTRING( ZCA_EINA~MATNR, 1, 4 ) NOT IN ('MAT3','MAT4')
+   AND ZCA_EINA~LIFNR EQ @PV_LIFNR
+   AND  ZCA_EINA~DATBI &gt; @SY-DATUM
+   INTO CORRESPONDING FIELDS OF TABLE @GT_DISPLAY .
+  ELSE.
+
+    SELECT
+   ZCA_EINA~INFNR,
+   ZCA_EINA~LIFNR,
+   ZCA_EINA~MATNR,
+   ZCA_EINA~NETPR,
+   ZCA_EINA~WEARS,
+   ZCA_EINA~LVORM,
+   ZCA_EINA~DATAB,
+   ZCA_EINA~DATBC,
+   ZCA_EINA~DATBI,
+   ZCA_MAKT~MAKTX,
+   ZCA_MAKT~SPRAS
+   FROM ZCA_EINA
+   INNER JOIN ZCA_MAKT
+   ON ZCA_EINA~MATNR EQ ZCA_MAKT~MATNR
+   WHERE ZCA_EINA~LVORM EQ ' '
+   AND   ZCA_MAKT~SPRAS EQ @GV_LANG
+   AND ( ZCA_EINA~LIFNR = @LV_LIFNR OR @LV_LIFNR IS INITIAL )
+   AND ( ZCA_EINA~MATNR = @LV_MATNR OR @LV_MATNR IS INITIAL )
+   AND SUBSTRING( ZCA_EINA~MATNR, 1, 4 ) NOT IN ('MAT3','MAT4')
+         AND  ZCA_EINA~DATBI &gt; @SY-DATUM
+   INTO CORRESPONDING FIELDS OF TABLE @GT_DISPLAY .
+
+  ENDIF.
+
+
+
+
+<font color ="#0000FF">*  GO_ALV_GRID-&gt;REFRESH_TABLE_DISPLAY(    ).</font>
+
+
+  GT_ORIGINAL[] = GT_DISPLAY[].
+
+ENDFORM.
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*& Form CHANGE_FCAT</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+FORM CHANGE_FCAT .
+
+  CALL METHOD GO_ALV_GRID-&gt;SET_READY_FOR_INPUT
+    EXPORTING
+      I_READY_FOR_INPUT = 1.                " Ready for Input Status
+
+
+  DATA: LS_STYLE          TYPE LVC_S_STYL.
+  DATA: LT_STYLE_EDIT     TYPE LVC_T_STYL.
+  DATA: LT_STYLE_READONLY TYPE LVC_T_STYL.
+
+  CLEAR LS_STYLE.
+  LS_STYLE-FIELDNAME = SPACE. " ALL Fields
+  LS_STYLE-STYLE     = CL_GUI_ALV_GRID=&gt;MC_STYLE_DISABLED.
+  INSERT LS_STYLE INTO TABLE LT_STYLE_READONLY.
+
+
+  CLEAR GS_DISPLAY-CELLSTYLE.
+  " 편집 가능 필드 설정
+  PERFORM SET_FIELD_EDITABLE USING 'NETPR'.
+  PERFORM SET_FIELD_EDITABLE USING 'DATBC'.
+  PERFORM SET_FIELD_EDITABLE USING 'DATBI'.
+
+
+
+  LT_STYLE_EDIT = GS_DISPLAY-CELLSTYLE.
+
+  INSERT LS_STYLE INTO TABLE LT_STYLE_EDIT. " 특정 필드를 열게 하고, 나머지는 전부 읽기 전용
+
+
+<font color ="#0000FF">*-----------------------------------------------------------</font>
+  " 1. 수정용으로 변경
+<font color ="#0000FF">*-----------------------------------------------------------</font>
+  LOOP AT GT_DISPLAY INTO GS_DISPLAY.
+
+    READ TABLE GT_SELECTED_ROW INTO DATA(LS_ROW) WITH KEY INDEX = SY-TABIX.
+
+    IF SY-SUBRC EQ 0.
+      " 특정 필드만 수정 가능하게 열음
+      GS_DISPLAY-CELLSTYLE = LT_STYLE_EDIT.
+    ELSE.
+      " 모든 필드를 읽기 전용으로 잠금
+      GS_DISPLAY-CELLSTYLE = LT_STYLE_READONLY.
+
+    ENDIF.
+
+    MODIFY GT_DISPLAY FROM GS_DISPLAY TRANSPORTING CELLSTYLE.
+  ENDLOOP.
+
+
+
+ENDFORM.
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*& Form APPEND_FCAT_DATA</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+FORM APPEND_FCAT_DATA .
+
+
+
+ENDFORM.
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*& Form SAVE_DATA</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+FORM SAVE_DATA .
+
+  DATA:
+    LT_UPDATE   TYPE TABLE OF ZCA_EINA,
+    LS_UPDATE   TYPE ZCA_EINA,
+    LV_INDEX    TYPE I,
+    LS_ORIGINAL LIKE LINE OF GT_ORIGINAL.
+
+
+<font color ="#0000FF">*---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*  선택한 행 인덱스 가져오기</font>
+<font color ="#0000FF">*---------------------------------------------------------------------*</font>
+
+  GO_ALV_GRID-&gt;GET_SELECTED_ROWS(
+    IMPORTING
+      ET_INDEX_ROWS =   DATA(LT_INDEX_ROWS1)
+  ).
+
+
+
+  GT_ORIGINAL[] = GT_DISPLAY.
+
+  CLEAR GS_DISPLAY.
+
+<font color ="#0000FF">*---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*  저장 메시지 출력</font>
+<font color ="#0000FF">*---------------------------------------------------------------------*</font>
+
+
+  PERFORM POPUP_TO_CONFIRM USING ' 데이터를 저장하시겠습니까? '.
+
+
+  IF SY-SUBRC &lt;&gt; 0.  " 아니요 누르면 그냥 나간다
+    PERFORM DATA_SELECT_EINA USING ' '.
+    RETURN.
+  ENDIF.
+
+<font color ="#0000FF">*---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*  작업 시작</font>
+<font color ="#0000FF">*---------------------------------------------------------------------*</font>
+
+  CLEAR GS_DISPLAY.
+  LOOP AT GT_DISPLAY INTO GS_DISPLAY.
+
+<font color ="#0000FF">*---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*  데이터 생성시 문제되는 부분에 대한 메시지 출력</font>
+<font color ="#0000FF">*---------------------------------------------------------------------*</font>
+
+    IF
+      GS_DISPLAY-NETPR IS INITIAL
+   OR GS_DISPLAY-WEARS IS INITIAL
+   OR GS_DISPLAY-DATBC IS INITIAL
+   OR GS_DISPLAY-DATBI IS INITIAL.
+
+      MESSAGE W257.
+
+    ELSEIF GS_DISPLAY-DATBI &lt; SY-DATUM.
+      MESSAGE W258.
+
+    ELSEIF GS_DISPLAY-DATBC &gt; GS_DISPLAY-DATBI.
+<font color ="#0000FF">*      MESSAGE |시작일은 { GS_DISPLAY-DATBI } 보다 늦을 수 없습니다.| TYPE 'E' DISPLAY LIKE 'W'.</font>
+      MESSAGE W259.
+    ENDIF.
+
+
+<font color ="#0000FF">*---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*  넘버 레인지 생성</font>
+<font color ="#0000FF">*---------------------------------------------------------------------*</font>
+
+    IF GS_DISPLAY-INFNR IS INITIAL.
+      DATA: LV_NUM TYPE I.
+
+      CALL FUNCTION 'NUMBER_GET_NEXT'
+        EXPORTING
+          NR_RANGE_NR = '01'     " 위에서 지정한 No
+          OBJECT      = 'ZCA_INFNR' " number range obj 명
+        IMPORTING
+          NUMBER      = LV_NUM. " 저장할 변수.
+      GS_DISPLAY-INFNR = 'IR0' && LV_NUM.
+      GS_DISPLAY-LVORM = ' '.
+      MODIFY GT_DISPLAY FROM GS_DISPLAY.
+    ENDIF.
+
+    CLEAR GS_DISPLAY.
+  ENDLOOP.
+
+
+<font color ="#0000FF">*---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*  아까 ORIGINAL에 변경 전값 넣어놓은거</font>
+<font color ="#0000FF">*  변경 사항있는지 확인하고 작업공간에 데이터 넘긴 후 LT_UPDATE에 저장</font>
+<font color ="#0000FF">*---------------------------------------------------------------------*</font>
+  LOOP AT GT_DISPLAY INTO GS_DISPLAY.
+    READ TABLE GT_ORIGINAL INTO LS_ORIGINAL WITH KEY INFNR = GS_DISPLAY-INFNR.
+    IF SY-SUBRC = 0.
+
+      IF GS_DISPLAY-INFNR EQ LS_ORIGINAL-INFNR AND
+         GS_DISPLAY-NETPR NE LS_ORIGINAL-NETPR OR
+         GS_DISPLAY-WEARS NE LS_ORIGINAL-WEARS OR
+         GS_DISPLAY-DATAB NE LS_ORIGINAL-DATAB OR
+         GS_DISPLAY-DATAB NE LS_ORIGINAL-DATBC OR
+         GS_DISPLAY-DATAB NE LS_ORIGINAL-DATBI.
+        GS_DISPLAY-AEDAT = SY-DATUM.
+        GS_DISPLAY-AENAM = SY-UNAME.
+        GS_DISPLAY-AEZET = SY-UZEIT.
+        MOVE-CORRESPONDING GS_DISPLAY TO LS_UPDATE.
+        APPEND LS_UPDATE TO LT_UPDATE.
+      ENDIF.
+    ENDIF.
+  ENDLOOP.
+
+
+
+
+<font color ="#0000FF">*---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*  저장</font>
+<font color ="#0000FF">*---------------------------------------------------------------------*</font>
+
+  IF LT_UPDATE IS NOT INITIAL.
+
+
+<font color ="#0000FF">*      READ TABLE LT_UPDATE INTO LS_UPDATE INDEX LS_INDEX_ROWS1.</font>
+<font color ="#0000FF">*      LS_UPDATE-AEDAT = SY-DATUM.</font>
+<font color ="#0000FF">*      LS_UPDATE-AENAM = SY-UNAME.</font>
+<font color ="#0000FF">*      LS_UPDATE-AEZET = SY-UZEIT.</font>
+<font color ="#0000FF">*      MODIFY LT_UPDATE FROM LS_UPDATE INDEX LS_INDEX_ROWS1.</font>
+
+
+
+
+    IF SY-SUBRC = 0.
+      MESSAGE S260 DISPLAY LIKE 'I'.
+
+      MODIFY ZCA_EINA FROM TABLE LT_UPDATE.
+
+    ELSE.
+      MESSAGE S254 DISPLAY LIKE 'E'.
+      RETURN.
+    ENDIF.
+
+  ELSEIF GT_DISPLAY IS NOT INITIAL.
+
+    LOOP AT GT_DISPLAY INTO DATA(LS_DIPLAY).
+      LS_DIPLAY-ERDAT = SY-DATUM.
+      LS_DIPLAY-ERNAM = SY-UNAME.
+      LS_DIPLAY-ERZET = SY-UZEIT.
+      MODIFY GT_DISPLAY FROM LS_DIPLAY .
+    ENDLOOP.
+
+
+
+    IF SY-SUBRC = 0.
+      MESSAGE S260 DISPLAY LIKE 'I'.
+      LOOP AT GT_DISPLAY INTO GS_DISPLAY.
+        MOVE-CORRESPONDING GS_DISPLAY TO LS_UPDATE.
+        APPEND LS_UPDATE TO LT_UPDATE.
+      ENDLOOP.
+      MODIFY ZCA_EINA FROM TABLE LT_UPDATE.
+    ELSE.
+      MESSAGE S254 DISPLAY LIKE 'E'.
+      RETURN.
+    ENDIF.
+  ELSE.
+    MESSAGE S261 DISPLAY LIKE 'I'.
+    RETURN.
+  ENDIF.
+
+
+<font color ="#0000FF">***---------------------------------------------------------------------*</font>
+<font color ="#0000FF">***  저장 사항 ALV에 띄우기</font>
+<font color ="#0000FF">***---------------------------------------------------------------------*</font>
+<font color ="#0000FF">**  GO_ALV_GRID-&gt;REFRESH_TABLE_DISPLAY( ).</font>
+
+ENDFORM.
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*& Form SET_FIELD_STYLE</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*& text</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*&      --&gt; P_</font>
+<font color ="#0000FF">*&      --&gt; P_</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+FORM SET_FIELD_STYLE  USING  PV_FIELDNAME TYPE LVC_FNAME
+                               PV_STYLE TYPE CHAR10.
+
+  DATA: LS_STYLE TYPE LVC_S_STYL.
+
+  LS_STYLE-FIELDNAME = PV_FIELDNAME.
+
+  CASE PV_STYLE.
+    WHEN 'ENABLED'.
+      LS_STYLE-STYLE = CL_GUI_ALV_GRID=&gt;MC_STYLE_ENABLED.  " 편집 가능
+    WHEN 'DISABLED'.
+      LS_STYLE-STYLE = CL_GUI_ALV_GRID=&gt;MC_STYLE_DISABLED. " 편집 불가
+    WHEN OTHERS.
+      LS_STYLE-STYLE = CL_GUI_ALV_GRID=&gt;MC_STYLE_DISABLED. " 기본값 (Disabled)
+  ENDCASE.
+
+  INSERT LS_STYLE INTO TABLE GS_DISPLAY-CELLSTYLE. " ALV 스타일 테이블에 추가
+ENDFORM.
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*& Form STYL_RE</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+FORM STYL_RE .
+
+  LOOP AT GT_DISPLAY INTO GS_DISPLAY.
+    CLEAR GS_DISPLAY-CELLSTYLE.
+    MODIFY GT_DISPLAY FROM GS_DISPLAY INDEX SY-TABIX.
+  ENDLOOP.
+
+ENDFORM.
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*& Form DISABELD_CELL</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+FORM DISABELD_CELL .
+
+  CALL METHOD GO_ALV_GRID-&gt;SET_READY_FOR_INPUT
+    EXPORTING
+      I_READY_FOR_INPUT = 0.                " Ready for Input Status
+
+<font color ="#0000FF">*  DATA:</font>
+<font color ="#0000FF">*    LT_SELECTED_ROWS TYPE LVC_T_ROW,</font>
+<font color ="#0000FF">*    LS_STYLE         TYPE LVC_S_STYL,</font>
+<font color ="#0000FF">*    LV_INDEX         TYPE I.</font>
+<font color ="#0000FF">*</font>
+<font color ="#0000FF">*</font>
+<font color ="#0000FF">*  " 모든 행의 셀 스타일 초기화</font>
+<font color ="#0000FF">*</font>
+<font color ="#0000FF">*  PERFORM STYL_RE.</font>
+<font color ="#0000FF">*</font>
+<font color ="#0000FF">*  LOOP AT GT_DISPLAY INTO GS_DISPLAY.</font>
+<font color ="#0000FF">*</font>
+<font color ="#0000FF">*    IF SY-SUBRC = 0.</font>
+<font color ="#0000FF">*</font>
+<font color ="#0000FF">*      " INFNR 필드 편집 불가능</font>
+<font color ="#0000FF">*      LS_STYLE-FIELDNAME = 'INFNR'.</font>
+<font color ="#0000FF">*      LS_STYLE-STYLE = CL_GUI_ALV_GRID=&gt;MC_STYLE_DISABLED.</font>
+<font color ="#0000FF">*      INSERT LS_STYLE INTO TABLE GS_DISPLAY-CELLSTYLE.</font>
+<font color ="#0000FF">*</font>
+<font color ="#0000FF">*      LS_STYLE-FIELDNAME = 'MAKTX'.</font>
+<font color ="#0000FF">*      LS_STYLE-STYLE = CL_GUI_ALV_GRID=&gt;MC_STYLE_DISABLED.</font>
+<font color ="#0000FF">*      INSERT LS_STYLE INTO TABLE GS_DISPLAY-CELLSTYLE.</font>
+<font color ="#0000FF">*</font>
+<font color ="#0000FF">*      " LIFNR 필드 편집 불가능</font>
+<font color ="#0000FF">*      LS_STYLE-FIELDNAME = 'LIFNR'.</font>
+<font color ="#0000FF">*      LS_STYLE-STYLE = CL_GUI_ALV_GRID=&gt;MC_STYLE_DISABLED.</font>
+<font color ="#0000FF">*      INSERT LS_STYLE INTO TABLE GS_DISPLAY-CELLSTYLE.</font>
+<font color ="#0000FF">*</font>
+<font color ="#0000FF">*      " MATNR 필드 편집 불가능</font>
+<font color ="#0000FF">*      LS_STYLE-FIELDNAME = 'MATNR'.</font>
+<font color ="#0000FF">*      LS_STYLE-STYLE = CL_GUI_ALV_GRID=&gt;MC_STYLE_DISABLED.</font>
+<font color ="#0000FF">*      INSERT LS_STYLE INTO TABLE GS_DISPLAY-CELLSTYLE.</font>
+<font color ="#0000FF">*</font>
+<font color ="#0000FF">*      " NETPR 필드 편집 불가능</font>
+<font color ="#0000FF">*      LS_STYLE-FIELDNAME = 'NETPR'.</font>
+<font color ="#0000FF">*      LS_STYLE-STYLE = CL_GUI_ALV_GRID=&gt;MC_STYLE_DISABLED.</font>
+<font color ="#0000FF">*      INSERT LS_STYLE INTO TABLE GS_DISPLAY-CELLSTYLE.</font>
+<font color ="#0000FF">*</font>
+<font color ="#0000FF">*      " WEARS 필드 편집 불가능</font>
+<font color ="#0000FF">*      LS_STYLE-FIELDNAME = 'WEARS'.</font>
+<font color ="#0000FF">*      LS_STYLE-STYLE = CL_GUI_ALV_GRID=&gt;MC_STYLE_DISABLED.</font>
+<font color ="#0000FF">*      INSERT LS_STYLE INTO TABLE GS_DISPLAY-CELLSTYLE.</font>
+<font color ="#0000FF">*</font>
+<font color ="#0000FF">*      " DATAB 필드 편집 불가능</font>
+<font color ="#0000FF">*      LS_STYLE-FIELDNAME = 'DATAB'.</font>
+<font color ="#0000FF">*      LS_STYLE-STYLE = CL_GUI_ALV_GRID=&gt;MC_STYLE_DISABLED.</font>
+<font color ="#0000FF">*      INSERT LS_STYLE INTO TABLE GS_DISPLAY-CELLSTYLE.</font>
+<font color ="#0000FF">*</font>
+<font color ="#0000FF">*      " DATBC 필드 편집 불가능</font>
+<font color ="#0000FF">*      LS_STYLE-FIELDNAME = 'DATBC'.</font>
+<font color ="#0000FF">*      LS_STYLE-STYLE = CL_GUI_ALV_GRID=&gt;MC_STYLE_DISABLED.</font>
+<font color ="#0000FF">*      INSERT LS_STYLE INTO TABLE GS_DISPLAY-CELLSTYLE.</font>
+<font color ="#0000FF">*</font>
+<font color ="#0000FF">*      " DATBI 필드 편집 불가능</font>
+<font color ="#0000FF">*      LS_STYLE-FIELDNAME = 'DATBI'.</font>
+<font color ="#0000FF">*      LS_STYLE-STYLE = CL_GUI_ALV_GRID=&gt;MC_STYLE_DISABLED.</font>
+<font color ="#0000FF">*      INSERT LS_STYLE INTO TABLE GS_DISPLAY-CELLSTYLE.</font>
+<font color ="#0000FF">*</font>
+<font color ="#0000FF">*      MODIFY GT_DISPLAY FROM GS_DISPLAY.</font>
+<font color ="#0000FF">*</font>
+<font color ="#0000FF">*    ENDIF.</font>
+<font color ="#0000FF">*</font>
+<font color ="#0000FF">*  ENDLOOP.</font>
+<font color ="#0000FF">*</font>
+<font color ="#0000FF">**-----------------------------------------------------------------------------</font>
+<font color ="#0000FF">*  CALL METHOD GO_ALV_GRID-&gt;REFRESH_TABLE_DISPLAY.</font>
+
+ENDFORM.
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*& Form SET_FIELD_READONLY</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+FORM SET_FIELD_READONLY  USING PV_FNAME.
+
+  DATA: LS_STYLE TYPE LVC_S_STYL.
+  LS_STYLE-FIELDNAME = PV_FNAME.
+  LS_STYLE-STYLE = CL_GUI_ALV_GRID=&gt;MC_STYLE_DISABLED.
+  INSERT LS_STYLE INTO TABLE GS_DISPLAY-CELLSTYLE.
+
+ENDFORM.
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*& Form SET_FIELD_EDITABLE</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+FORM SET_FIELD_EDITABLE USING PV_FNAME.
+  DATA: LS_STYLE TYPE LVC_S_STYL.
+  LS_STYLE-FIELDNAME = PV_FNAME.
+  LS_STYLE-STYLE = CL_GUI_ALV_GRID=&gt;MC_STYLE_ENABLED.
+  INSERT LS_STYLE INTO TABLE GS_DISPLAY-CELLSTYLE.
+ENDFORM.
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*& Form DELETE</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+FORM DELETE .
+  DATA LT_SELECTED_ROW TYPE LVC_T_ROW.
+  DATA LS_ROW TYPE LVC_S_ROW.
+  DATA LV_INDEX TYPE I.
+  DATA LV_INFNR TYPE ZCA_EINA-INFNR.
+
+
+  CALL METHOD GO_ALV_GRID-&gt;GET_SELECTED_ROWS
+    IMPORTING
+      ET_INDEX_ROWS = LT_SELECTED_ROW.
+
+
+
+
+
+
+  IF LT_SELECTED_ROW IS NOT INITIAL.
+    PERFORM POPUP_TO_CONFIRM USING ' 삭제 하시겠습니까? '.
+
+    IF SY-SUBRC &lt;&gt; 0.  " 아니요 누르면 그냥 나간다
+      RETURN.
+    ENDIF.
+
+
+    LOOP AT LT_SELECTED_ROW INTO LS_ROW.
+      CLEAR LV_INFNR.
+
+      CLEAR GS_DISPLAY.
+      LV_INDEX = LS_ROW-INDEX.
+      " 인덱스로 GT_DISPLAY 읽기
+      READ TABLE GT_DISPLAY INTO GS_DISPLAY INDEX LV_INDEX.
+      LV_INFNR = GS_DISPLAY-INFNR.
+
+      IF SY-SUBRC = 0.
+        " 여기서 원하는 필드 값 변경 가능
+        GS_DISPLAY-LVORM = 'X'.
+        " 변경값 다시 테이블에 반영
+        MODIFY GT_DISPLAY FROM GS_DISPLAY INDEX LV_INDEX.
+        UPDATE ZCA_EINA SET LVORM = GS_DISPLAY-LVORM
+                         WHERE INFNR = LV_INFNR.
+      ENDIF.
+    ENDLOOP.
+
+
+
+
+
+  ELSE.
+    MESSAGE I102.
+  ENDIF.
+
+  PERFORM DATA_SELECT_EINA USING ' '.
+
+  PERFORM DISABELD_CELL.
+
+ENDFORM.
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*& Form CREATE2</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+FORM CREATE2 .
+
+  CREATE OBJECT GO_CONTAINER2
+    EXPORTING
+      CONTAINER_NAME = 'CCON2'.
+
+  CREATE OBJECT GO_ALV_GRID2
+    EXPORTING
+      I_PARENT = GO_CONTAINER2.
+
+ENDFORM.
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*& Form DISPLAY2</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*& text</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+FORM DISPLAY2 .
+
+  GS_VARIANT2-REPORT = SY-REPID.
+  GS_VARIANT2-HANDLE = '3000'.
+
+  GO_ALV_GRID2-&gt;SET_TABLE_FOR_FIRST_DISPLAY(
+  EXPORTING
+<font color ="#0000FF">*    I_BUFFER_ACTIVE               =                  " Buffering Active</font>
+<font color ="#0000FF">*    I_BYPASSING_BUFFER            =                  " Switch Off Buffer</font>
+<font color ="#0000FF">*    I_CONSISTENCY_CHECK           =                  " Starting Consistency Check for Interface Error Recognition</font>
+    I_STRUCTURE_NAME              =    'ZCA_LFA1'              " Internal Output Table Structure Name
+IS_VARIANT      = GS_VARIANT              " Layout
+I_SAVE          = 'A'                 " Save Layout
+<font color ="#0000FF">*    I_DEFAULT                     = 'X'              " Default Display Variant</font>
+  IS_LAYOUT                     =   GS_LAYOUT2               " Layout
+<font color ="#0000FF">*    IS_PRINT                      =                  " Print Control</font>
+<font color ="#0000FF">*    IT_SPECIAL_GROUPS             =                  " Field Groups</font>
+<font color ="#0000FF">*    IT_TOOLBAR_EXCLUDING          =                  " Excluded Toolbar Standard Functions</font>
+<font color ="#0000FF">*    IT_HYPERLINK                  =                  " Hyperlinks</font>
+<font color ="#0000FF">*    IT_ALV_GRAPHICS               =                  " Table of Structure DTC_S_TC</font>
+<font color ="#0000FF">*    IT_EXCEPT_QINFO               =                  " Table for Exception Quickinfo</font>
+<font color ="#0000FF">*    IR_SALV_ADAPTER               =                  " Internal Usage only !!! - obsolete</font>
+  CHANGING
+    IT_OUTTAB                     =    GT_DISPLAY2           " Output Table
+  IT_FIELDCATALOG               =  GT_FIELDCAT2                " Field Catalog
+<font color ="#0000FF">*    IT_SORT                       =                  " Sort Criteria</font>
+<font color ="#0000FF">*    IT_FILTER                     =                  " Filter Criteria</font>
+).
+ENDFORM.
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*& Form FCAT2</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+FORM FCAT2 .
+
+  CLEAR GS_FIELDCAT2.
+  GS_FIELDCAT2-FIELDNAME = 'SAKNR'.
+  GS_FIELDCAT2-NO_OUT    = ABAP_ON.
+  APPEND GS_FIELDCAT2 TO GT_FIELDCAT2.
+
+  CLEAR GS_FIELDCAT2.
+  GS_FIELDCAT2-FIELDNAME = 'BPCSNR'.
+  GS_FIELDCAT2-NO_OUT    = ABAP_ON.
+  APPEND GS_FIELDCAT2 TO GT_FIELDCAT2.
+
+  CLEAR GS_FIELDCAT2.
+  GS_FIELDCAT2-FIELDNAME = 'LIFNR'.
+  GS_FIELDCAT2-OUTPUTLEN = 14.
+  APPEND GS_FIELDCAT2 TO GT_FIELDCAT2.
+
+  CLEAR GS_FIELDCAT2.
+  GS_FIELDCAT2-FIELDNAME = 'NAME1'.
+  GS_FIELDCAT2-OUTPUTLEN = 17.
+  APPEND GS_FIELDCAT2 TO GT_FIELDCAT2.
+
+
+
+
+  CLEAR GS_FIELDCAT2.
+  GS_FIELDCAT2-FIELDNAME = 'BPHAED'.
+  GS_FIELDCAT2-OUTPUTLEN = 10.
+  APPEND GS_FIELDCAT2 TO GT_FIELDCAT2.
+
+  CLEAR GS_FIELDCAT2.
+  GS_FIELDCAT2-FIELDNAME = 'BPADRR'.
+  GS_FIELDCAT2-NO_OUT    = ABAP_ON.
+  APPEND GS_FIELDCAT2 TO GT_FIELDCAT2.
+
+  CLEAR GS_FIELDCAT2.
+  GS_FIELDCAT2-FIELDNAME = 'BPSTAT'.
+  GS_FIELDCAT2-NO_OUT    = ABAP_ON.
+  APPEND GS_FIELDCAT2 TO GT_FIELDCAT2.
+
+  CLEAR GS_FIELDCAT2.
+  GS_FIELDCAT2-FIELDNAME = 'ZLSCH'.
+  GS_FIELDCAT2-NO_OUT    = ABAP_ON.
+  APPEND GS_FIELDCAT2 TO GT_FIELDCAT2.
+
+  CLEAR GS_FIELDCAT2.
+  GS_FIELDCAT2-FIELDNAME = 'ZEMAIL'.
+  GS_FIELDCAT2-NO_OUT    = ABAP_ON.
+  APPEND GS_FIELDCAT2 TO GT_FIELDCAT2.
+
+  CLEAR GS_FIELDCAT2.
+  GS_FIELDCAT2-FIELDNAME = 'BANKCODE'.
+  GS_FIELDCAT2-NO_OUT    = ABAP_ON.
+  APPEND GS_FIELDCAT2 TO GT_FIELDCAT2.
+
+  CLEAR GS_FIELDCAT2.
+  GS_FIELDCAT2-FIELDNAME = 'ERNAM'.
+  GS_FIELDCAT2-NO_OUT    = ABAP_ON.
+  APPEND GS_FIELDCAT2 TO GT_FIELDCAT2.
+
+  CLEAR GS_FIELDCAT2.
+  GS_FIELDCAT2-FIELDNAME = 'ERDAT'.
+  GS_FIELDCAT2-NO_OUT    = ABAP_ON.
+  APPEND GS_FIELDCAT2 TO GT_FIELDCAT2.
+
+  CLEAR GS_FIELDCAT2.
+  GS_FIELDCAT2-FIELDNAME = 'ERZET'.
+  GS_FIELDCAT2-NO_OUT    = ABAP_ON.
+  APPEND GS_FIELDCAT2 TO GT_FIELDCAT2.
+
+  CLEAR GS_FIELDCAT2.
+  GS_FIELDCAT2-FIELDNAME = 'AENAM'.
+  GS_FIELDCAT2-NO_OUT    = ABAP_ON.
+  APPEND GS_FIELDCAT2 TO GT_FIELDCAT2.
+
+  CLEAR GS_FIELDCAT2.
+  GS_FIELDCAT2-FIELDNAME = 'AEDAT'.
+  GS_FIELDCAT2-NO_OUT    = ABAP_ON.
+  APPEND GS_FIELDCAT2 TO GT_FIELDCAT2.
+
+  CLEAR GS_FIELDCAT2.
+  GS_FIELDCAT2-FIELDNAME = 'AEZET'.
+  GS_FIELDCAT2-NO_OUT    = ABAP_ON.
+  APPEND GS_FIELDCAT2 TO GT_FIELDCAT2.
+
+
+ENDFORM.
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*& Form LAYO2</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+FORM LAYO2 .
+
+  GS_LAYOUT2-SEL_MODE = 'A'.
+  GS_LAYOUT2-NO_TOOLBAR = ABAP_ON.
+  GS_VARIANT-HANDLE = '2'.
+
+ENDFORM.
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*& Form DATA_SELECT_LFA1</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+FORM DATA_SELECT_LFA1 .
+
+  SELECT LIFNR
+         NAME1
+         SAKNR
+         BPCSNR
+         BPHAED
+         BPADRR
+         ZLSCH
+         ZEMAIL
+         BANKCODE
+    FROM ZCA_LFA1
+    INTO CORRESPONDING FIELDS OF TABLE GT_DISPLAY2
+    WHERE BPSTAT EQ ' '.
+
+
+
+
+
+ENDFORM.
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*& Form DATA_SELECT_MARA_ROH</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+FORM DATA_SELECT_MARA_ROH.
+
+  SELECT A~MATNR
+         B~MAKTX
+    FROM ZCA_MARA AS A LEFT OUTER JOIN ZCA_MAKT AS B  ON B~MATNR EQ A~MATNR
+                                                     AND B~SPRAS EQ GV_LANG
+    INTO CORRESPONDING FIELDS OF TABLE GT_DISPLAY3
+   WHERE A~MRART IN ('ROH','VERP')  " 원자재 or 포장재
+     AND A~LVORM EQ SPACE.
+
+  SORT GT_DISPLAY3 BY MATNR.
+
+ENDFORM.
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*& Form DISPLAY3</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+FORM DISPLAY3 .
+
+  GS_VARIANT3-REPORT = SY-REPID.
+  GS_VARIANT3-HANDLE = '2000'.
+
+  GO_ALV_GRID3-&gt;SET_TABLE_FOR_FIRST_DISPLAY(
+  EXPORTING
+<font color ="#0000FF">*    I_BUFFER_ACTIVE               =                  " Buffering Active</font>
+<font color ="#0000FF">*    I_BYPASSING_BUFFER            =                  " Switch Off Buffer</font>
+<font color ="#0000FF">*    I_CONSISTENCY_CHECK           =                  " Starting Consistency Check for Interface Error Recognition</font>
+    I_STRUCTURE_NAME              =    'ZCA_MAKT'              " Internal Output Table Structure Name
+IS_VARIANT      = GS_VARIANT              " Layout
+I_SAVE          = 'A'                 " Save Layout
+<font color ="#0000FF">*    I_DEFAULT                     = 'X'              " Default Display Variant</font>
+  IS_LAYOUT                     =   GS_LAYOUT3               " Layout
+<font color ="#0000FF">*    IS_PRINT                      =                  " Print Control</font>
+<font color ="#0000FF">*    IT_SPECIAL_GROUPS             =                  " Field Groups</font>
+<font color ="#0000FF">*    IT_TOOLBAR_EXCLUDING          =                  " Excluded Toolbar Standard Functions</font>
+<font color ="#0000FF">*    IT_HYPERLINK                  =                  " Hyperlinks</font>
+<font color ="#0000FF">*    IT_ALV_GRAPHICS               =                  " Table of Structure DTC_S_TC</font>
+<font color ="#0000FF">*    IT_EXCEPT_QINFO               =                  " Table for Exception Quickinfo</font>
+<font color ="#0000FF">*    IR_SALV_ADAPTER               =                  " Internal Usage only !!! - obsolete</font>
+  CHANGING
+    IT_OUTTAB                     =    GT_DISPLAY3           " Output Table
+  IT_FIELDCATALOG               =  GT_FIELDCAT3                " Field Catalog
+<font color ="#0000FF">*    IT_SORT                       =                  " Sort Criteria</font>
+<font color ="#0000FF">*    IT_FILTER                     =                  " Filter Criteria</font>
+).
+
+ENDFORM.
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*& Form CREATE3</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+FORM CREATE3 .
+
+  CREATE OBJECT GO_CONTAINER3
+    EXPORTING
+      CONTAINER_NAME = 'CCON3'.
+
+  CREATE OBJECT GO_ALV_GRID3
+    EXPORTING
+      I_PARENT = GO_CONTAINER3.
+
+ENDFORM.
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*& Form LAYO3</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+FORM LAYO3 .
+
+  GS_LAYOUT3-SEL_MODE = 'A'.
+  GS_LAYOUT3-NO_TOOLBAR = ABAP_ON.
+  GS_VARIANT-HANDLE = '3'.
+
+ENDFORM.
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*& Form FCAT3</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+FORM FCAT3 .
+
+
+  CLEAR GS_FIELDCAT3.
+  GS_FIELDCAT3-FIELDNAME = 'SPRAS'.
+  GS_FIELDCAT3-NO_OUT    = ABAP_ON.
+  APPEND GS_FIELDCAT3 TO GT_FIELDCAT3.
+
+  CLEAR GS_FIELDCAT3.
+  GS_FIELDCAT3-FIELDNAME = 'MATNR'.
+  GS_FIELDCAT3-OUTPUTLEN = 14.
+  APPEND GS_FIELDCAT3 TO GT_FIELDCAT3.
+
+  CLEAR GS_FIELDCAT3.
+  GS_FIELDCAT3-FIELDNAME = 'MAKTX'.
+  GS_FIELDCAT3-OUTPUTLEN = 17.
+  APPEND GS_FIELDCAT3 TO GT_FIELDCAT3.
+
+  CLEAR GS_FIELDCAT3.
+  GS_FIELDCAT3-FIELDNAME = 'ERNAM'.
+  GS_FIELDCAT3-NO_OUT    = ABAP_ON.
+  APPEND GS_FIELDCAT3 TO GT_FIELDCAT3.
+
+  CLEAR GS_FIELDCAT3.
+  GS_FIELDCAT3-FIELDNAME = 'ERDAT'.
+  GS_FIELDCAT3-NO_OUT    = ABAP_ON.
+  APPEND GS_FIELDCAT3 TO GT_FIELDCAT3.
+
+  CLEAR GS_FIELDCAT3.
+  GS_FIELDCAT3-FIELDNAME = 'ERZET'.
+  GS_FIELDCAT3-NO_OUT    = ABAP_ON.
+  APPEND GS_FIELDCAT3 TO GT_FIELDCAT3.
+
+  CLEAR GS_FIELDCAT3.
+  GS_FIELDCAT3-FIELDNAME = 'AENAM'.
+  GS_FIELDCAT3-NO_OUT    = ABAP_ON.
+  APPEND GS_FIELDCAT3 TO GT_FIELDCAT3.
+
+  CLEAR GS_FIELDCAT3.
+  GS_FIELDCAT3-FIELDNAME = 'AEDAT'.
+  GS_FIELDCAT3-NO_OUT    = ABAP_ON.
+  APPEND GS_FIELDCAT3 TO GT_FIELDCAT3.
+
+  CLEAR GS_FIELDCAT3.
+  GS_FIELDCAT3-FIELDNAME = 'AEZET'.
+  GS_FIELDCAT3-NO_OUT    = ABAP_ON.
+  APPEND GS_FIELDCAT3 TO GT_FIELDCAT3.
+
+
+ENDFORM.
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*& Form SELETE_DISPLAY2</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+FORM SELETE_DISPLAY2 .
+
+  CLEAR GV_INDEX.
+  " 선택한 행 인덱스 가져오기
+  CALL METHOD GO_ALV_GRID2-&gt;GET_SELECTED_ROWS
+    IMPORTING
+      ET_INDEX_ROWS = DATA(LT_SELECTED_ROW2).
+
+  IF LT_SELECTED_ROW2 IS NOT INITIAL.
+    LOOP AT LT_SELECTED_ROW2 INTO DATA(LS_ROW2).
+
+      READ TABLE GT_DISPLAY2 INTO GS_DISPLAY2 INDEX LS_ROW2-INDEX.
+      IF SY-SUBRC = 0.
+        GV_INDEX = LS_ROW2-INDEX.
+        DATA(LV_LIFNR2) = GS_DISPLAY2-LIFNR.
+
+        PERFORM DATA_SELECT_EINA USING LV_LIFNR2.
+        APPEND LINES OF GT_DISPLAY TO GT_SELECT_DISPLAY.
+
+
+      ENDIF.
+    ENDLOOP.
+    CLEAR GT_DISPLAY.
+    GT_DISPLAY[] = GT_SELECT_DISPLAY.
+    CLEAR GT_SELECT_DISPLAY.
+
+    CLEAR LT_SELECTED_ROW2.
+    CLEAR LS_ROW2.
+
+  ENDIF.
+
+ENDFORM.
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*& Form SORT_DISPLAY1</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+FORM SORT_DISPLAY1 USING PV_FIELD TYPE CHAR15.
+
+  CLEAR GT_SORT.
+
+  IF PV_FIELD EQ ' '.
+
+    CLEAR GS_SORT.
+    GS_SORT-FIELDNAME = 'LIFNR'.
+    GS_SORT-UP = ABAP_ON.
+    APPEND GS_SORT TO GT_SORT.
+
+
+    CLEAR GS_SORT.
+    GS_SORT-FIELDNAME = 'MATNR'.
+    GS_SORT-UP = ABAP_ON.
+    APPEND GS_SORT TO GT_SORT.
+
+  ELSEIF PV_FIELD IS NOT INITIAL.
+    CLEAR GS_SORT.
+    GS_SORT-FIELDNAME = PV_FIELD.
+    GS_SORT-UP = ABAP_ON.
+    APPEND GS_SORT TO GT_SORT.
+
+
+
+  ENDIF.
+
+
+
+
+  SORT GT_FIELDCAT BY FIELDNAME.
+
+  " ALV에 정렬 적용
+  CALL METHOD GO_ALV_GRID-&gt;SET_SORT_CRITERIA
+    EXPORTING
+      IT_SORT = GT_SORT.
+
+<font color ="#0000FF">*  GO_ALV_GRID-&gt;REFRESH_TABLE_DISPLAY( ).</font>
+
+ENDFORM.
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*& Form FITER_DISPLAY</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+FORM FITER_DISPLAY .
+
+  CLEAR LS_FILTER.
+  LS_FILTER-FIELDNAME = 'LIFNR'.       " 필터를 적용할 필드
+  LS_FILTER-SIGN      = 'I'.           " Include
+  LS_FILTER-OPTION    = 'EQ'.          " Equal
+  LS_FILTER-LOW       = '10000001'.    " 필터 조건값
+
+  APPEND LS_FILTER TO LT_FILTER.
+
+  CALL METHOD GO_ALV_GRID-&gt;SET_FILTER_CRITERIA
+    EXPORTING
+      IT_FILTER = LT_FILTER.
+
+<font color ="#0000FF">*  CALL METHOD GO_ALV_GRID-&gt;REFRESH_TABLE_DISPLAY.</font>
+
+ENDFORM.
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*& Form CLEAR_DISPLAY1</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+FORM CLEAR_DISPLAY1 .
+
+  CLEAR GT_DISPLAY.
+<font color ="#0000FF">*  GO_ALV_GRID-&gt;REFRESH_TABLE_DISPLAY( ).</font>
+
+
+
+ENDFORM.
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*& Form SELETE_DISPLAY3</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+FORM SELETE_DISPLAY3 .
+
+  REFRESH GT_ORIGINAL.
+  REFRESH GT_DISPLAY.
+
+  CLEAR GV_INDEX2.
+  " 선택한 행 인덱스 가져오기
+  CALL METHOD GO_ALV_GRID3-&gt;GET_SELECTED_ROWS
+    IMPORTING
+      ET_INDEX_ROWS = DATA(LT_SELECTED_ROW3).
+
+  IF LT_SELECTED_ROW3 IS NOT INITIAL.
+    LOOP AT LT_SELECTED_ROW3 INTO DATA(LS_ROW3).
+
+      READ TABLE GT_DISPLAY3 INTO GS_DISPLAY3 INDEX LS_ROW3-INDEX.
+      IF SY-SUBRC = 0.
+        GV_INDEX2 = LS_ROW3-INDEX.
+        DATA(LV_MATNR) = GS_DISPLAY3-MATNR.
+
+<font color ="#0000FF">*        PERFORM DATA_SELECT_EINA USING LV_LIFNR3.</font>
+        PERFORM DATA_SELECT_EINA2 USING LV_MATNR.
+
+        APPEND LINES OF GT_DISPLAY TO GT_SELECT_DISPLAY2.
+
+
+      ENDIF.
+    ENDLOOP.
+    CLEAR GT_DISPLAY.
+    GT_DISPLAY[] = GT_SELECT_DISPLAY2[] .
+    CLEAR GT_SELECT_DISPLAY2.
+
+    CLEAR LT_SELECTED_ROW3.
+    CLEAR LS_ROW3.
+
+  ENDIF.
+
+ENDFORM.
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*& Form DATA_SELECT_EINA2</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+FORM DATA_SELECT_EINA2  USING    PV_MATNR.
+
+  DATA: LV_LIFNR TYPE ZCA_EINA-LIFNR,
+        LV_MATNR TYPE ZCA_EINA-MATNR.
+
+  LV_LIFNR = ZCA_EINA-LIFNR.
+  LV_MATNR = ZCA_EINA-MATNR.
+
+  IF PV_MATNR IS NOT INITIAL.
+
+    SELECT
+   ZCA_EINA~INFNR,
+   ZCA_EINA~LIFNR,
+   ZCA_EINA~MATNR,
+   ZCA_EINA~NETPR,
+   ZCA_EINA~WEARS,
+   ZCA_EINA~LVORM,
+   ZCA_EINA~DATAB,
+   ZCA_EINA~DATBC,
+   ZCA_EINA~DATBI,
+   ZCA_MAKT~MAKTX,
+   ZCA_MAKT~SPRAS
+   FROM ZCA_EINA
+   INNER JOIN ZCA_MAKT
+   ON ZCA_EINA~MATNR EQ ZCA_MAKT~MATNR
+   WHERE ZCA_EINA~LVORM EQ ' '
+   AND   ZCA_MAKT~SPRAS EQ @GV_LANG
+   AND ( ZCA_EINA~LIFNR = @LV_LIFNR OR @LV_LIFNR IS INITIAL )
+   AND ( ZCA_EINA~MATNR = @LV_MATNR OR @LV_MATNR IS INITIAL )
+   AND SUBSTRING( ZCA_EINA~MATNR, 1, 4 ) NOT IN ('MAT3','MAT4')
+   AND ZCA_EINA~MATNR EQ @PV_MATNR
+         AND  ZCA_EINA~DATBI &gt; @SY-DATUM
+   INTO CORRESPONDING FIELDS OF TABLE @GT_DISPLAY .
+  ELSE.
+
+    SELECT
+   ZCA_EINA~INFNR,
+   ZCA_EINA~LIFNR,
+   ZCA_EINA~MATNR,
+   ZCA_EINA~NETPR,
+   ZCA_EINA~WEARS,
+   ZCA_EINA~LVORM,
+   ZCA_EINA~DATAB,
+   ZCA_EINA~DATBC,
+   ZCA_EINA~DATBI,
+   ZCA_MAKT~MAKTX,
+   ZCA_MAKT~SPRAS
+   FROM ZCA_EINA
+   INNER JOIN ZCA_MAKT
+   ON ZCA_EINA~MATNR EQ ZCA_MAKT~MATNR
+   WHERE ZCA_EINA~LVORM EQ ' '
+   AND   ZCA_MAKT~SPRAS EQ @GV_LANG
+   AND ( ZCA_EINA~LIFNR = @LV_LIFNR OR @LV_LIFNR IS INITIAL )
+   AND ( ZCA_EINA~MATNR = @LV_MATNR OR @LV_MATNR IS INITIAL )
+   AND SUBSTRING( ZCA_EINA~MATNR, 1, 4 ) NOT IN ('MAT3','MAT4')
+         AND  ZCA_EINA~DATBI &gt; @SY-DATUM
+   INTO CORRESPONDING FIELDS OF TABLE @GT_DISPLAY .
+
+  ENDIF.
+
+
+
+
+<font color ="#0000FF">*  GO_ALV_GRID-&gt;REFRESH_TABLE_DISPLAY(    ).</font>
+
+
+  GT_ORIGINAL[] = GT_DISPLAY[].
+
+ENDFORM.
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*& Form FCAT_POS_CAHNGE</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+FORM FCAT_POS_CAHNGE  USING  PV_FCAT TYPE CHAR15.
+
+
+  DATA: LS_FCAT TYPE LVC_S_FCAT.
+
+
+  CALL METHOD GO_ALV_GRID-&gt;GET_FRONTEND_FIELDCATALOG
+    IMPORTING
+      ET_FIELDCATALOG = GT_FIELDCAT.
+
+
+  LOOP AT GT_FIELDCAT INTO LS_FCAT.
+    IF LS_FCAT-FIELDNAME = PV_FCAT.
+      LS_FCAT-COL_POS = 1.
+      MODIFY GT_FIELDCAT FROM LS_FCAT.
+    ENDIF.
+  ENDLOOP.
+
+  CALL METHOD GO_ALV_GRID-&gt;SET_FRONTEND_FIELDCATALOG
+    EXPORTING
+      IT_FIELDCATALOG = GT_FIELDCAT.
+
+<font color ="#0000FF">*  CALL METHOD GO_ALV_GRID-&gt;REFRESH_TABLE_DISPLAY.</font>
+
+ENDFORM.
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*& Form SELECT_MATNR_LIFNR</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+FORM SELECT_MATNR_LIFNR .
+
+<font color ="#0000FF">*------------------------------------------------------------</font>
+<font color ="#0000FF">*  사용할 공간 CLEAR</font>
+<font color ="#0000FF">*------------------------------------------------------------</font>
+  CLEAR GS_DISPLAY2.
+  CLEAR GS_DISPLAY3.
+  CLEAR GT_ORIGINAL.
+  CLEAR GT_DISPLAY.
+
+<font color ="#0000FF">*------------------------------------------------------------</font>
+<font color ="#0000FF">* GRID 2의 선택한 행</font>
+<font color ="#0000FF">*------------------------------------------------------------</font>
+  GO_ALV_GRID2-&gt;GET_SELECTED_ROWS(
+    IMPORTING
+      ET_INDEX_ROWS =  DATA(LT_SELECTED_ROWS2) ).
+
+<font color ="#0000FF">*------------------------------------------------------------</font>
+<font color ="#0000FF">* GRID 3의 선택한 행</font>
+<font color ="#0000FF">*------------------------------------------------------------</font>
+
+  GO_ALV_GRID3-&gt;GET_SELECTED_ROWS(
+  IMPORTING
+    ET_INDEX_ROWS =  DATA(LT_SELECTED_ROWS3) ).
+
+
+<font color ="#0000FF">*------------------------------------------------------------</font>
+<font color ="#0000FF">* 작업 시작</font>
+<font color ="#0000FF">*------------------------------------------------------------</font>
+
+
+<font color ="#0000FF">*------------------------------------------------------------</font>
+<font color ="#0000FF">* GT_DISPLAY2 에서 선택한 샐의 정보를 작업 공간에 가져 옵니다.</font>
+<font color ="#0000FF">*------------------------------------------------------------</font>
+
+  IF LT_SELECTED_ROWS2 IS NOT INITIAL.
+
+    CLEAR GT_DISPLAY.
+    LOOP AT LT_SELECTED_ROWS2 INTO DATA(LS_ROW2).
+      READ TABLE GT_DISPLAY2 INTO GS_DISPLAY2 INDEX LS_ROW2-INDEX.
+      IF SY-SUBRC EQ 0.
+        DATA(LV_INDEX2) = LS_ROW2-INDEX.
+        DATA(LV_LIFNR) = GS_DISPLAY2-LIFNR.
+        PERFORM DATA_SELECT_EINA USING LV_LIFNR.
+
+        APPEND LINES OF GT_DISPLAY TO GT_SELECT_DISPLAY.
+
+      ENDIF.
+
+    ENDLOOP.
+  ENDIF.
+<font color ="#0000FF">*------------------------------------------------------------</font>
+<font color ="#0000FF">* GT_DISPLAY3 에서 선택한 샐의 정보를 작업 공간에 가져 옵니다.</font>
+<font color ="#0000FF">*------------------------------------------------------------</font>
+
+  IF LT_SELECTED_ROWS3 IS NOT INITIAL.
+
+    CLEAR GT_DISPLAY.
+    LOOP AT LT_SELECTED_ROWS3 INTO DATA(LS_ROW3).
+      READ TABLE GT_DISPLAY3 INTO GS_DISPLAY3 INDEX LS_ROW3-INDEX.
+      IF SY-SUBRC EQ 0.
+        DATA(LV_INDEX3) = LS_ROW3-INDEX.
+        DATA(LV_MATNR3) = GS_DISPLAY3-MATNR.
+        PERFORM DATA_SELECT_EINA2 USING LV_MATNR3.
+
+        APPEND LINES OF GT_DISPLAY TO GT_SELECT_DISPLAY2.
+
+      ENDIF.
+
+    ENDLOOP.
+
+  ENDIF.
+
+
+<font color ="#0000FF">*------------------------------------------------------------</font>
+<font color ="#0000FF">* GT_DISPLAY2 와 3에서 가져온 정보를 diplay에 전달</font>
+<font color ="#0000FF">*------------------------------------------------------------</font>
+
+  CLEAR GT_DISPLAY.
+
+  SORT GT_SELECT_DISPLAY2 BY MATNR LIFNR.
+
+  LOOP AT GT_SELECT_DISPLAY INTO GS_SELECT_DISPLAY.
+
+    READ TABLE GT_SELECT_DISPLAY2 INTO GS_SELECT_DISPLAY2
+      WITH KEY MATNR = GS_SELECT_DISPLAY-MATNR
+               LIFNR = GS_SELECT_DISPLAY-LIFNR
+               INFNR = GS_SELECT_DISPLAY-INFNR
+      BINARY SEARCH.
+
+    IF SY-SUBRC = 0.
+      APPEND GS_SELECT_DISPLAY2 TO GT_DISPLAY.
+    ENDIF.
+
+  ENDLOOP.
+
+
+
+  CLEAR GS_SELECT_DISPLAY2.
+  CLEAR GT_SELECT_DISPLAY2.
+  CLEAR GS_SELECT_DISPLAY.
+  CLEAR GT_SELECT_DISPLAY.
+
+<font color ="#0000FF">*  GO_ALV_GRID-&gt;REFRESH_TABLE_DISPLAY( ).</font>
+
+
+
+ENDFORM.
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*& Form POPUP_TO_CONFIRM</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+FORM POPUP_TO_CONFIRM  USING    PV_TEXT TYPE CHAR25.
+
+  DATA LV_ANSWER TYPE C.
+  CALL FUNCTION 'POPUP_TO_CONFIRM'
+    EXPORTING
+      TEXT_QUESTION = PV_TEXT
+    IMPORTING
+      ANSWER        = LV_ANSWER.
+  IF LV_ANSWER &lt;&gt; '1'.
+    SY-SUBRC = 4.  " 아니오면 SY-SUBRC를 4로 세팅
+  ELSE.
+    SY-SUBRC = 0.  " 예
+  ENDIF.
+
+
+
+
+ENDFORM.
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*& Form DATA_ZCA_EORD</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+FORM DATA_ZCA_EORD USING PV_LIFNR TYPE CHAR15.
+
+  SELECT ZEORD
+         LIFNR
+         MATNR
+         INFNR
+         VDATU
+         BDATU
+         BLKFL
+    FROM ZCA_EORD
+    INTO CORRESPONDING FIELDS OF TABLE GT_EORD
+    WHERE LVORM EQ ' '
+    AND LIFNR EQ PV_LIFNR
+    AND BDATU &gt; SY-DATUM.
+
+ENDFORM.
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*& Form CREATE_EINA_DATA</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+FORM CREATE_EINA_DATA .
+
+
+<font color ="#0000FF">*----------------------------------------------------------------------------*</font>
+<font color ="#0000FF">* 1. 필요한 타입과 변수 선언</font>
+<font color ="#0000FF">*----------------------------------------------------------------------------*</font>
+  TYPES: BEGIN OF TY_LIFNR_MATNR,
+           LIFNR TYPE ZCA_EORD-LIFNR,
+           MATNR TYPE ZCA_EORD-MATNR,
+         END OF TY_LIFNR_MATNR.
+
+  DATA: LT_LIFNR_MATNR TYPE STANDARD TABLE OF TY_LIFNR_MATNR WITH EMPTY KEY,
+        LT_CREATE_ROW2 TYPE LVC_T_ROW, " ALV2 선택 행 (밴더)
+        LT_CREATE_ROW3 TYPE LVC_T_ROW, " ALV3 선택 행 (자재)
+        LS_ROW2        TYPE LVC_S_ROW,
+        LS_ROW3        TYPE LVC_S_ROW.
+  DATA: LS_RESULT LIKE GS_DISPLAY.
+
+<font color ="#0000FF">*----------------------------------------------------------------------------*</font>
+<font color ="#0000FF">* 2. 선택한 밴더와 자재를 매칭해서 조합</font>
+<font color ="#0000FF">*----------------------------------------------------------------------------*</font>
+  CLEAR GT_DISPLAY. " 꼭 초기화!
+
+  CALL METHOD GO_ALV_GRID2-&gt;GET_SELECTED_ROWS
+    IMPORTING
+      ET_INDEX_ROWS = LT_CREATE_ROW2.
+
+  CALL METHOD GO_ALV_GRID3-&gt;GET_SELECTED_ROWS
+    IMPORTING
+      ET_INDEX_ROWS = LT_CREATE_ROW3.
+
+  IF LT_CREATE_ROW3 IS INITIAL OR LT_CREATE_ROW2 IS INITIAL.
+    MESSAGE W263 DISPLAY LIKE 'E'.
+    RETURN.
+  ENDIF.
+
+
+  IF LT_CREATE_ROW2 IS NOT INITIAL AND LT_CREATE_ROW3 IS NOT INITIAL.
+
+    CLEAR LT_LIFNR_MATNR.
+
+    LOOP AT LT_CREATE_ROW2 INTO LS_ROW2.
+      READ TABLE GT_DISPLAY2 INTO GS_DISPLAY2 INDEX LS_ROW2-INDEX.
+      IF SY-SUBRC = 0.
+        LOOP AT LT_CREATE_ROW3 INTO LS_ROW3.
+          READ TABLE GT_DISPLAY3 INTO GS_DISPLAY3 INDEX LS_ROW3-INDEX.
+          IF SY-SUBRC = 0.
+
+            " *** 여기 수정 ***
+            " lifnr 와 matnr을 각각 짝지어서 저장
+            APPEND VALUE TY_LIFNR_MATNR(
+              LIFNR = GS_DISPLAY2-LIFNR
+              MATNR = GS_DISPLAY3-MATNR
+            ) TO LT_LIFNR_MATNR.
+
+          ENDIF.
+        ENDLOOP.
+      ENDIF.
+    ENDLOOP.
+
+<font color ="#0000FF">*----------------------------------------------------------------------------*</font>
+<font color ="#0000FF">* 3. 정확히 매칭되는 lifnr+matnr 조합만 조회</font>
+<font color ="#0000FF">*----------------------------------------------------------------------------*</font>
+    LOOP AT LT_LIFNR_MATNR INTO DATA(LS_KEY).
+
+      CLEAR LS_RESULT. " 매번 초기화 해주는게 안전함
+
+      SELECT SINGLE E~LIFNR,
+                    E~MATNR,
+                    M~MAKTX,
+                    A~DATAB
+        FROM ZCA_EORD AS E
+        INNER JOIN ZCA_MAKT AS M ON E~MATNR = M~MATNR
+        INNER JOIN ZCA_MARA AS A ON E~MATNR = A~MATNR
+        WHERE E~LIFNR = @LS_KEY-LIFNR
+          AND E~MATNR = @LS_KEY-MATNR
+          AND E~BDATU &gt; @SY-DATUM
+        INTO CORRESPONDING FIELDS OF @LS_RESULT.
+
+      LS_RESULT-WEARS = 'KRW'.
+<font color ="#0000FF">*      LS_RESULT-ERNAM = SY-UNAME.</font>
+<font color ="#0000FF">*      LS_RESULT-ERDAT = SY-DATUM.</font>
+<font color ="#0000FF">*      LS_RESULT-ERZET = SY-UZEIT.</font>
+
+      IF SY-SUBRC = 0.
+        APPEND LS_RESULT TO GT_DISPLAY.
+      ENDIF.
+
+    ENDLOOP.
+
+<font color ="#0000FF">***----------------------------------------------------------------------------*</font>
+<font color ="#0000FF">*** 4. ALV Refresh</font>
+<font color ="#0000FF">***----------------------------------------------------------------------------*</font>
+<font color ="#0000FF">**    CALL METHOD GO_ALV_GRID-&gt;REFRESH_TABLE_DISPLAY( ).</font>
+
+  ENDIF.
+
+  IF GT_DISPLAY IS NOT INITIAL.
+    CALL METHOD GO_ALV_GRID-&gt;SET_READY_FOR_INPUT
+      EXPORTING
+        I_READY_FOR_INPUT = 1.                " Ready for Input Status
+  ENDIF.
+
+ENDFORM.
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*& Form CREATE_CELL</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+FORM CREATE_CELL .
+
+<font color ="#0000FF">**  CALL METHOD GO_ALV_GRID-&gt;SET_READY_FOR_INPUT</font>
+<font color ="#0000FF">**    EXPORTING</font>
+<font color ="#0000FF">**      I_READY_FOR_INPUT = 0.               " Ready for Input Status</font>
+
+  DATA:
+    LT_SELECTED_ROWS TYPE LVC_T_ROW,
+    LS_STYLE         TYPE LVC_S_STYL,
+    LV_INDEX         TYPE I.
+
+
+  " 모든 행의 셀 스타일 초기화
+
+<font color ="#0000FF">*  PERFORM STYL_RE.</font>
+
+
+  LOOP AT GT_DISPLAY INTO GS_DISPLAY.
+
+    REFRESH GS_DISPLAY-CELLSTYLE.
+
+<font color ="#0000FF">*     모든 필드 편집 불가능</font>
+    LS_STYLE-FIELDNAME = ''.
+    LS_STYLE-STYLE = CL_GUI_ALV_GRID=&gt;MC_STYLE_DISABLED.
+    INSERT LS_STYLE INTO TABLE GS_DISPLAY-CELLSTYLE.
+
+    PERFORM SET_FIELD_EDITABLE USING 'NETPR'.
+<font color ="#0000FF">*      PERFORM SET_FIELD_EDITABLE USING 'WEARS'.</font>
+    PERFORM SET_FIELD_EDITABLE USING 'DATBC'.
+    PERFORM SET_FIELD_EDITABLE USING 'DATBI'.
+
+    MODIFY GT_DISPLAY FROM GS_DISPLAY TRANSPORTING CELLSTYLE.
+  ENDLOOP.
+
+ENDFORM.
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*& Form BTN_DIS</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+FORM BTN_DIS .
+
+  CLEAR GT_DISPLAY.
+
+  CALL METHOD GO_ALV_GRID2-&gt;GET_SELECTED_ROWS
+    IMPORTING
+      ET_INDEX_ROWS = DATA(LT_SELECTED_ROW2).
+
+  CALL METHOD GO_ALV_GRID3-&gt;GET_SELECTED_ROWS
+    IMPORTING
+      ET_INDEX_ROWS = DATA(LT_SELECTED_ROW3).
+
+  RANGES: LR_LIFNR FOR GS_DISPLAY-LIFNR,
+          LR_MATNR FOR GS_DISPLAY-MATNR.
+
+  LOOP AT LT_SELECTED_ROW2 INTO DATA(LS_ROW).
+
+    READ TABLE GT_DISPLAY2 INTO GS_DISPLAY2 INDEX LS_ROW-INDEX.
+    CHECK SY-SUBRC EQ 0.
+
+    CLEAR LR_LIFNR.
+    LR_LIFNR-SIGN     = 'I'.
+    LR_LIFNR-OPTION   = 'EQ'.
+    LR_LIFNR-LOW      = GS_DISPLAY2-LIFNR.
+    APPEND LR_LIFNR.
+
+  ENDLOOP.
+
+  LOOP AT LT_SELECTED_ROW3 INTO LS_ROW.
+
+    READ TABLE GT_DISPLAY3 INTO GS_DISPLAY3 INDEX LS_ROW-INDEX.
+    CHECK SY-SUBRC EQ 0.
+
+    CLEAR LR_MATNR.
+    LR_MATNR-SIGN     = 'I'.
+    LR_MATNR-OPTION   = 'EQ'.
+    LR_MATNR-LOW      = GS_DISPLAY3-MATNR.
+    APPEND LR_MATNR.
+
+  ENDLOOP.
+
+
+  SELECT ZCA_EINA~INFNR,
+         ZCA_EINA~LIFNR,
+         ZCA_EINA~MATNR,
+         ZCA_EINA~NETPR,
+         ZCA_EINA~WEARS,
+         ZCA_EINA~LVORM,
+         ZCA_EINA~DATAB,
+         ZCA_EINA~DATBC,
+         ZCA_EINA~DATBI,
+         ZCA_MAKT~MAKTX,
+         ZCA_MAKT~SPRAS
+    FROM ZCA_EINA
+    LEFT OUTER JOIN ZCA_MAKT ON   ZCA_MAKT~MATNR EQ ZCA_EINA~MATNR
+                             AND  ZCA_MAKT~SPRAS EQ @GV_LANG
+ WHERE ZCA_EINA~LVORM EQ ' '
+   AND ZCA_EINA~LIFNR IN @LR_LIFNR
+   AND ZCA_EINA~MATNR IN @LR_MATNR
+   AND ZCA_EINA~DATBI &gt;= @SY-DATUM
+  INTO CORRESPONDING FIELDS OF TABLE @GT_DISPLAY .
+
+
+
+  " 밴처, 자재 선택을 안한 경우
+  IF LT_SELECTED_ROW2 IS INITIAL AND LT_SELECTED_ROW3 IS INITIAL.
+
+<font color ="#0000FF">*    PERFORM DATA_SELECT_EINA USING ' '.</font>
+    PERFORM SORT_DISPLAY1 USING 'INFNR'.
+    PERFORM FCAT_POS_CAHNGE USING 'INFNR'.
+
+    " 밴처만 선택을 한 경우
+  ELSEIF LT_SELECTED_ROW2 IS NOT INITIAL AND LT_SELECTED_ROW3 IS INITIAL.
+
+<font color ="#0000FF">*    PERFORM SELETE_DISPLAY2 .</font>
+    PERFORM SORT_DISPLAY1 USING 'LIFNR'.
+    PERFORM FCAT_POS_CAHNGE USING 'LIFNR'.
+
+    "자재만 선택한 경우
+  ELSEIF LT_SELECTED_ROW2 IS INITIAL AND LT_SELECTED_ROW3 IS NOT INITIAL.
+
+<font color ="#0000FF">*    PERFORM SELETE_DISPLAY3 .</font>
+    PERFORM SORT_DISPLAY1 USING 'MATNR'.
+    PERFORM FCAT_POS_CAHNGE USING 'MATNR'.
+
+    " 밴처, 자재 둘다 선택한 경우
+  ELSEIF LT_SELECTED_ROW2 IS NOT INITIAL AND LT_SELECTED_ROW3 IS NOT INITIAL.
+
+<font color ="#0000FF">*    PERFORM SELECT_MATNR_LIFNR.</font>
+    PERFORM SORT_DISPLAY1 USING ' '.
+
+  ENDIF.
+
+
+  PERFORM DISABELD_CELL.
+
+
+ENDFORM.
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*& Form UPDATE</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+FORM UPDATE .
+
+  " 선택한 행 인덱스 가져오기
+  CALL METHOD GO_ALV_GRID-&gt;GET_SELECTED_ROWS
+    IMPORTING
+      ET_INDEX_ROWS = GT_SELECTED_ROW.
+
+  IF GT_SELECTED_ROW IS INITIAL.
+    MESSAGE W262.
+  ELSE.
+    PERFORM CHANGE_FCAT .
+    LV_SAVE = 'X'.
+  ENDIF.
+
+ENDFORM.
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*& Form SAVE</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+FORM SAVE .
+
+  " 이거 꼭써야 값 변경된건지 아닌지 알 수 있음
+  GO_ALV_GRID-&gt;CHECK_CHANGED_DATA( ).
+  PERFORM SAVE_DATA.
+  PERFORM DISABELD_CELL.
+
+ENDFORM.
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*& Form SET_STYLE</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+FORM SET_STYLE  USING PT_STYLE     TYPE LVC_T_STYL
+                      PV_FIELDNAME TYPE LVC_S_STYL-FIELDNAME.
+
+  DATA: LS_STYLE TYPE LVC_S_STYL.
+
+  LS_STYLE-FIELDNAME = PV_FIELDNAME.
+  LS_STYLE-STYLE     = CL_GUI_ALV_GRID=&gt;MC_STYLE_DISABLED.
+
+  INSERT LS_STYLE INTO TABLE PT_STYLE.
+
+ENDFORM.
+</pre>
+<hr>
+<font size="2" face = "Sans Serif">Extracted by Direct Download Enterprise version 1.3.1 - E.G.Mellodew. 1998-2005 UK. Sap Release 758
+</font>
+</body>
+</html>

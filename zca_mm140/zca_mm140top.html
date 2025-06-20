@@ -1,0 +1,308 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2//EN">
+<html>
+<head>
+<title>ZCA_MM140TOP</title>
+</head>
+<body bgcolor="#FFFFE0">
+<font size="3" face = "Arial" color="#000000"><b>Code listing for: ZCA_MM140TOP</b></font>
+<br>
+<font size="3" face = "Arial" color="#000000"><b>Description:  top</b></font>
+<hr>
+<pre width="100">
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*& Include          SAPMZCA_MM140TOP</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+
+<font color ="#0000FF">*---------------------------------------------------------------------*</font>
+<font color ="#0000FF">* 테이블 선언</font>
+<font color ="#0000FF">*---------------------------------------------------------------------*</font>
+
+TABLES: ZCA_MARM, ZCA_EBAN, ZCA_EKKO, ZCA_EKPO, ZCA_T001W,
+        ZCA_LFA1, ZCA_MARA, ZCA_EINA, ZCA_MAKT, ZCA_MARD, ZCA_PPT030.
+
+<font color ="#0000FF">*---------------------------------------------------------------------*</font>
+<font color ="#0000FF">* 1번 ALV 관련 변수 ZCA_EBAN</font>
+<font color ="#0000FF">*---------------------------------------------------------------------*</font>
+DATA: GO_CONTAINER1 TYPE REF TO CL_GUI_CUSTOM_CONTAINER,
+      GO_ALV_GRID1  TYPE REF TO CL_GUI_ALV_GRID,
+      GS_LAYOUT1    TYPE LVC_S_LAYO,
+      GT_FIELDCAT1  TYPE LVC_T_FCAT,
+      GS_FIELDCAT1  TYPE LVC_S_FCAT,
+      GT_SORT1      TYPE LVC_T_SORT,
+      GS_SORT1      TYPE LVC_S_SORT,
+      GT_FILTER1    TYPE LVC_T_FILT,
+      GS_FILTER1    TYPE LVC_S_FILT,
+      GT_EXCLUDE1   TYPE UI_FUNCTIONS,
+      GS_VARIANT1   TYPE DISVARIANT.
+
+DATA  OK_CODE       TYPE SY-UCOMM.
+
+DATA: BEGIN OF GS_DISPLAY1.
+        include structure <a href ="zca_eban/dictionary-zca_eban.html">ZCA_EBAN</a>.
+DATA:   PNAME TYPE ZCA_T001W-PNAME,
+        EBELN TYPE ZCA_EKPO-EBELN,
+        ICON  TYPE CHAR4,
+      END OF GS_DISPLAY1.
+
+DATA GT_DISPLAY1 LIKE TABLE OF GS_DISPLAY1.
+
+
+
+<font color ="#0000FF">*---------------------------------------------------------------------*</font>
+<font color ="#0000FF">* 2번 ALV 관련 변수 ZCA_EBAN</font>
+<font color ="#0000FF">*---------------------------------------------------------------------*</font>
+DATA: GO_CONTAINER2 TYPE REF TO CL_GUI_CUSTOM_CONTAINER,
+      GO_ALV_GRID2  TYPE REF TO CL_GUI_ALV_GRID,
+      GS_LAYOUT2    TYPE LVC_S_LAYO,
+      GT_FIELDCAT2  TYPE LVC_T_FCAT,
+      GS_FIELDCAT2  TYPE LVC_S_FCAT,
+      GT_SORT2      TYPE LVC_T_SORT,
+      GS_SORT2      TYPE LVC_S_SORT,
+      GT_FILTER2    TYPE LVC_T_FILT,
+      GS_FILTER2    TYPE LVC_S_FILT,
+      GT_EXCLUDE2   TYPE UI_FUNCTIONS.
+
+DATA: BEGIN OF GS_DISPLAY2.
+        include structure <a href ="zca_eban/dictionary-zca_eban.html">ZCA_EBAN</a>.
+DATA:   PNAME TYPE ZCA_T001W-PNAME,
+        EBELN TYPE ZCA_EKPO-EBELN,
+        ICON  TYPE CHAR4,
+        LTFNR TYPE  ZCA_EKPO-LTFNR,
+        MAKTX TYPE  ZCA_MAKT-MAKTX,
+      END OF GS_DISPLAY2.
+
+DATA GT_DISPLAY2 LIKE TABLE OF GS_DISPLAY2.
+
+
+
+
+<font color ="#0000FF">*---------------------------------------------------------------------*</font>
+<font color ="#0000FF">* 3번 ALV 관련 변수 ZCA_EINA</font>
+<font color ="#0000FF">*---------------------------------------------------------------------*</font>
+DATA: GO_CONTAINER3 TYPE REF TO CL_GUI_CUSTOM_CONTAINER,
+      GO_ALV_GRID3  TYPE REF TO CL_GUI_ALV_GRID,
+      GS_LAYOUT3    TYPE LVC_S_LAYO,
+      GT_FIELDCAT3  TYPE LVC_T_FCAT,
+      GS_FIELDCAT3  TYPE LVC_S_FCAT,
+      GT_SORT3      TYPE LVC_T_SORT,
+      GS_SORT3      TYPE LVC_S_SORT,
+      GT_FILTER3    TYPE LVC_T_FILT,
+      GS_FILTER3    TYPE LVC_S_FILT,
+      GT_EXCLUDE3   TYPE UI_FUNCTIONS.
+
+DATA: BEGIN OF GS_DISPLAY3.
+        include structure <a href ="zca_eina/dictionary-zca_eina.html">ZCA_EINA</a>.
+DATA:   MAKTX              TYPE ZCA_MAKT-MAKTX,
+        NAME1              TYPE ZCA_LFA1-NAME1,
+        ICON               TYPE CHAR4,
+        EXIST              TYPE CHAR1,
+        BRTME              TYPE ZCA_MARA-BRTME,
+        ROWCOLOR           TYPE CHAR4,                    " 행 색 처리
+        COMPARE_MIN        TYPE P DECIMALS 2,                        " 최저가와 비교
+        COMPARE_WEATER     TYPE P DECIMALS 2,                        " 계절가와 차이
+        COMPARE_3M         TYPE P DECIMALS 2,                        " 3개월 차이
+        COMPARE_MOVE       TYPE P DECIMALS 2,                        " 이동 평균가 차이
+        OTD                TYPE P DECIMALS 2,                        " 납기율
+        1Y_HISTORY         TYPE P,                    " 1년간 거래 내역
+        COMPARE_PERCENTAGE TYPE CHAR1,                    " 판매가 비율
+        LOW_PRICE          TYPE CHAR1,                    " 자재별 최저가인 밴더 표시!
+      END OF GS_DISPLAY3.
+
+DATA GT_DISPLAY3 LIKE TABLE OF GS_DISPLAY3.
+DATA GS_WA3 LIKE GS_DISPLAY3.                          " 작업용 공간
+DATA GT_WA3 LIKE TABLE OF GS_DISPLAY3.                 " 작업용 공간
+DATA GT_SAVE3 LIKE TABLE OF GS_DISPLAY3.
+
+
+
+DATA: GT_MARA TYPE TABLE OF ZCA_MARA.
+<font color ="#0000FF">*---------------------------------------------------------------------*</font>
+<font color ="#0000FF">* 4번 ALV 관련 변수 ZCA_EBAN   -&gt; 선택된 밴더 기록</font>
+<font color ="#0000FF">*---------------------------------------------------------------------*</font>
+DATA: GO_CONTAINER4 TYPE REF TO CL_GUI_CUSTOM_CONTAINER,
+      GO_ALV_GRID4  TYPE REF TO CL_GUI_ALV_GRID,
+      GS_LAYOUT4    TYPE LVC_S_LAYO,
+      GT_FIELDCAT4  TYPE LVC_T_FCAT,
+      GS_FIELDCAT4  TYPE LVC_S_FCAT,
+      GT_SORT4      TYPE LVC_T_SORT,
+      GS_SORT4      TYPE LVC_S_SORT,
+      GT_FILTER4    TYPE LVC_T_FILT,
+      GS_FILTER4    TYPE LVC_S_FILT,
+      GS_VARIANT4   TYPE DISVARIANT.
+
+
+DATA: BEGIN OF GS_DISPLAY4.
+        include structure <a href ="zca_ekpo/dictionary-zca_ekpo.html">ZCA_EKPO</a>.
+DATA:   MAKTX  TYPE ZCA_MAKT-MAKTX,
+        QUATER TYPE NUMC3,
+        NAME1  TYPE ZCA_LFA1-NAME1,
+      END OF GS_DISPLAY4.
+
+DATA GT_DISPLAY4 LIKE TABLE OF GS_DISPLAY4.
+DATA GT_SAVE4 LIKE TABLE OF GS_DISPLAY4.
+
+
+<font color ="#0000FF">*---------------------------------------------------------------------*</font>
+<font color ="#0000FF">* 5번 ALV 관련 변수    -&gt; 선택된 밴더의 쿼터 가공용</font>
+<font color ="#0000FF">*---------------------------------------------------------------------*</font>
+DATA: GO_CONTAINER5 TYPE REF TO CL_GUI_CUSTOM_CONTAINER,
+      GO_ALV_GRID5  TYPE REF TO CL_GUI_ALV_GRID,
+      GS_LAYOUT5    TYPE LVC_S_LAYO,
+      GT_FIELDCAT5  TYPE LVC_T_FCAT,
+      GS_FIELDCAT5  TYPE LVC_S_FCAT,
+      GT_SORT5      TYPE LVC_T_SORT,
+      GS_SORT5      TYPE LVC_S_SORT,
+      GT_FILTER5    TYPE LVC_T_FILT,
+      GS_FILTER5    TYPE LVC_S_FILT.
+
+DATA: BEGIN OF GS_DISPLAY5.
+        include structure <a href ="zca_ekpo/dictionary-zca_ekpo.html">ZCA_EKPO</a>.
+DATA:   MAKTX  TYPE ZCA_MAKT-MAKTX,
+        QUATER TYPE NUMC3,
+        NAME1  TYPE ZCA_LFA1-NAME1,
+      END OF GS_DISPLAY5.
+
+DATA GT_DISPLAY5 LIKE TABLE OF GS_DISPLAY5.
+DATA GT_SAVE5 LIKE TABLE OF GS_DISPLAY5.
+<font color ="#0000FF">*---------------------------------------------------------------------*</font>
+<font color ="#0000FF">* INPUT 필드 작업을 위한 변수 ZCA_MARM, ZCA_MARA, ZCA_MAKT</font>
+<font color ="#0000FF">*---------------------------------------------------------------------*</font>
+
+DATA INPUT_MVAPR TYPE ZCA_MARD-TOPRI.
+DATA INPUT_MVAPR1 TYPE ZCA_MARD-TOPRI.
+
+DATA INPUT_3M TYPE ZCA_MARD-TOPRI.       " 3개월 평균가
+DATA INPUT_3M1 TYPE ZCA_MARD-TOPRI.
+
+DATA INPUT_WEATHER TYPE ZCA_MARD-TOPRI.  " 계절가
+DATA INPUT_WEATHER1 TYPE ZCA_MARD-TOPRI. " 변환단위 계절가
+DATA INPUT_SPRING TYPE ZCA_MARD-TOPRI.
+DATA INPUT_SPRING1 TYPE ZCA_MARD-TOPRI.
+DATA INPUT_SUMMER TYPE ZCA_MARD-TOPRI.
+DATA INPUT_SUMMER1 TYPE ZCA_MARD-TOPRI.
+DATA INPUT_FALL TYPE ZCA_MARD-TOPRI.
+DATA INPUT_FALL1 TYPE ZCA_MARD-TOPRI.
+DATA INPUT_WINTER TYPE ZCA_MARD-TOPRI.
+DATA INPUT_WINTER1 TYPE ZCA_MARD-TOPRI.
+
+DATA TEXT_WEATHER TYPE CHAR10.
+DATA TEXT_BANFN TYPE ZCA_EBAN-BANFN.
+DATA TEXT_MATNR TYPE ZCA_EBAN-MATNR.
+DATA INPUT_WAERS1 TYPE ZCA_MARD-WAERS.
+DATA INPUT_WAERS2 TYPE ZCA_MARD-WAERS.
+DATA INPUT_WAERS3 TYPE ZCA_MARD-WAERS.
+DATA INPUT_WAERS4 TYPE ZCA_MARD-WAERS.
+DATA INPUT_WAERS5 TYPE ZCA_MARD-WAERS.
+
+
+
+
+
+<font color ="#0000FF">*---------------------------------------------------------------------*</font>
+<font color ="#0000FF">* 아이콘 처리용 변수들</font>
+<font color ="#0000FF">*---------------------------------------------------------------------*</font>
+
+DATA: GV_SHOW_ICON TYPE ABAP_BOOL.
+DATA GV_ICON_SEASON TYPE CHAR15.
+
+DATA GV_LTFNR  TYPE ZCA_EKKO-LTFNR.
+<font color ="#0000FF">*---------------------------------------------------------------------*</font>
+<font color ="#0000FF">* 단위 변환용 변수 ZCA_MARM</font>
+<font color ="#0000FF">*---------------------------------------------------------------------*</font>
+
+DATA GT_MARM TYPE TABLE OF ZCA_MARM.
+DATA GS_MARM TYPE ZCA_MARM.
+
+<font color ="#0000FF">*---------------------------------------------------------------------*</font>
+<font color ="#0000FF">* 작업용 변수들</font>
+<font color ="#0000FF">*---------------------------------------------------------------------*</font>
+
+DATA GV_BANFN TYPE ZCA_EBAN-BANFN.
+DATA GV_EBELP TYPE ZCA_EKPO-EBELP.
+DATA GV_SELECT TYPE CHAR1.
+DATA GV_PRAMT TYPE ZCA_EBAN-PRAMT.
+DATA GV_MEINH TYPE ZCA_EBAN-MEINH.
+
+DATA: GV_QUATER_COUNT TYPE I. "
+DATA: GV_INDEX_120 TYPE I. "
+DATA: GV_SELECT_ALL TYPE CHAR1. "
+
+DATA: CHECK_ALV3_DIS TYPE CHAR1. "
+
+DATA GV_ANSWER TYPE CHAR1.
+DATA GV_COMPARE TYPE CHAR1.
+DATA GV_COMPARE_COLOR TYPE CHAR1.
+DATA GV_SELECT_COLOR TYPE CHAR1.
+DATA GV_COMPARE_MONEY TYPE CHAR1.
+
+DATA GV_TEXT TYPE TEXT15.
+
+DATA: GV_NEW_DATE TYPE SY-DATUM.
+DATA: GV_HISTORY TYPE SY-DATUM.
+
+
+" 납기율 평가
+<font color ="#0000FF">*DATA: BEGIN OF GS_OTD .</font>
+<font color ="#0000FF">*DATA: LTFNR     TYPE ZCA_EKKO-LTFNR,</font>
+<font color ="#0000FF">*      INDAT     TYPE ZCA_EKKO-INDAT,</font>
+<font color ="#0000FF">*      EBELN     TYPE ZCA_EKKO-EBELN,</font>
+<font color ="#0000FF">*      BEDAT     TYPE ZCA_EKKO-BEDAT,</font>
+<font color ="#0000FF">*      OTD_COUNT TYPE P,</font>
+<font color ="#0000FF">*      END OF GS_OTD.</font>
+<font color ="#0000FF">*DATA GT_OTD LIKE TABLE OF GS_OTD.</font>
+
+" 거래 내역
+DATA: BEGIN OF GS_1Y_HISTORY .
+DATA: LTFNR         TYPE ZCA_EKKO-LTFNR,
+      COUNT         TYPE I,
+      OTD_ALL_DELAY TYPE P,
+      OTD_COUNT_AVG TYPE P,
+      END OF GS_1Y_HISTORY.
+
+DATA GT_1Y_HISTORY LIKE TABLE OF GS_1Y_HISTORY.
+
+DATA GT_MARD TYPE TABLE OF ZCA_MARD.
+
+<font color ="#0000FF">*---------------------------------------------------------------------*</font>
+<font color ="#0000FF">* 구매 오더 발행용 ZCA_EKPO 아이템  ZCA_EKKO 헤더</font>
+<font color ="#0000FF">*---------------------------------------------------------------------*</font>
+DATA GT_EKKO TYPE TABLE OF ZCA_EKKO.
+DATA GS_EKKO TYPE ZCA_EKKO.
+DATA GT_EKPO TYPE TABLE OF ZCA_EKPO.
+DATA GS_EKPO TYPE ZCA_EKPO.
+
+
+<font color ="#0000FF">*---------------------------------------------------------------------*</font>
+<font color ="#0000FF">* TEST ALV1</font>
+<font color ="#0000FF">*---------------------------------------------------------------------*</font>
+DATA: GO_CONTAINER_TEST1 TYPE REF TO CL_GUI_CUSTOM_CONTAINER,
+      GO_ALV_GRID_TEST1  TYPE REF TO CL_GUI_ALV_GRID.
+<font color ="#0000FF">*---------------------------------------------------------------------*</font>
+<font color ="#0000FF">* TEST ALV2</font>
+<font color ="#0000FF">*---------------------------------------------------------------------*</font>
+DATA: GO_CONTAINER_TEST2 TYPE REF TO CL_GUI_CUSTOM_CONTAINER,
+      GO_ALV_GRID_TEST2  TYPE REF TO CL_GUI_ALV_GRID,
+      GS_LAYOUT_TEST2    TYPE LVC_S_LAYO,
+      GT_FIELDCAT_TEST2  TYPE LVC_T_FCAT,
+      GS_FIELDCAT_TEST2  TYPE LVC_S_FCAT,
+      GT_SORT_TEST2      TYPE LVC_T_SORT,
+      GS_SORT_TEST2      TYPE LVC_S_SORT,
+      GT_FILTER_TEST2    TYPE LVC_T_FILT,
+      GS_FILTER_TEST2    TYPE LVC_S_FILT,
+      GS_VARIANT_TEST2   TYPE DISVARIANT.
+
+
+<font color ="#0000FF">*---------------------------------------------------------------------*</font>
+<font color ="#0000FF">* TAB STRIP</font>
+<font color ="#0000FF">*---------------------------------------------------------------------*</font>
+
+CONTROLS: TAB_STRIP TYPE TABSTRIP.
+DATA: GV_TAB(10).
+
+DATA DYNNR TYPE SY-DYNNR VALUE '0151'.
+</pre>
+<hr>
+<font size="2" face = "Sans Serif">Extracted by Direct Download Enterprise version 1.3.1 - E.G.Mellodew. 1998-2005 UK. Sap Release 758
+</font>
+</body>
+</html>

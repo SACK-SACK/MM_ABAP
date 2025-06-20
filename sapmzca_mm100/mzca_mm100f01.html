@@ -1,0 +1,654 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2//EN">
+<html>
+<head>
+<title>MZCA_MM100F01</title>
+</head>
+<body bgcolor="#FFFFE0">
+<font size="3" face = "Arial" color="#000000"><b>Code listing for: MZCA_MM100F01</b></font>
+<br>
+<font size="3" face = "Arial" color="#000000"><b>Description:  F01</b></font>
+<hr>
+<pre width="100">
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*& Include          MZCA_MM100F01</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*&      Module  EIXT  INPUT</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+MODULE EXIT INPUT.
+
+  CASE OK_CODE.
+    WHEN 'EXIT'.
+      LEAVE PROGRAM.
+  ENDCASE.
+
+ENDMODULE.
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*& Form DATA_SELECT</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+FORM DATA_SELECT .
+
+  CLEAR INPUT_CLOSE.
+  CLEAR INPUT_GREEN.
+  CLEAR INPUT_YELLOW.
+  CLEAR INPUT_RED.
+
+  SELECT ZCA_EBAN~BANFN
+         ZCA_EBAN~MATNR
+         ZCA_EBAN~MRPID
+         ZCA_EBAN~WERKS
+         ZCA_EBAN~PRAMT
+         ZCA_EBAN~MEINS
+         ZCA_EBAN~MEINH
+         ZCA_EBAN~BADAT
+         ZCA_EBAN~LVORM
+         ZCA_EBAN~BANPR
+         ZCA_MAKT~MAKTX
+         ZCA_T001W~PNAME UP TO 52 ROWS
+    FROM ZCA_EBAN
+    INNER JOIN ZCA_MAKT
+    ON ZCA_EBAN~MATNR EQ ZCA_MAKT~MATNR
+    INNER JOIN ZCA_T001W
+    ON ZCA_T001W~WERKS EQ ZCA_EBAN~WERKS
+    INTO CORRESPONDING FIELDS OF TABLE GT_DISPLAY
+    WHERE ZCA_MAKT~SPRAS EQ '3'
+    AND   ZCA_EBAN~LVORM EQ ' '
+    AND   ZCA_EBAN~BADAT =&gt; SY-DATUM
+    .
+
+  LOOP AT GT_DISPLAY INTO GS_DISPLAY.
+    GS_DISPLAY-NADAT = GS_DISPLAY-BADAT.
+    INPUT_CLOSE += 1.
+    IF GS_DISPLAY-BADAT = SY-DATUM.
+
+
+
+    ENDIF.
+
+    CASE GS_DISPLAY-BANPR.
+      WHEN 'A'.
+        GS_DISPLAY-ICON = ICON_LED_GREEN.
+        INPUT_GREEN += 1.
+      WHEN 'W'.
+        GS_DISPLAY-ICON = ICON_LED_YELLOW.
+        INPUT_YELLOW += 1.
+      WHEN 'D'.
+        GS_DISPLAY-ICON = ICON_LED_RED.
+        INPUT_RED += 1.
+    ENDCASE.
+    MODIFY GT_DISPLAY FROM GS_DISPLAY.
+
+
+
+  ENDLOOP.
+
+  CLEAR GS_DISPLAY.
+
+
+
+ENDFORM.
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*& Form CLEAR_DATA</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+FORM CLEAR_DATA .
+
+  CLEAR GT_DISPLAY.
+
+ENDFORM.
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*& Form CREATE</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+FORM CREATE USING  PO_CONTAINER TYPE REF TO CL_GUI_CUSTOM_CONTAINER
+                   PO_ALV_GRID  TYPE REF TO CL_GUI_ALV_GRID
+                   VALUE(PV_CONTAINER_NAME).
+
+  CREATE OBJECT PO_CONTAINER
+    EXPORTING
+      CONTAINER_NAME = PV_CONTAINER_NAME.
+
+  CREATE OBJECT PO_ALV_GRID
+    EXPORTING
+      I_PARENT = PO_CONTAINER.
+
+
+ENDFORM.
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*& Form LAYO</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+FORM LAYO .
+  GS_LAYOUT-ZEBRA = ABAP_ON.
+  GS_LAYOUT-SEL_MODE = 'A'.
+ENDFORM.
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*& Form FCAT</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+FORM FCAT .
+
+  CLEAR GS_FIELDCAT.
+  GS_FIELDCAT-FIELDNAME = 'BANFN'.
+  GS_FIELDCAT-OUTPUTLEN = 13.
+  APPEND GS_FIELDCAT TO GT_FIELDCAT.
+
+  CLEAR GS_FIELDCAT.
+  GS_FIELDCAT-FIELDNAME = 'MATNR'.
+  GS_FIELDCAT-OUTPUTLEN = 15.
+  APPEND GS_FIELDCAT TO GT_FIELDCAT.
+
+  CLEAR GS_FIELDCAT.
+  GS_FIELDCAT-FIELDNAME = 'WERKS'.
+  GS_FIELDCAT-OUTPUTLEN = 8.
+  APPEND GS_FIELDCAT TO GT_FIELDCAT.
+
+  CLEAR GS_FIELDCAT.
+  GS_FIELDCAT-FIELDNAME = 'PRAMT'.
+  GS_FIELDCAT-QFIELDNAME = 'MEINS'.
+  GS_FIELDCAT-OUTPUTLEN = 8.
+  APPEND GS_FIELDCAT TO GT_FIELDCAT.
+
+  CLEAR GS_FIELDCAT.
+  GS_FIELDCAT-FIELDNAME = 'MEINS'.
+  GS_FIELDCAT-COLTEXT = '구매 단위'.
+  GS_FIELDCAT-OUTPUTLEN = 6.
+  APPEND GS_FIELDCAT TO GT_FIELDCAT.
+
+  CLEAR GS_FIELDCAT.
+  GS_FIELDCAT-FIELDNAME = 'BADAT'.
+  GS_FIELDCAT-OUTPUTLEN = 15.
+  APPEND GS_FIELDCAT TO GT_FIELDCAT.
+
+  CLEAR GS_FIELDCAT.
+  GS_FIELDCAT-FIELDNAME = 'MRPID'.
+  GS_FIELDCAT-COLTEXT = 'MRP 코드'.
+  APPEND GS_FIELDCAT TO GT_FIELDCAT.
+
+
+
+
+
+<font color ="#0000FF">*---------------------------------------------------------------------*</font>
+<font color ="#0000FF">* 새로 추가된 필드</font>
+<font color ="#0000FF">*---------------------------------------------------------------------*</font>
+
+  CLEAR GS_FIELDCAT.
+  GS_FIELDCAT-FIELDNAME = 'NADAT'.
+  GS_FIELDCAT-COLTEXT = '예상 도착일'.
+  GS_FIELDCAT-COL_POS = 18.
+  GS_FIELDCAT-OUTPUTLEN = 15.
+  APPEND GS_FIELDCAT TO GT_FIELDCAT.
+
+  CLEAR GS_FIELDCAT.
+  GS_FIELDCAT-FIELDNAME = 'PNAME'.
+  GS_FIELDCAT-REF_TABLE = 'ZCA_T001W'.
+  GS_FIELDCAT-REF_FIELD = 'PNAME'.
+  GS_FIELDCAT-COL_POS = 8.
+  GS_FIELDCAT-OUTPUTLEN = 10.
+  APPEND GS_FIELDCAT TO GT_FIELDCAT.
+
+
+  CLEAR GS_FIELDCAT.
+  GS_FIELDCAT-FIELDNAME = 'MAKTX'.
+  GS_FIELDCAT-REF_TABLE = 'ZCA_MAKT'.
+  GS_FIELDCAT-REF_FIELD = 'MAKTX'.
+  GS_FIELDCAT-COL_POS = 5.
+  GS_FIELDCAT-OUTPUTLEN = 15.
+  APPEND GS_FIELDCAT TO GT_FIELDCAT.
+
+  CLEAR GS_FIELDCAT.
+  GS_FIELDCAT-FIELDNAME = 'ICON'.
+  GS_FIELDCAT-COLTEXT = '승인 여부'.
+  GS_FIELDCAT-COL_POS = 1.
+  GS_FIELDCAT-OUTPUTLEN = 6.
+  GS_FIELDCAT-JUST = 'C'.
+  APPEND GS_FIELDCAT TO GT_FIELDCAT.
+
+
+
+<font color ="#0000FF">*---------------------------------------------------------------------*</font>
+<font color ="#0000FF">* NO OUT</font>
+<font color ="#0000FF">*---------------------------------------------------------------------*</font>
+
+  CLEAR GS_FIELDCAT.
+  GS_FIELDCAT-FIELDNAME = 'MEINH'.
+  GS_FIELDCAT-NO_OUT = ABAP_ON.
+  APPEND GS_FIELDCAT TO GT_FIELDCAT.
+
+  CLEAR GS_FIELDCAT.
+  GS_FIELDCAT-FIELDNAME = 'LVORM'.
+  GS_FIELDCAT-NO_OUT = ABAP_ON.
+  APPEND GS_FIELDCAT TO GT_FIELDCAT.
+
+  CLEAR GS_FIELDCAT.
+  GS_FIELDCAT-FIELDNAME = 'AENAM'.
+  GS_FIELDCAT-NO_OUT = ABAP_ON.
+  APPEND GS_FIELDCAT TO GT_FIELDCAT.
+
+  CLEAR GS_FIELDCAT.
+  GS_FIELDCAT-FIELDNAME = 'AEDAT'.
+  GS_FIELDCAT-NO_OUT = ABAP_ON.
+  APPEND GS_FIELDCAT TO GT_FIELDCAT.
+
+  CLEAR GS_FIELDCAT.
+  GS_FIELDCAT-FIELDNAME = 'AEZET'.
+  GS_FIELDCAT-NO_OUT = ABAP_ON.
+  APPEND GS_FIELDCAT TO GT_FIELDCAT.
+
+  CLEAR GS_FIELDCAT.
+  GS_FIELDCAT-FIELDNAME = 'ERNAM'.
+  GS_FIELDCAT-NO_OUT = ABAP_ON.
+  APPEND GS_FIELDCAT TO GT_FIELDCAT.
+
+
+  CLEAR GS_FIELDCAT.
+  GS_FIELDCAT-FIELDNAME = 'ERZET'.
+  GS_FIELDCAT-NO_OUT = ABAP_ON.
+  APPEND GS_FIELDCAT TO GT_FIELDCAT.
+
+
+  CLEAR GS_FIELDCAT.
+  GS_FIELDCAT-FIELDNAME = 'ERDAT'.
+  GS_FIELDCAT-NO_OUT = ABAP_ON.
+  APPEND GS_FIELDCAT TO GT_FIELDCAT.
+
+  CLEAR GS_FIELDCAT.
+  GS_FIELDCAT-FIELDNAME = 'BANPR'.
+  GS_FIELDCAT-NO_OUT = ABAP_ON.
+  APPEND GS_FIELDCAT TO GT_FIELDCAT.
+
+ENDFORM.
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*& Form DISPLAY</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+FORM DISPLAY  USING PO_ALV_GRID TYPE REF TO CL_GUI_ALV_GRID.
+
+  GS_VARIANT-REPORT = SY-REPID.
+  GS_VARIANT-HANDLE = '1000'.
+
+  PO_ALV_GRID-&gt;SET_TABLE_FOR_FIRST_DISPLAY(
+  EXPORTING
+<font color ="#0000FF">*    I_BUFFER_ACTIVE               =                  " Buffering Active</font>
+<font color ="#0000FF">*    I_BYPASSING_BUFFER            =                  " Switch Off Buffer</font>
+<font color ="#0000FF">*    I_CONSISTENCY_CHECK           =                  " Starting Consistency Check for Interface Error Recognition</font>
+    I_STRUCTURE_NAME              =    'ZCA_EBAN'              " Internal Output Table Structure Name
+    IS_VARIANT                    =     GS_VARIANT             " Layout
+    I_SAVE                        =   'X'               " Save Layout
+<font color ="#0000FF">*    I_DEFAULT                     = 'X'              " Default Display Variant</font>
+  IS_LAYOUT                     =   GS_LAYOUT               " Layout
+<font color ="#0000FF">*    IS_PRINT                      =                  " Print Control</font>
+<font color ="#0000FF">*    IT_SPECIAL_GROUPS             =                  " Field Groups</font>
+<font color ="#0000FF">*    IT_TOOLBAR_EXCLUDING          =                  " Excluded Toolbar Standard Functions</font>
+<font color ="#0000FF">*    IT_HYPERLINK                  =                  " Hyperlinks</font>
+<font color ="#0000FF">*    IT_ALV_GRAPHICS               =                  " Table of Structure DTC_S_TC</font>
+<font color ="#0000FF">*    IT_EXCEPT_QINFO               =                  " Table for Exception Quickinfo</font>
+<font color ="#0000FF">*    IR_SALV_ADAPTER               =                  " Internal Usage only !!! - obsolete</font>
+  CHANGING
+    IT_OUTTAB                     =    GT_DISPLAY
+  " Output Table
+  IT_FIELDCATALOG               =  GT_FIELDCAT                " Field Catalog
+<font color ="#0000FF">*    IT_SORT                       =     GT_SORT                " Sort Criteria</font>
+<font color ="#0000FF">*    IT_FILTER                     =               " Filter Criteria</font>
+  ).
+ENDFORM.
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*& Form FILTER</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+FORM FILTER  USING    PV_C TYPE ZCA_EBAN-BANPR.
+
+  CLEAR GT_DISPLAY.
+  SELECT ZCA_EBAN~BANFN
+         ZCA_EBAN~MATNR
+         ZCA_EBAN~MRPID
+         ZCA_EBAN~WERKS
+         ZCA_EBAN~PRAMT
+         ZCA_EBAN~MEINS
+         ZCA_EBAN~MEINH
+         ZCA_EBAN~BADAT
+         ZCA_EBAN~LVORM
+         ZCA_EBAN~BANPR
+         ZCA_MAKT~MAKTX
+         ZCA_T001W~PNAME
+    FROM ZCA_EBAN
+    INNER JOIN ZCA_MAKT
+    ON ZCA_EBAN~MATNR EQ ZCA_MAKT~MATNR
+    INNER JOIN ZCA_T001W
+    ON ZCA_T001W~WERKS EQ ZCA_EBAN~WERKS
+    INTO CORRESPONDING FIELDS OF TABLE GT_DISPLAY
+    WHERE ZCA_MAKT~SPRAS EQ '3'
+    AND   ZCA_EBAN~LVORM EQ ' '
+    AND   ZCA_EBAN~BADAT =&gt; SY-DATUM
+    AND   ZCA_EBAN~BANPR EQ PV_C.
+
+  CLEAR GS_DISPLAY.
+  LOOP AT GT_DISPLAY INTO GS_DISPLAY.
+
+    GS_DISPLAY-NADAT = GS_DISPLAY-BADAT.
+
+    CASE GS_DISPLAY-BANPR.
+      WHEN 'A'.
+        GS_DISPLAY-ICON = ICON_LED_GREEN.
+      WHEN 'W'.
+        GS_DISPLAY-ICON = ICON_LED_YELLOW.
+      WHEN 'D'.
+        GS_DISPLAY-ICON = ICON_LED_RED.
+    ENDCASE.
+    MODIFY GT_DISPLAY FROM GS_DISPLAY.
+  ENDLOOP.
+
+ENDFORM.
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*& Form DATA_OK</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+FORM BANPR_W_D USING PV_TEXT TYPE TEXT40
+                     PV_TYPE TYPE CHAR1
+                     PO_ALV_GRID TYPE REF TO CL_GUI_ALV_GRID.
+  REFRESH GT_MAIL.
+
+  CLEAR GS_DISPLAY.
+
+  PO_ALV_GRID-&gt;GET_SELECTED_ROWS(
+    IMPORTING
+      ET_INDEX_ROWS =   DATA(LT_ROW)               " Indexes of Selected Rows
+<font color ="#0000FF">*      ET_ROW_NO     =                  " Numeric IDs of Selected Rows</font>
+  ).
+
+
+
+  IF LT_ROW IS NOT INITIAL.
+
+    PERFORM POPUP_TO_CONFIRM USING PV_TEXT.
+
+    IF GV_ANSWER = '1'.
+
+
+      LOOP AT LT_ROW INTO DATA(LS_ROW).
+        READ TABLE GT_DISPLAY INTO GS_DISPLAY INDEX LS_ROW-INDEX.
+        IF SY-SUBRC EQ 0.
+          MOVE-CORRESPONDING GS_DISPLAY TO GS_MAIL.
+          APPEND GS_MAIL TO GT_MAIL.
+          GV_SEND = GS_DISPLAY-BANPR.
+          IF GS_DISPLAY-BANPR EQ 'W'.
+            GS_DISPLAY-BANPR = PV_TYPE.
+
+            UPDATE ZCA_EBAN SET BANPR = GS_DISPLAY-BANPR
+                                AEDAT = SY-DATUM
+                                AENAM = SY-UNAME
+                                AEZET = SY-UZEIT
+                            WHERE MATNR = GS_DISPLAY-MATNR
+                            AND   BANFN = GS_DISPLAY-BANFN.
+
+
+
+            IF SY-SUBRC NE 0.
+              ROLLBACK WORK.
+<font color ="#0000FF">*        MESSAGE 'ERROR' TYPE 'E'.</font>
+              MESSAGE E254.
+
+            ELSE.
+              COMMIT WORK.
+
+
+            ENDIF.
+
+
+          ELSE.
+            MESSAGE '대기 상태만 전환이 가능합니다.' TYPE 'E' DISPLAY LIKE 'I'.
+          ENDIF.
+
+        ENDIF.
+
+      ENDLOOP.
+
+    ELSE.
+
+
+    ENDIF.
+
+  ELSE.
+    MESSAGE '행을 선택해 주세여' TYPE 'I' DISPLAY LIKE 'E'.
+  ENDIF.
+
+
+  IF GT_MAIL IS NOT INITIAL AND GV_ANSWER EQ '1'
+                            AND ( OK_CODE = 'BTN_NO2' OR OK_CODE = 'BTN_NO' ).
+    PERFORM SEND_MESSAGE.
+    REFRESH GT_MAIL.
+  ENDIF.
+
+  CLEAR LT_ROW.
+  CLEAR LS_ROW.
+  CLEAR GV_ANSWER.
+
+
+
+
+  GO_ALV_GRID-&gt;REFRESH_TABLE_DISPLAY( ).
+
+ENDFORM.
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*& Form POPUP_TO_CONFIRM</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+
+FORM POPUP_TO_CONFIRM  USING    PV_TEXT  TYPE TEXT40.
+
+  CALL FUNCTION 'POPUP_TO_CONFIRM'
+    EXPORTING
+      TEXT_QUESTION         = PV_TEXT
+      TEXT_BUTTON_1         = '예'
+      TEXT_BUTTON_2         = '아니요'
+      DEFAULT_BUTTON        = '1'
+      DISPLAY_CANCEL_BUTTON = SPACE
+    IMPORTING
+      ANSWER                = GV_ANSWER.
+ENDFORM.
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*& Module IMBAK OUTPUT</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+MODULE IMBAK OUTPUT.
+
+  IF GV_ONCE IS INITIAL.
+    GV_ONCE = 'X'.
+
+    CLEAR GS_DISPLAY.
+    PERFORM FILTER USING 'W'.
+
+    LOOP AT GT_DISPLAY INTO GS_DISPLAY.
+
+
+      IF GS_DISPLAY-BADAT EQ SY-DATUM.
+        CALL SCREEN 110 STARTING AT 10 5.
+        EXIT.
+      ENDIF.
+
+
+    ENDLOOP.
+    CLEAR GT_DISPLAY.
+    PERFORM DATA_SELECT.
+    GO_ALV_GRID-&gt;REFRESH_TABLE_DISPLAY( ).
+  ENDIF.
+ENDMODULE.
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*& Form SELECT_MARA</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+FORM SELECT_MARA .
+
+  CLEAR: ZCA_MARA, ZCA_MAKT.
+
+  SELECT SINGLE MATNR
+                MRART
+                MATKL
+                MEINS
+                BRTME
+                DATAB
+    FROM ZCA_MARA
+    INTO CORRESPONDING FIELDS OF ZCA_MARA
+    WHERE MATNR EQ GS_DISPLAY-MATNR
+     AND  LVORM EQ ' '.
+
+
+
+
+ENDFORM.
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*& Form SELECT_PPT030</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+FORM SELECT_PPT030 .
+  CLEAR ZCA_PPT030.
+  SELECT SINGLE MRPID
+PLNUM
+MATNR
+STOCK
+PLNQT
+USEQT
+RESQT
+MEINS
+MRPDT
+BANFN
+    FROM ZCA_PPT030
+    INTO CORRESPONDING FIELDS OF ZCA_PPT030
+    WHERE LOEKZ = ' '
+    AND MRPID EQ GS_DISPLAY-MRPID
+    AND MATNR EQ GS_DISPLAY-MATNR.
+
+ENDFORM.
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*& Form SELECT_MATX</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+FORM SELECT_MATX .
+
+  SELECT SINGLE MAKTX
+    FROM ZCA_MAKT
+     INTO CORRESPONDING FIELDS OF ZCA_MAKT
+    WHERE SPRAS EQ '3'
+
+    AND MATNR EQ GS_DISPLAY-MATNR.
+
+ENDFORM.
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*& Form SELECT_PPT030_WHO</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+FORM SELECT_PPT030_WHO .
+
+  CLEAR ZCA_PPT030.
+  SELECT SINGLE ERNAM
+ERDAT
+ERZET
+AENAM
+AEDAT
+AEZET
+    FROM ZCA_PPT030
+    INTO CORRESPONDING FIELDS OF ZCA_PPT030
+    WHERE LOEKZ = ' '
+    AND MRPID EQ GS_DISPLAY-MRPID
+    AND MATNR EQ GS_DISPLAY-MATNR.
+
+ENDFORM.
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*& Form SELECT_T001W</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+FORM SELECT_T001W .
+  CLEAR ZCA_T001W.
+
+  SELECT SINGLE WERKS
+BUKRS
+PTYPE
+PNAME
+PADRS
+PHONE
+    FROM ZCA_T001W
+    INTO CORRESPONDING FIELDS OF ZCA_T001W
+    WHERE WERKS EQ GS_DISPLAY-WERKS
+    AND LOEKZ EQ ' '.
+
+ENDFORM.
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*& Form SEND_MESSAGE</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+FORM SEND_MESSAGE .
+
+<font color ="#0000FF">* 누르면 RED LIGHT정보가 싹 메일로 보내진다</font>
+<font color ="#0000FF">* 필드추가 -&gt; 날짜 누구한테 보냈는지?</font>
+
+  DATA: LO_SEND_REQUEST TYPE REF TO CL_BCS,
+        LO_DOCUMENT     TYPE REF TO CL_DOCUMENT_BCS,
+        LT_MAIL_BODY    TYPE BCSY_TEXT,
+        LV_LINE         TYPE STRING,
+        LO_SENDER       TYPE REF TO IF_SENDER_BCS,
+        LO_RECIPIENT    TYPE REF TO IF_RECIPIENT_BCS,
+        LS_DISPLAY      LIKE LINE OF GT_DISPLAY.
+
+<font color ="#0000FF">* 메일 객체 생성</font>
+  LO_SEND_REQUEST = CL_BCS=&gt;CREATE_PERSISTENT( ).
+
+<font color ="#0000FF">* html 테이블 시작</font>
+  APPEND '&lt;html&gt;&lt;body&gt;' TO LT_MAIL_BODY.
+  APPEND '&lt;h3&gt;반려 처리 되었습니다.&lt;/h3&gt;' TO LT_MAIL_BODY.
+  APPEND '&lt;table border="1" cellpadding="5" cellspacing="0" style="border-collapse:collapse;"&gt;' TO LT_MAIL_BODY.
+
+<font color ="#0000FF">* 테이블 헤더 작성</font>
+  LV_LINE = '&lt;tr&gt;&lt;th&gt;구매요청번호&lt;/th&gt;&lt;th&gt;자재명&lt;/th&gt;&lt;/tr&gt;'. " 컬럼명 수정
+  APPEND LV_LINE TO LT_MAIL_BODY.
+
+<font color ="#0000FF">* GT_DISPLAY 내용을 HTML 테이블로 변환</font>
+  CLEAR GS_MAIL.
+  LOOP AT GT_MAIL INTO GS_MAIL .
+<font color ="#0000FF">*    IF LS_DISPLAY-BANPR = 'D'.</font>
+    LV_LINE = |&lt;tr&gt;&lt;td&gt;{ GS_MAIL-BANFN }&lt;/td&gt;&lt;td&gt;{ GS_MAIL-MATNR }&lt;/td&gt;&lt;/tr&gt;|.
+    APPEND LV_LINE TO LT_MAIL_BODY.
+    CLEAR LV_LINE.
+<font color ="#0000FF">*    ENDIF.</font>
+  ENDLOOP.
+
+
+
+<font color ="#0000FF">* HTML 테이블 닫기</font>
+  APPEND '&lt;/table&gt;' TO LT_MAIL_BODY.
+  APPEND '&lt;/body&gt;&lt;/html&gt;' TO LT_MAIL_BODY.
+
+<font color ="#0000FF">* 메일 문서 작성 (htm 타입)</font>
+  LO_DOCUMENT = CL_DOCUMENT_BCS=&gt;CREATE_DOCUMENT(
+                  I_TYPE    = 'HTM'
+                  I_TEXT    = LT_MAIL_BODY
+                  I_SUBJECT = |{ SY-DATUM } 반려 목록| ).
+
+  LO_SEND_REQUEST-&gt;SET_DOCUMENT( LO_DOCUMENT ).
+
+<font color ="#0000FF">* 보내는 요청에 문서 추가</font>
+  LO_SEND_REQUEST-&gt;SET_DOCUMENT( LO_DOCUMENT ).
+
+<font color ="#0000FF">* 송신자 설정 (현재 사용자)</font>
+  LO_SENDER = CL_SAPUSER_BCS=&gt;CREATE( SY-UNAME ).
+  LO_SEND_REQUEST-&gt;SET_SENDER( LO_SENDER ).
+
+<font color ="#0000FF">* 수신자 설정 (SAP 사용자)</font>
+  LO_RECIPIENT = CL_SAPUSER_BCS=&gt;CREATE( 'LSYN-C-21' ).  " 여기 사용자 ID 넣기
+
+  LO_SEND_REQUEST-&gt;ADD_RECIPIENT(
+    I_RECIPIENT = LO_RECIPIENT
+    I_EXPRESS   = 'X' ).
+
+  TRY.
+<font color ="#0000FF">* 메일 발송</font>
+      LO_SEND_REQUEST-&gt;SEND( I_WITH_ERROR_SCREEN = 'X' ).
+
+<font color ="#0000FF">* 커밋</font>
+      COMMIT WORK.
+    CATCH CX_SEND_REQ_BCS INTO DATA(LX_SEND).
+      MESSAGE LX_SEND-&gt;GET_TEXT( ) TYPE 'E'.
+    CATCH CX_ADDRESS_BCS INTO DATA(LX_ADDR).
+      MESSAGE LX_ADDR-&gt;GET_TEXT( ) TYPE 'E'.
+    CATCH CX_DOCUMENT_BCS INTO DATA(LX_DOC).
+      MESSAGE LX_DOC-&gt;GET_TEXT( ) TYPE 'E'.
+  ENDTRY.
+
+ENDFORM.
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*& Form LANGU</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+FORM LANGU .
+
+ENDFORM.
+</pre>
+<hr>
+<font size="2" face = "Sans Serif">Extracted by Direct Download Enterprise version 1.3.1 - E.G.Mellodew. 1998-2005 UK. Sap Release 758
+</font>
+</body>
+</html>

@@ -1,0 +1,71 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2//EN">
+<html>
+<head>
+<title>ZCA_MM010_TOP</title>
+</head>
+<body bgcolor="#FFFFE0">
+<font size="3" face = "Arial" color="#000000"><b>Code listing for: ZCA_MM010_TOP</b></font>
+<br>
+<font size="3" face = "Arial" color="#000000"><b>Description:  TOP</b></font>
+<hr>
+<pre width="100">
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*& Include          ZCA_MM010_TOP</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+REPORT zca_mm010.
+
+TABLES: zca_rbkp, zca_rseg.
+
+DATA: gt_rbkp TYPE TABLE OF zca_rbkp, " 송장 헤더 인터널 테이블
+      gs_rbkp LIKE LINE OF  gt_rbkp,
+      gt_rseg TYPE TABLE OF zca_rseg, " 송장 아이템 인터널 테이블
+      gs_rseg LIKE LINE OF  gt_rseg.
+
+DATA: BEGIN OF gs_display1.           " 송장 헤더 DISPLAY
+        include structure <a href ="zca_rbkp/dictionary-zca_rbkp.html">zca_rbkp</a>.
+DATA:   icon  TYPE char4,
+        name1 TYPE zca_venname,
+      END OF gs_display1.
+DATA: gt_display1 LIKE TABLE OF gs_display1.
+
+DATA: BEGIN OF gs_display2.
+        include structure <a href ="zca_rseg/dictionary-zca_rseg.html">zca_rseg</a>.
+DATA:   maktx type zca_maktx,     " 자재명
+        name1 TYPE zca_venname,   " 벤더명
+        pname TYPE zca_pname,     " 플랜트명
+        lgobe type zca_lgobe,     " 창고명
+      END OF gs_display2.
+DATA: gt_display2 LIKE TABLE OF gs_display2.
+
+DATA ok_code TYPE sy-ucomm. " OK_CODE
+
+<font color ="#0000FF">* ALV 관련</font>
+DATA: go_custom_con1 TYPE REF TO cl_gui_custom_container,      " 컨테이너
+      go_alv1        TYPE REF TO cl_gui_alv_grid.              " ALV GRID
+
+DATA: go_custom_con2 TYPE REF TO cl_gui_custom_container,      " 컨테이너
+      go_alv2        TYPE REF TO cl_gui_alv_grid.              " ALV GRID
+
+DATA: gs_fieldcat  TYPE lvc_s_fcat,
+      gt_fieldcat  TYPE lvc_t_fcat,
+      gs_layo      TYPE lvc_s_layo,
+      gs_sort      TYPE lvc_s_sort,
+      gt_sort      TYPE lvc_t_sort,
+      gs_functions TYPE ui_functions,  " 트리를 사용할 때 등장하는 버튼목록
+      gs_refto     TYPE REF TO data,
+      gs_pos       TYPE i.
+
+DATA: gs_fieldcat2 TYPE lvc_s_fcat,
+      gt_fieldcat2 TYPE lvc_t_fcat,
+      gs_layo2     TYPE lvc_s_layo.
+
+DATA: gv_mode TYPE char1.
+
+CLASS lcl_application DEFINITION DEFERRED.
+DATA: g_application TYPE REF TO lcl_application.  " 더블클릭과 핫스팟 이벤트
+</pre>
+<hr>
+<font size="2" face = "Sans Serif">Extracted by Direct Download Enterprise version 1.3.1 - E.G.Mellodew. 1998-2005 UK. Sap Release 758
+</font>
+</body>
+</html>

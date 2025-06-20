@@ -1,0 +1,94 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2//EN">
+<html>
+<head>
+<title>ZCA_MM140</title>
+</head>
+<body bgcolor="#FFFFE0">
+<font size="3" face = "Arial" color="#000000"><b>Code listing for: ZCA_MM140</b></font>
+<br>
+<font size="3" face = "Arial" color="#000000"><b>Description:  [MM] 구매 오더 등록</b></font>
+<hr>
+<pre width="100">
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*& Report SAPMZCA_MM140</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*&</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+REPORT ZCA_MM140 MESSAGE-ID ZCA_MSG.
+
+include <a href ="zca_mm140top.html">ZCA_MM140TOP</a>.
+
+include <a href ="zca_mm140scr.html">ZCA_MM140SCR</a>.
+
+include <a href ="zca_mm140cls.html">ZCA_MM140CLS</a>.
+
+include <a href ="zca_mm140o01.html">ZCA_MM140O01</a>.
+
+include <a href ="zca_mm140i01.html">ZCA_MM140I01</a>.
+
+include <a href ="zca_mm140f01.html">ZCA_MM140F01</a>.
+
+INITIALIZATION.
+<font color ="#0000FF">*  BTN_TEXT = |@10@ 검색|.</font>
+
+  PERFORM ZCA_MARM.
+  PERFORM GT_MARD.
+  PERFORM GT_1Y_HISTORY.
+  PERFORM GT_WA3.
+
+
+  PERFORM WEATHER_ICON.
+
+
+
+
+AT SELECTION-SCREEN.
+
+START-OF-SELECTION.
+
+  CALL SCREEN 100.
+
+<font color ="#0000FF">*GUI Texts</font>
+<font color ="#0000FF">*----------------------------------------------------------</font>
+<font color ="#0000FF">* T-100 --&gt; [MM] 구매 오더 등록</font>
+<font color ="#0000FF">* T-110 --&gt; [MM] 구매 오더 등록</font>
+<font color ="#0000FF">* T-120 --&gt; & &의 쿼터를 입력하세요</font>
+<font color ="#0000FF">* T-130 --&gt; &</font>
+<font color ="#0000FF">* T-150 --&gt; 구매 오더</font>
+
+<font color ="#0000FF">*Text elements</font>
+<font color ="#0000FF">*----------------------------------------------------------</font>
+<font color ="#0000FF">* 001 검색 조건</font>
+
+
+<font color ="#0000FF">*Selection texts</font>
+<font color ="#0000FF">*----------------------------------------------------------</font>
+<font color ="#0000FF">* PA_COUNT         최대 검색 수</font>
+<font color ="#0000FF">* SO_BADAT D       .</font>
+<font color ="#0000FF">* SO_BANFN D       .</font>
+<font color ="#0000FF">* SO_EBELN         구매 오더 코드</font>
+<font color ="#0000FF">* SO_MRPID D       .</font>
+<font color ="#0000FF">* SO_WERKS D       .</font>
+
+
+<font color ="#0000FF">*Messages</font>
+<font color ="#0000FF">*----------------------------------------------------------</font>
+<font color ="#0000FF">*</font>
+<font color ="#0000FF">* Message class: ZCA_MSG</font>
+<font color ="#0000FF">*100   검색조건에 해당되는 데이터가 없습니다.</font>
+<font color ="#0000FF">*251   쿼터의 합이 & 로 올바르지 않습니다.</font>
+<font color ="#0000FF">*252   모든 자재의 벤더를 선정해 주세요</font>
+<font color ="#0000FF">*253   번호 생성에 이상이 생겼습니다.</font>
+<font color ="#0000FF">*254   데이터 저장에 실패 했습니다.</font>
+<font color ="#0000FF">*255   잘못된 field 값 입력</font>
+<font color ="#0000FF">*256   알 수 없는 오류 발생</font>
+<font color ="#0000FF">*257   빈 필드를 채워 주세요</font>
+<font color ="#0000FF">*264   오더 처리가 안되고 날짜가 지난 요청입니다.</font>
+<font color ="#0000FF">*266   미래 날짜는 검색할 수 없습니다.</font>
+<font color ="#0000FF">*319   에러발생</font>
+</pre>
+<hr>
+<font size="2" face = "Sans Serif">Extracted by Direct Download Enterprise version 1.3.1 - E.G.Mellodew. 1998-2005 UK. Sap Release 758
+</font>
+</body>
+</html>

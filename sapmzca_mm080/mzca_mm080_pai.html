@@ -1,0 +1,180 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2//EN">
+<html>
+<head>
+<title>MZCA_MM080_PAI</title>
+</head>
+<body bgcolor="#FFFFE0">
+<font size="3" face = "Arial" color="#000000"><b>Code listing for: MZCA_MM080_PAI</b></font>
+<br>
+<font size="3" face = "Arial" color="#000000"><b>Description:  PAI</b></font>
+<hr>
+<pre width="100">
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*& Include          MZCA_MM080_PAI</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*&      Module  USER_COMMAND_0100  INPUT</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+MODULE user_command_0100 INPUT.
+
+  CASE ok_code.
+    WHEN 'BACK'.
+      LEAVE TO SCREEN 0.
+    WHEN 'STOC'.
+      PERFORM matching_pname.
+    WHEN 'RECIV'.
+      CALL SCREEN 0120 STARTING AT 3 3.
+  ENDCASE.
+
+ENDMODULE.
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*&      Module  EXIT  INPUT</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+MODULE exit INPUT.
+
+  CASE ok_code.
+    WHEN 'EXIT'.
+      LEAVE PROGRAM.
+    WHEN 'CANC'.
+      LEAVE TO SCREEN 0.
+
+  ENDCASE.
+
+ENDMODULE.
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*&      Module  USER_COMMAND_0110  INPUT</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+MODULE user_command_0110 INPUT.
+
+  CASE ok_code.
+    WHEN 'BACK'.
+      LEAVE TO SCREEN 0.
+
+    WHEN 'ENTR'.  " 엔터를 치면 오른쪽 필드가 채워진다.
+      PERFORM calculate.
+
+    WHEN 'RESI'.  " 입고완료를 누르면 ZCA_MARD ZCA_MMT010 TABLE수정 후 자재문서도 생성
+      PERFORM move_stock.
+      PERFORM refresh_screen.
+
+  ENDCASE.
+
+ENDMODULE.
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*&      Module  CHECK_LGORT2  INPUT</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+MODULE check_lgort2 INPUT.
+
+  " 출고지
+  DATA: lv_werks_from TYPE zca_werks,
+        lv_lgort_from TYPE zca_lgort.
+
+  " 입고지
+  DATA: lv_werks_to TYPE zca_werks,
+        lv_lgort_to TYPE zca_lgort.
+
+  DATA:
+    lT_lgort TYPE TABLE OF zca_T001L,
+    ls_lgort LIKE LINE OF  lt_lgort.
+
+  " 화면에서 받은 값 저장
+  lv_werks_from = zca_t001w-werks.
+  lv_lgort_from = popup_lgort1.
+
+  lv_werks_to = ccon_werks.
+  lv_lgort_to = zca_t001l-lgort.
+
+  " 동일 플랜트 + 동일 창고일 경우 에러
+  IF lv_werks_from = lv_werks_to AND lv_lgort_from = lv_lgort_to.
+    MESSAGE e204.  " 204 '출고지와 입고지가 같을 수 없습니다.'
+  ENDIF.
+
+  SELECT lgort
+    INTO CORRESPONDING FIELDS OF TABLE lT_lgort
+    FROM zca_T001L
+    WHERE werks = ccon_werks.
+
+  READ TABLE lt_lgort INTO ls_lgort WITH KEY lgort = lv_lgort_to.
+
+  IF sy-subrc &lt;&gt; 0.
+    MESSAGE e205.   " '플랜트에 해당 창고가 없습니다.'
+  ENDIF.
+
+
+
+ENDMODULE.
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*&      Module  USER_COMMAND_0120  INPUT</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+MODULE user_command_0120 INPUT.
+
+  CASE ok_code.
+    WHEN 'CANC'.
+      LEAVE TO SCREEN 0.
+    WHEN 'OK'.
+      PERFORM request_stock_transfer.
+  ENDCASE.
+
+ENDMODULE.
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*&      Module  INPUT_CHECK  INPUT</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+MODULE input_check INPUT.
+<font color ="#0000FF">*</font>
+  DATA: lv_werks TYPE zca_werks.
+
+  SELECT SINGLE werks
+    FROM zca_t001w
+    INTO lv_werks
+    WHERE werks = ccon_werks.
+
+  IF sy-subrc &lt;&gt; 0.
+    MESSAGE e206.  " '존재하지 않는 PLATN입니다'
+  ENDIF.
+
+ENDMODULE.
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*&      Module  CHECK_NUM  INPUT</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+MODULE check_num INPUT.
+
+  DATA: lt_mard TYPE TABLE OF zca_mard,
+        ls_mard LIKE LINE OF  lt_mard.
+
+  SELECT SINGLE *
+    FROM zca_mard
+    INTO CORRESPONDING FIELDS OF ls_mard
+    WHERE werks = zca_t001w-werks
+      AND lgort = popup_lgort1
+      AND matnr = zca_marc-matnr.
+
+  IF zca_mmt010-btqty &lt; 0.
+
+    MESSAGE e207.  " '0이상의 숫자만 입력 가능합니다.'
+
+  ELSEIF ls_mard-labst &lt; zca_mmt010-btqty.
+
+    MESSAGE '출고지 수량보다 많은 수량은 이동할 수 없습니다.' TYPE 'E'.
+
+  ENDIF.
+
+ENDMODULE.
+<font color ="#0000FF">**&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">**&      Module  INPUT_CHECK2  INPUT</font>
+<font color ="#0000FF">**&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*MODULE input_check2 INPUT.</font>
+<font color ="#0000FF">*</font>
+<font color ="#0000FF">*  DATA: LV TYPE zca_tstock,</font>
+<font color ="#0000FF">*        L_DIS LIKE LINE OF GT_DISPLAY1.</font>
+<font color ="#0000FF">*</font>
+<font color ="#0000FF">*  READ TABLE GT_DISPLAY1 INTO l_dis WITH KEY</font>
+<font color ="#0000FF">*</font>
+<font color ="#0000FF">*</font>
+<font color ="#0000FF">*</font>
+<font color ="#0000FF">*ENDMODULE.</font>
+</pre>
+<hr>
+<font size="2" face = "Sans Serif">Extracted by Direct Download Enterprise version 1.3.1 - E.G.Mellodew. 1998-2005 UK. Sap Release 758
+</font>
+</body>
+</html>

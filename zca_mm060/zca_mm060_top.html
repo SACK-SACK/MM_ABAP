@@ -1,0 +1,79 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2//EN">
+<html>
+<head>
+<title>ZCA_MM060_TOP</title>
+</head>
+<body bgcolor="#FFFFE0">
+<font size="3" face = "Arial" color="#000000"><b>Code listing for: ZCA_MM060_TOP</b></font>
+<br>
+<font size="3" face = "Arial" color="#000000"><b>Description:  TOP</b></font>
+<hr>
+<pre width="100">
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*& Include          ZCA_MM060_TOP</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+TABLES: ZCA_EBAN, ZCA_MARA, ZCA_MARD, ZCA_MAKT, ZCA_T001W .
+
+<font color ="#0000FF">* ccon1</font>
+<font color ="#0000FF">*-----------------------------------------------------------------------</font>
+DATA: BEGIN OF GS_DISPLAY.
+        include structure <a href ="zca_eban/dictionary-zca_eban.html">ZCA_EBAN</a>.
+DATA:   ICON  TYPE CHAR4,
+        MAKTX TYPE ZCA_MAKT-MAKTX,
+        PNAME TYPE ZCA_T001W-PNAME,
+        SPRAS TYPE ZCA_MAKT-SPRAS,
+        NADAT TYPE SY-DATUM,
+      END OF GS_DISPLAY.
+DATA: GT_DISPLAY LIKE TABLE OF GS_DISPLAY.
+
+
+<font color ="#0000FF">* ALV 관련 객체</font>
+DATA: GO_CONTAINER TYPE REF TO CL_GUI_CUSTOM_CONTAINER,
+      GO_ALV_GRID  TYPE REF TO CL_GUI_ALV_GRID,
+      GS_LAYOUT    TYPE LVC_S_LAYO,
+      GT_FIELDCAT  TYPE LVC_T_FCAT,
+      GS_FIELDCAT  TYPE LVC_S_FCAT,
+      OK_CODE      TYPE SY-UCOMM,
+      GS_VARIANT   TYPE DISVARIANT..
+
+<font color ="#0000FF">** 범위를 위한 레인지 선언</font>
+
+DATA: GV_OR_LOW    TYPE ZCA_EBAN-BANFN,
+      GV_OR_HIGH   TYPE ZCA_EBAN-BANFN,
+      GV_DATE_LOW  TYPE SY-DATUM,
+      GV_DATE_HIGH TYPE SY-DATUM.
+
+DATA: GR_BANFN_RANGE TYPE RANGE OF ZCA_EBAN-BANFN,
+      GR_BADAT_RANGE TYPE RANGE OF ZCA_EBAN-BADAT.
+
+
+<font color ="#0000FF">*ccon2</font>
+<font color ="#0000FF">*-----------------------------------------------------------------------</font>
+DATA GS_DISPLAY2 LIKE GS_DISPLAY.
+
+DATA: GT_DISPLAY2 LIKE TABLE OF GS_DISPLAY2.
+
+
+DATA: GT_FIELDCAT2  TYPE LVC_T_FCAT,
+      GS_FIELDCAT2  TYPE LVC_S_FCAT,
+      GS_LAYOUT2    TYPE LVC_S_LAYO,
+      GO_CONTAINER2 TYPE REF TO CL_GUI_CUSTOM_CONTAINER,
+      GO_ALV_GRID2  TYPE REF TO CL_GUI_ALV_GRID.
+
+
+<font color ="#0000FF">*-----------------------------------------------------------------------</font>
+
+DATA GV_SPRAS TYPE ZCA_MAKT-SPRAS.
+
+
+DATA INPUT_MEINS1 TYPE ZCA_MARD-MEINS.
+DATA INPUT_MEINS2 TYPE ZCA_MARD-MEINS.
+DATA INPUT_MEINS3 TYPE ZCA_MARD-MEINS.
+DATA INPUT_MEINS4 TYPE ZCA_MARD-MEINS.
+DATA INPUT_MEINS5 TYPE ZCA_MARD-MEINS.
+</pre>
+<hr>
+<font size="2" face = "Sans Serif">Extracted by Direct Download Enterprise version 1.3.1 - E.G.Mellodew. 1998-2005 UK. Sap Release 758
+</font>
+</body>
+</html>
